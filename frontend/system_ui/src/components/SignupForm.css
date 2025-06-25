@@ -1,0 +1,160 @@
+.signup-container {
+  background-color: #d1d1d1;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 500px;
+  min-height: 600px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  border: 3px solid #4a9eff;
+}
+
+.signup-content {
+  padding: 40px 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #d1d1d1;
+  min-height: 100%;
+}
+
+.logo-section {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.logo {
+  margin-bottom: 20px;
+}
+
+.logo img {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.logo-section h1 {
+  color: #333;
+  font-size: 32px;
+  font-weight: 600;
+  margin-bottom: 15px;
+  letter-spacing: 1px;
+}
+
+.logo-section p {
+  color: #666;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.signup-form {
+  background-color: #3a3a4a;
+  padding: 30px;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 400px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background-color: #fff;
+  border-radius: 4px;
+  padding: 0 15px;
+  height: 45px;
+}
+
+.input-icon {
+  font-size: 16px;
+  margin-right: 10px;
+  color: #666;
+}
+
+.input-wrapper input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 14px;
+  color: #333;
+}
+
+.input-wrapper input::placeholder {
+  color: #999;
+}
+
+.password-toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 0;
+  margin-left: 10px;
+}
+
+.signup-button {
+  width: 100%;
+  background-color: #4a9eff;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 4px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-bottom: 20px;
+}
+
+.signup-button:hover {
+  background-color: #3a8ee6;
+}
+
+.signup-button:active {
+  background-color: #2a7ecc;
+}
+
+.login-link {
+  text-align: center;
+  color: #ccc;
+  font-size: 14px;
+}
+
+.login-link .link-button {
+  background: none;
+  border: none;
+  color: #4a9eff;
+  font-size: 14px;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+}
+
+.login-link .link-button:hover {
+  color: #6bb3ff;
+}
+
+@media (max-width: 600px) {
+  .signup-container {
+    max-width: 100%;
+    min-height: auto;
+  }
+  
+  .signup-content {
+    padding: 30px 20px;
+  }
+  
+  .signup-form {
+    padding: 25px 20px;
+  }
+  
+  .logo-section h1 {
+    font-size: 28px;
+  }
+}
