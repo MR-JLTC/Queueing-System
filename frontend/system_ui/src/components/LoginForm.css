@@ -1,92 +1,152 @@
-body {
-  background-color: #f0f2f5;
-  margin: 0;
-  padding: 0;
-  min-height: 100vh;
+
+.login-page {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 40px 20px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
+  background: transparent;
+}
+.login-container {
+  width: 100%;
+  max-width: 600px;
+  background-color: #22253b;
+  border: 1px solid #333;
+  border-radius: 10px;
+  padding: 30px 20px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  
+}
+
+body {
+  background-color: #c2bbc0;
+  margin: 0;
+  padding: 0;
   font-family: 'Arial', sans-serif;
 }
 
 .header-section {
+  max-width: 600px;
   text-align: center;
-  margin-bottom: 60px;
-  padding: 20px;
+  background-color: #c2bbc0;
+}
+
+.inter-font {
+  font-family: 'Inter', sans-serif;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .logo-section {
   margin-bottom: 20px;
 }
-
-.logo img {
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+.login-page .logo-section .logo img {
+  width: 90px;
+  height: auto;
+  border-radius: 0;
 }
 
-.logo-section h1 {
-  color: #1a1a1a;
-  font-size: 40px;
-  margin: 20px 0 12px 0;
-  font-weight: 700;
+
+
+.login-page .logo-section h1 {
+
+  color: #22253b !important;
+  font-size: 50px;
+  
 }
 
-.logo-section p {
-  color: #4a4a4a;
-  font-size: 20px;
-  margin: 0;
+.login-page .logo-section p {
+  color: #000 !important;
 }
 
-.login-container {
-  width: 100%;
-  max-width: 400px;
-  margin: 0 auto;
-  background-color: #000000;
-  border: 1px solid #333333;
-  border-radius: 8px;
-  padding: 20px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-}
-
-.form-group {
-  margin-bottom: 20px;
-  color: #ffffff;
-  font-size: 16px;
-  display: flex;
-  flex-direction: column;
-}
-
-.input-wrapper {
+.form-group.horizontal {
   display: flex;
   align-items: center;
-  padding: 14px;
-  background-color: #1a1a1a;
-  border: 1px solid #333333;
-  border-radius: 6px;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  width: 100%;
+  max-width: 500px;
+  gap: 16px;
 }
+
+.input-label {
+  color: #fff;
+  font-size: 16px;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 120px;
+}
+
+.input-icon {
+  font-size: 18px;
+  color: #999;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+  flex: 1;
+  padding: 12px;
+  font-size: 16px;
+  border: 1px solid #333;
+  border-radius: 6px;
+  background-color: #1a1a1a;
+  color: #fff;
+  outline: none;
+  width: 100%;
+}
+
+input:focus {
+  border-color: #007bff;
+}
+
+
+.password-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.password-wrapper input {
+  flex: 1;
+}
+
+
+ .password-toggle {
+  position: absolute;
+  right: 12px;
+  background: none;
+  border: none;
+  color: #999;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 0;
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.password-toggle:hover {
+  color: #fff;
+}
+
+
+
+
 
 .input-wrapper:focus-within {
   border-color: #007bff;
 }
 
 .input-icon {
-  margin-right: 12px;
-  color: #999999;
-  font-size: 18px;
+  font-size: 20px;
+  padding: 0 5px;
 }
 
-.input-wrapper input {
-  flex: 1;
-  border: none;
-  outline: none;
-  background: transparent;
-  font-size: 16px;
-  color: #ffffff;
-  width: 100%;
-}
+
 
 .input-wrapper input::placeholder {
   color: #999999;
@@ -95,6 +155,7 @@ body {
 .forgot-password-link {
   text-align: right;
   margin-bottom: 12px;
+  margin-right: 50px;
 }
 
 .link-button {
@@ -113,7 +174,7 @@ body {
 }
 
 .login-button {
-  width: 100%;
+  width: 65%;
   background-color: #007bff;
   color: white;
   border: none;
@@ -123,6 +184,7 @@ body {
   font-weight: 600;
   cursor: pointer;
   margin-bottom: 12px;
+  margin-left: 75px;
   transition: background-color 0.3s ease;
 }
 
@@ -130,15 +192,6 @@ body {
   background-color: #0056b3;
 }
 
-.password-toggle {
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 18px;
-  color: #999999;
-  margin-left: 12px;
-  transition: color 0.3s ease;
-}
 
 .password-toggle:hover {
   color: #ffffff;
@@ -148,6 +201,7 @@ body {
   text-align: center;
   color: #ffffff;
   font-size: 14px;
+  margin-left: 100px;
 }
 
 .signup-link .link-button {
@@ -176,6 +230,7 @@ body {
 
   .logo-section p {
     font-size: 16px;
+   
   }
 
   .login-container {
@@ -203,4 +258,10 @@ body {
   .password-toggle {
     font-size: 16px;
   }
+  
+
+
+
+
+
 }

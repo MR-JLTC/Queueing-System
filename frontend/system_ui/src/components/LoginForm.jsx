@@ -28,53 +28,55 @@ const LoginForm = ({ onForgotPassword, onGoToSignup }) => {
     setShowPassword(!showPassword);
   };
 
-  return (
-    <>
+ return (
+  <>
+    <div className="login-page">
       <div className="header-section">
         <div className="logo-section">
           <div className="logo">
-            <img src="/src/assets/logo.png" alt="Bahandi Logo" />
+            <img src="/src/assets/bahandi_logo.png" alt="Bahandi Logo" />
           </div>
-          <h1>Welcome to Bahandi</h1>
-          <p>Please log in to your account using the form below.</p>
+          <h1 className="inter-font">Welcome to Bahandi</h1>
+          <p className="inter-font">Please log in to your account using the form below.</p>
         </div>
       </div>
+
       <div className="login-container">
-        <div className="form-group">
-          <div className="input-wrapper">
-            <span className="input-icon">👤</span>
-            <input
-              type="text"
-              name="username"
-              placeholder="Username"
-              value={formData.username}
-              onChange={handleInputChange}
-              required
-            />
-          </div>
+
+        <div className="form-group horizontal">
+          <label className="input-label">
+            <span className="input-icon">👤</span> Username:
+          </label>
+          <input
+            type="text"
+            name="username"
+            value={formData.username}
+            onChange={handleInputChange}
+            required
+          />
         </div>
 
-        <div className="form-group">
-          <div className="input-wrapper">
-            <span className="input-icon">✉️</span>
-            <input
-              type="email"
-              name="email"
-              placeholder="Email"
-              value={formData.email}
-              onChange={handleInputChange}
-              required
-            />
-          </div>
+        <div className="form-group horizontal">
+          <label className="input-label">
+            <span className="input-icon">✉️</span> Email:
+          </label>
+          <input
+            type="email"
+            name="email"
+            value={formData.email}
+            onChange={handleInputChange}
+            required
+          />
         </div>
 
-        <div className="form-group">
-          <div className="input-wrapper">
-            <span className="input-icon">🔒</span>
+        <div className="form-group horizontal">
+          <label className="input-label">
+            <span className="input-icon">🔒</span> Password:
+          </label>
+          <div className="password-wrapper">
             <input
               type={showPassword ? "text" : "password"}
               name="password"
-              placeholder="Password"
               value={formData.password}
               onChange={handleInputChange}
               required
@@ -114,8 +116,10 @@ const LoginForm = ({ onForgotPassword, onGoToSignup }) => {
           </button>
         </div>
       </div>
-    </>
-  );
+    </div>
+  </>
+);
+
 };
 
 export default LoginForm;
