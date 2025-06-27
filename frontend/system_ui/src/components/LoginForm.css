@@ -37,6 +37,7 @@ body {
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 
+
 .logo-section {
   margin-bottom: 20px;
 }
@@ -56,7 +57,7 @@ body {
 }
 
 .login-page .logo-section p {
-  color: #000 !important;
+  color: #362f2f !important;
 }
 
 .form-group.horizontal {

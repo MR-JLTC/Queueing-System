@@ -37,7 +37,7 @@ const LoginForm = ({ onForgotPassword, onGoToSignup }) => {
             <img src="/src/assets/bahandi_logo.png" alt="Bahandi Logo" />
           </div>
           <h1 className="inter-font">Welcome to Bahandi</h1>
-          <p className="inter-font">Please log in to your account using the form below.</p>
+          <p>Please log in to your account using the form below.</p>
         </div>
       </div>
 
