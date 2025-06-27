@@ -33,65 +33,67 @@ const SignupForm = ({ onGoToLogin }) => {
   };
 
   return (
-    <div className="signup-container">
-      <div className="signup-content">
+    
+      <div className="signup-page">
+      <div className="header-section">
         <div className="logo-section">
           <div className="logo">
-            <img src="/src/assets/logo.png" alt="Bahandi Logo" />
+            <img src="/src/assets/bahandi_logo.png" alt="Bahandi Logo" />
           </div>
-          <h1>SIGN UP</h1>
-          <p>Kindly fill up the form to get started.</p>
+          <h1 className="inter-font">SIGN UP</h1>
+          <p className="inter-font2">Kindly fill up the form to get started.</p>
         </div>
 
-        <form className="signup-form" onSubmit={handleSubmit}>
-          <div className="form-group">
-            <div className="input-wrapper">
-              <span className="input-icon">👤</span>
-              <input
-                type="text"
-                name="username"
-                placeholder="Username"
-                value={formData.username}
-                onChange={handleInputChange}
-                required
-              />
-            </div>
-          </div>
+          <div className="signup-container">
 
-          <div className="form-group">
-            <div className="input-wrapper">
-              <span className="input-icon">✉️</span>
-              <input
-                type="email"
-                name="email"
-                placeholder="Email"
-                value={formData.email}
-                onChange={handleInputChange}
-                required
-              />
-            </div>
-          </div>
+        <div className="form-group horizontal">
+          <label className="input-label">
+            <span className="input-icon">👤</span> Username:
+          </label>
+          <input
+            type="text"
+            name="username"
+            value={formData.username}
+            onChange={handleInputChange}
+            required
+          />
+        </div>
+         
 
-          <div className="form-group">
-            <div className="input-wrapper">
-              <span className="input-icon">🔒</span>
-              <input
-                type={showPassword ? "text" : "password"}
-                name="password"
-                placeholder="Password"
-                value={formData.password}
-                onChange={handleInputChange}
-                required
-              />
-              <button
-                type="button"
-                className="password-toggle"
-                onClick={togglePasswordVisibility}
-              >
-                {showPassword ? '🙈' : '👁️'}
-              </button>
-            </div>
+          <div className="form-group horizontal">
+          <label className="input-label">
+            <span className="input-icon">✉️</span> Email:
+          </label>
+          <input
+            type="email"
+            name="email"
+            value={formData.email}
+            onChange={handleInputChange}
+            required
+          />
+        </div>
+
+         <div className="form-group horizontal">
+          <label className="input-label">
+            <span className="input-icon">🔒</span> Password:
+          </label>
+          <div className="password-wrapper">
+            <input
+              type={showPassword ? "text" : "password"}
+              name="password"
+              value={formData.password}
+              onChange={handleInputChange}
+              required
+            />
+            <button
+              type="button"
+              className="password-toggle"
+              onClick={togglePasswordVisibility}
+            >
+              {showPassword ? '🙈' : '👁️'}
+            </button>
           </div>
+        </div>
 
           <button type="submit" className="signup-button">
             Sign Up
@@ -107,8 +109,9 @@ const SignupForm = ({ onGoToLogin }) => {
               Log in
             </button>
           </div>
-        </form>
+        
       </div>
+    </div>
     </div>
   );
 };

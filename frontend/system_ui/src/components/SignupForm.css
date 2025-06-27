@@ -1,63 +1,72 @@
-.signup-container {
-  background-color: #d1d1d1;
-  border-radius: 8px;
-  width: 100%;
-  max-width: 500px;
-  min-height: 600px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-  overflow: hidden;
-  border: 3px solid #4a9eff;
-}
-
-.signup-content {
-  padding: 40px 30px;
+.signup-page {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 40px 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: #d1d1d1;
-  min-height: 100%;
+  background: transparent;
 }
+.signup-container {
+  width: 100%;
+  max-width:800px;
+  background-color: #22253b;
+  border: 1px solid #333;
+  border-radius: 10px;
+  padding: 30px 20px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  
+}
+
+body {
+  background-color: #c2bbc0;
+  margin: 0;
+  padding: 0;
+  font-family: 'Arial', sans-serif;
+}
+
+.header-section {
+  max-width: 600px;
+  text-align: center;
+  background-color: #c2bbc0;
+}
+
+.inter-font {
+  font-family: 'Inter', sans-serif;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
 
 .logo-section {
-  text-align: center;
-  margin-bottom: 40px;
-}
-
-.logo {
   margin-bottom: 20px;
 }
-
-.logo img {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  object-fit: cover;
+.signup-page .logo-section .logo img {
+  width: 90px;
+  height: auto;
+  border-radius: 0;
 }
 
-.logo-section h1 {
-  color: #333;
-  font-size: 32px;
-  font-weight: 600;
-  margin-bottom: 15px;
-  letter-spacing: 1px;
+
+
+.signup-page .logo-section h1 {
+
+  color: #22253b !important;
+  font-size: 50px;
+  
 }
 
-.logo-section p {
-  color: #666;
-  font-size: 16px;
-  line-height: 1.5;
+.signup-page .logo-section p {
+  color: #362f2f !important;
 }
 
-.signup-form {
-  background-color: #3a3a4a;
-  padding: 30px;
-  border-radius: 8px;
+.form-group.horizontal {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
   width: 100%;
-  max-width: 400px;
-}
-
-.form-group {
-  margin-bottom: 20px;
+  max-width: 500px;
+  gap: 16px;
 }
 
 .input-wrapper {
