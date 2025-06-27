@@ -26,6 +26,7 @@ body {
   padding: 0;
   font-family: 'Arial', sans-serif;
   overflow: hidden;
+  
 }
 
 .header-section {
@@ -207,6 +208,9 @@ input:focus {
   color: #ffffff;
   font-size: 14px;
   margin-left: 100px;
+}
+.signup-link:active{
+  background-color: #2a7ecc;
 }
 
 .signup-link .link-button {
