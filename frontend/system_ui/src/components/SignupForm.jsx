@@ -21,11 +21,8 @@ const SignupForm = ({ onGoToLogin }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log('Signup attempt:', formData);
-    // Add your signup logic here
-    // After successful signup, you might want to redirect to login or dashboard
-    // For now, we'll just log the attempt
     alert('Signup successful! You can now log in.');
-    onGoToLogin(); // Navigate back to login after successful signup
+    onGoToLogin();
   };
 
   const togglePasswordVisibility = () => {
@@ -42,6 +39,7 @@ const SignupForm = ({ onGoToLogin }) => {
           </div>
           <h1 className="inter-font">SIGN UP</h1>
           <p className="inter-font2">Kindly fill up the form to get started.</p>
+        </div>
         </div>
 
           <div className="signup-container">
@@ -112,7 +110,7 @@ const SignupForm = ({ onGoToLogin }) => {
         
       </div>
     </div>
-    </div>
+    
   );
 };
 

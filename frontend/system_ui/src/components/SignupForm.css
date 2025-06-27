@@ -7,9 +7,10 @@
   align-items: center;
   background: transparent;
 }
+
 .signup-container {
   width: 100%;
-  max-width:800px;
+  max-width:600px;
   background-color: #22253b;
   border: 1px solid #333;
   border-radius: 10px;
@@ -84,6 +85,20 @@ body {
   margin-right: 10px;
   color: #666;
 }
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+  flex: 1;
+  padding: 12px;
+  font-size: 16px;
+  border: 1px solid #333;
+  border-radius: 6px;
+  background-color: #e8e3e3;
+  color: #090909;
+  outline: none;
+  width: 100%;
+}
+
 
 .input-wrapper input {
   flex: 1;
@@ -92,7 +107,7 @@ body {
   background: transparent;
   font-size: 14px;
   color: #333;
-}
+} */
 
 .input-wrapper input::placeholder {
   color: #999;
@@ -108,8 +123,8 @@ body {
 }
 
 .signup-button {
-  width: 100%;
-  background-color: #4a9eff;
+  width: 65%;
+  background-color: #007bff;
   color: white;
   border: none;
   padding: 12px;
@@ -119,10 +134,12 @@ body {
   cursor: pointer;
   transition: background-color 0.3s ease;
   margin-bottom: 20px;
+  margin-left: 137px;
+  margin-top: 46px;
 }
 
 .signup-button:hover {
-  background-color: #3a8ee6;
+  background-color: #0056b3;
 }
 
 .signup-button:active {
@@ -144,9 +161,11 @@ body {
   text-decoration: underline;
   padding: 0;
 }
-
+.login-link .link-button:active{
+  background-color: #2a7ecc;
+}
 .login-link .link-button:hover {
-  color: #6bb3ff;
+   color: #0056b3;
 }
 
 @media (max-width: 600px) {
