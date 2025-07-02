@@ -1,69 +1,129 @@
-#root {
-  width: 100%;
-  margin: 0 auto;
-  padding: 2rem;
-  /* text-align: center; */
-  
-  
-}
-
-.logo {
-  height: 8em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
-}
-
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
-
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
-}
-
-/* The system designs */
+/* Reset */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-
+  font-family: "Segoe UI", sans-serif;
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  height: 100vh;
+  background-color: #c8c3c3;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 30px;
+  overflow: hidden;
 }
 
-.App {
-  /* min-height: 100vh;
-  background-color: #b81e1e;
+/* Forgot Password Container */
+.forgot-password-container {
+  background-color: #d1d1d1;
+  border-radius: 8px;
+  max-width: 300px;
+  width: 100%;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  position: relative;
+  top: 10px;
+}
+
+/* Logo Section */
+.logo-section {
+  text-align: center;
+  margin: 8px 0 5px;
+  background: none !important;
+}
+
+.logo-section img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: transparent;
+}
+
+/* Header */
+.forgot-password-header {
+  background-color: #2c2c2c;
+  color: #fff;
+  padding: 6px 10px;
+  font-size: 14px;
+  font-weight: bold;
+  text-align: center;
+}
+
+/* Content */
+.forgot-password-content {
+  padding: 10px 15px;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  padding: 20px; */
+}
+
+/* Verification Form */
+.verification-form {
+  background-color: #2c2c2c;
+  padding: 10px;
+  border-radius: 6px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  text-align: center;
+}
+
+.verification-form h3 {
+  color: white;
+  font-size: 12px;
+}
+
+/* Inputs */
+.verification-form input {
+  padding: 5px;
+  border: 2px solid #555;
+  border-radius: 4px;
+  background-color: #fff;
+  font-size: 12px;
+  color: #333;
+  outline: none;
+}
+
+.verification-form input:focus {
+  border-color: #888;
+}
+
+/* Button */
+.verification-form button {
+  background-color: #1da1f2;
+  color: white;
+  border: none;
+  padding: 5px 0;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.verification-form button:hover {
+  background-color: #1a91db;
+}
+
+.verification-form button:active {
+  background-color: #1687c9;
+}
+
+/* Back Button */
+.back-button {
+  background: none;
+  border: none;
+  color: #888;
+  font-size: 10px;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 5px;
+}
+
+.back-button:hover {
+  color: #aaa;
 }
