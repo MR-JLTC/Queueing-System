@@ -121,6 +121,20 @@ input[type="password"] {
   padding: 0;
   margin-left: 10px;
 }
+.confirm-password-wrapper {
+  max-width: 200px;
+  margin: 0 auto;
+}
+
+.confirm-password-wrapper input {
+  width: 100%;
+  box-sizing: border-box; 
+}
+
+.confirm-password-wrapper .password-toggle {
+  right: 8px;
+}
+
 
 .signup-button {
   width: 65%;

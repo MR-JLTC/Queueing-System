@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import './LoginForm.css';
 
+
 const LoginForm = ({ onForgotPassword, onGoToSignup }) => {
   const [formData, setFormData] = useState({
     username: '',
@@ -106,7 +107,7 @@ const LoginForm = ({ onForgotPassword, onGoToSignup }) => {
         </button>
 
         <div className="signup-link">
-          <span>Don't have an account? </span>
+          <span>Don't have an account?  </span>
           <button
             type="button"
             className="link-button"

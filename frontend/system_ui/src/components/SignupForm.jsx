@@ -5,7 +5,8 @@ const SignupForm = ({ onGoToLogin }) => {
   const [formData, setFormData] = useState({
     username: '',
     email: '',
-    password: ''
+    password: '',
+     confirmPassword: ''
   });
 
   const [showPassword, setShowPassword] = useState(false);
@@ -70,6 +71,7 @@ const SignupForm = ({ onGoToLogin }) => {
             required
           />
         </div>
+        
 
          <div className="form-group horizontal">
           <label className="input-label">
@@ -93,24 +95,42 @@ const SignupForm = ({ onGoToLogin }) => {
           </div>
         </div>
 
-          <button type="submit" className="signup-button">
-            Sign Up
-          </button>
+       <div className="form-group horizontal">
+  <div className="confirm-password-wrapper">
+    <input
+      type={showPassword ? "text" : "password"}
+      name="confirmPassword"
+      value={formData.confirmPassword}
+      onChange={handleInputChange}
+      placeholder="Confirm Password"
+      required
+    />
+    <button
+      type="button"
+      className="password-toggle"
+      onClick={togglePasswordVisibility}
+    >
+      {showPassword ? '🙈' : '👁️'}
+    </button>
+  </div>
+</div>
 
-          <div className="login-link">
-            <span>Already have an account? </span>
-            <button
-              type="button"
-              className="link-button"
-              onClick={onGoToLogin}
-            >
-              Log in
-            </button>
-          </div>
-        
+        <button type="submit" className="signup-button">
+          Sign Up
+        </button>
+
+        <div className="login-link">
+          <span>Already have an account? </span>
+          <button
+            type="button"
+            className="link-button"
+            onClick={onGoToLogin}
+          >
+            Log in
+          </button>
+        </div>
       </div>
     </div>
-    
   );
 };
 

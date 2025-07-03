@@ -7,13 +7,18 @@
 }
 
 body {
-  height: 100vh;
-  background-color: #c8c3c3;
+  /* height: 100vh;
+  background-color: #b5b0b0;
   display: flex;
   justify-content: center;
   align-items: flex-start;
   padding-top: 30px;
-  overflow: hidden;
+  overflow: hidden; */
+  height: auto; 
+  display: block;
+  padding-top: 30px;
+  overflow-x: hidden;
+  background-color: #b5b0b0;
 }
 
 /* Forgot Password Container */
@@ -31,7 +36,8 @@ body {
 .logo-section {
   text-align: center;
   margin: 8px 0 5px;
-  background: none !important;
+  
+  
 }
 
 .logo-section img {
@@ -127,3 +133,4 @@ body {
 .back-button:hover {
   color: #aaa;
 }
+

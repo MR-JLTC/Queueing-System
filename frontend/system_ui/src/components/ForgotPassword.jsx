@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import logo from "../assets/logo.png";
+import logo from "../assets/bahandi_logo.png";
 import "./ForgotPassword.css"; // or LoginForm.css kung irename nimo
 
 const LoginForm = ({ onBackToLogin }) => {
