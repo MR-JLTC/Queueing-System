@@ -1,5 +1,9 @@
 import React, { useState } from 'react';
 import './LoginForm.css';
+import showIcon from '../assets/visibility_on.svg';
+import hideIcon from '../assets/visibility_off.svg';
+
+
 
 
 const LoginForm = ({ onForgotPassword, onGoToSignup }) => {
@@ -46,7 +50,8 @@ const LoginForm = ({ onForgotPassword, onGoToSignup }) => {
 
         <div className="form-group horizontal">
           <label className="input-label">
-            <span className="input-icon">👤</span> Username:
+            <img src="/src/assets/person.svg" alt="Username Icon" className="input-icon-svg" />
+            Username:
           </label>
           <input
             type="text"
@@ -59,7 +64,8 @@ const LoginForm = ({ onForgotPassword, onGoToSignup }) => {
 
         <div className="form-group horizontal">
           <label className="input-label">
-            <span className="input-icon">✉️</span> Email:
+            <img src="/src/assets/mail.svg" alt="Mail Icon" className="input-icon-svg" />
+            Email:
           </label>
           <input
             type="email"
@@ -72,7 +78,8 @@ const LoginForm = ({ onForgotPassword, onGoToSignup }) => {
 
         <div className="form-group horizontal">
           <label className="input-label">
-            <span className="input-icon">🔒</span> Password:
+           <img src="/src/assets/lock.svg" alt="Password Icon" className="input-icon-svg" />
+           Password:
           </label>
           <div className="password-wrapper">
             <input
@@ -82,13 +89,19 @@ const LoginForm = ({ onForgotPassword, onGoToSignup }) => {
               onChange={handleInputChange}
               required
             />
+            
             <button
-              type="button"
+             type="button"
               className="password-toggle"
               onClick={togglePasswordVisibility}
-            >
-              {showPassword ? '🙈' : '👁️'}
+>
+                <img
+                src={showPassword ? showIcon : hideIcon}
+                alt={showPassword ? "Hide password" : "Show password"}
+                className="password-icon"
+                 />
             </button>
+
           </div>
         </div>
 
