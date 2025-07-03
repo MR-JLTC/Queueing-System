@@ -19,6 +19,7 @@ body {
   padding-top: 30px;
   overflow-x: hidden;
   background-color: #b5b0b0;
+  justify-content: center;
 }
 
 /* Forgot Password Container */
