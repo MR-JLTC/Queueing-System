@@ -2,17 +2,18 @@ import React, { useState } from 'react';
 import './LoginForm.css';
 import showIcon from '../assets/visibility_on.svg';
 import hideIcon from '../assets/visibility_off.svg';
+import PopupMessage from "./popup_menu/PopupMessage";
+import { showPopupMessage } from "./utils/popupUtils";
 
-
-
-
-const LoginForm = ({ onForgotPassword, onGoToSignup }) => {
+const LoginForm = ({ onForgotPassword, onLoginSuccess }) => {
   const [formData, setFormData] = useState({
     username: '',
     email: '',
     password: ''
   });
-
+  
+  // type can be 'success', 'error', etc.
+  const [popup, setPopup] = useState(null); // { type, message }
   const [showPassword, setShowPassword] = useState(false);
 
   const handleInputChange = (e) => {
@@ -25,29 +26,49 @@ const LoginForm = ({ onForgotPassword, onGoToSignup }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('Login attempt:', formData);
-    // Add your login logic here
+
+    const validUsername = 'admin';
+    const validPassword = '1234';
+    const validEmail = 'admin@gmail.com';
+
+    if (
+      formData.username === validUsername &&
+      formData.password === validPassword &&
+      formData.email === validEmail
+    ) {
+      setTimeout(() => onLoginSuccess(), 700);// Call the success handler from App.jsx
+      showPopupMessage(setPopup, "success", "Login successful!");
+    }else showPopupMessage(setPopup, "error", "Invalid credentials. Please try again.");
   };
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
 
- return (
-  <>
+  return (
     <div className="login-page">
-      <div className="header-section">
+      {/* ✅ POPUP */}
+      {popup && (
+        <PopupMessage
+          type={popup.type}
+          message={popup.message}
+          onClose={() => setPopup(null)}
+        />
+      )}
+      {/* ✅ HEADER */}
+      <div className="header-section2">
         <div className="logo-section">
           <div className="logo">
-            <img src="/src/assets/bahandi_logo.png" alt="Bahandi Logo" />
+            <img src="/src/assets/sys_logo.png" alt="Bahandi Logo" />
           </div>
-          <h1 className="inter-font">Welcome to Bahandi</h1>
+          <h1 className="inter-font">
+            <span style={{ color: 'white' }}>Welcome to </span><span style={{ color: 'yellow' }}>QLine</span>
+          </h1>
           <p>Please log in to your account using the form below.</p>
         </div>
       </div>
-
-      <div className="login-container">
-
+      {/* ✅ LOGIN FORM */}
+      <form className="login-container" onSubmit={handleSubmit}>
         <div className="form-group horizontal">
           <label className="input-label">
             <img src="/src/assets/person.svg" alt="Username Icon" className="input-icon-svg" />
@@ -73,13 +94,15 @@ const LoginForm = ({ onForgotPassword, onGoToSignup }) => {
             value={formData.email}
             onChange={handleInputChange}
             required
+            pattern=".+@.+\..+"
+            title="Please enter a valid email address that includes a '.'"
           />
         </div>
 
         <div className="form-group horizontal">
           <label className="input-label">
-           <img src="/src/assets/lock.svg" alt="Password Icon" className="input-icon-svg" />
-           Password:
+            <img src="/src/assets/lock.svg" alt="Password Icon" className="input-icon-svg" />
+            Password:
           </label>
           <div className="password-wrapper">
             <input
@@ -88,20 +111,19 @@ const LoginForm = ({ onForgotPassword, onGoToSignup }) => {
               value={formData.password}
               onChange={handleInputChange}
               required
+              maxLength={9}
             />
-            
             <button
-             type="button"
+              type="button"
               className="password-toggle"
               onClick={togglePasswordVisibility}
->
-                <img
+            >
+              <img
                 src={showPassword ? showIcon : hideIcon}
                 alt={showPassword ? "Hide password" : "Show password"}
                 className="password-icon"
-                 />
+              />
             </button>
-
           </div>
         </div>
 
@@ -115,25 +137,18 @@ const LoginForm = ({ onForgotPassword, onGoToSignup }) => {
           </button>
         </div>
 
-        <button type="submit" className="login-button" onClick={handleSubmit}>
+        <button type="submit" className="login-button">
           Login
         </button>
-
-        <div className="signup-link">
-          <span>Don't have an account?  </span>
-          <button
-            type="button"
-            className="link-button"
-            onClick={onGoToSignup}
-          >
-            Sign Up
-          </button>
+        <div className="powered-by">
+          <p>
+            Powered by{' '}
+            <img src="/src/assets/bahandi_logo.png" alt="Password Icon" className="input-icon-svg" />
+          </p>
         </div>
-      </div>
+      </form>
     </div>
-  </>
-);
-
+  );
 };
 
 export default LoginForm;
