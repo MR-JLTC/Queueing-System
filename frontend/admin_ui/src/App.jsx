@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import LoginForm from "./components/LoginForm";
-import ForgotPassword from "./components/ForgotPassword";
-import Dashboard from "./components/DashBoard";
+import LoginForm from "./admin/LoginForm";
+import ForgotPassword from "./admin/ForgotPassword";
+import Dashboard from "./admin/DashBoard";
 import "./App.css";
 
 function App() {
