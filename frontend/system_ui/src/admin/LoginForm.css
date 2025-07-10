@@ -9,8 +9,6 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-image: url('/src/assets/site_bg.jpg'); /* 👈 Update this path */
-  background-size: cover; /* Cover the whole area */
   background-position: center; /* Center the image */
   background-repeat: no-repeat; /* Prevent repetition */
   overflow-y: fixed;
@@ -33,7 +31,6 @@
 }
 
 body {
-  /* background-color: #b43b92; */
   margin: 0;
   padding: 0;
   font-family: 'Arial', sans-serif;
@@ -42,7 +39,6 @@ body {
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  
 }
 
 .header-section2 {
