@@ -11,7 +11,7 @@ import QueueManagement from '../client/QueueManagement';
 const AppRoutes = () => {
   return (
     <Routes>
-      <Route path="/" element={<LoginForm />} />
+      <Route path="/login" element={<LoginForm />} />
       <Route path="/forgot" element={<ForgotPassword />} />
       <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/counter" element={<CounterQueueManagementSystem />} />
