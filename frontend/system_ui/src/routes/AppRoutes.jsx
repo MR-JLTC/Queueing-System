@@ -19,8 +19,8 @@ const AppRoutes = () => {
       <Route path="/counter" element={<CounterQueueManagementSystem />} />
       <Route path="/monitoring" element={<QueueMonitoring />} />
       <Route path="/queue" element={<QueueManagement />} /> {/* ✅ new route */}
-    {/* <Route path="*" element={<Navigate to="/login" />} />
-    <Route path="/" element={<Navigate to="/login" />} /> */}
+    <Route path="*" element={<Navigate to="/login" />} />
+    <Route path="/" element={<Navigate to="/login" />} />
 
 
     </Routes>
