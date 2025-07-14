@@ -83,7 +83,7 @@ const ForgotPassword = () => {
         <button className="confirm-button" onClick={handleCodeSubmit}>
           Confirm
         </button>
-        <button className="link-button" onClick={() => navigate("/")}>
+        <button className="link-button" onClick={() => navigate("/login")}>
           Back to Login
         </button>
       </div>

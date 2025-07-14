@@ -1,10 +1,7 @@
-// components/Sidebar.jsx
-import React, { useState } from "react";
+import React from "react";
 import "./Dashboard.css";
 
-const Sidebar = () => {
-  const [activeTab, setActiveTab] = useState("Dashboard");
-
+const Sidebar = ({ activeTab, setActiveTab }) => {
   return (
     <aside className="sidebar">
       <div className="sidebar-header">

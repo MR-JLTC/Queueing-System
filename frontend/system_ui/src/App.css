@@ -4,15 +4,22 @@
   padding: 0;
   box-sizing: border-box;
   font-family: "Inter", sans-serif;
+  
 }
 
 body {
   
   height: auto; 
   display: block;
+ 
   overflow-x: hidden;
   background-color: transparent;
   
+}
+ 
+  body.login-page {
+  background-image: url('/src/assets/site_bg.jpg');
+  background-size: cover;
 }
 
 /* Forgot Password Container */

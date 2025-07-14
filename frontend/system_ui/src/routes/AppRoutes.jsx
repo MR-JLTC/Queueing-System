@@ -7,6 +7,8 @@ import Dashboard from "../admin/DashBoard";
 import CounterQueueManagementSystem from "../counter/CounterQueueManagement";
 // Client page
 import QueueManagement from '../client/QueueManagement';
+import QueueMonitoring from "../admin/QueueMonitoring";
+
 
 const AppRoutes = () => {
   return (
@@ -15,9 +17,8 @@ const AppRoutes = () => {
       <Route path="/forgot" element={<ForgotPassword />} />
       <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/counter" element={<CounterQueueManagementSystem />} />
-      {/* Client Routes */}
+      <Route path="/monitoring" element={<QueueMonitoring />} />
       <Route path="/queue" element={<QueueManagement />} /> {/* ✅ new route */}
-      {/* Catch-all fallback */}
       <Route path="*" element={<Navigate to="/" />} />
     </Routes>
   );

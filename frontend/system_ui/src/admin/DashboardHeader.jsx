@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 
 const branches = ["Main Branch", "Branch A", "Branch B"];
 
-const DashboardHeader = () => {
+const DashboardHeader = ({ activeTab }) => {
+
   const [selectedBranch, setSelectedBranch] = useState("Main Branch");
   const [showDropdown, setShowDropdown] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -34,7 +35,8 @@ const DashboardHeader = () => {
   </div>
 
   <div className="dashboard-title">
-    <h1>ADMIN DASHBOARD</h1>
+   <h1>{(activeTab ?? "Dashboard") === "Dashboard" ? "ADMIN DASHBOARD" : activeTab.toUpperCase()}</h1>
+
   </div>
 
 
