@@ -6,8 +6,8 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
     <aside className="sidebar">
       <div className="sidebar-header">
         <img src="/src/assets/me.jpg" alt="Admin" className="admin-avatar" />
-        <div>
-          <h4 className="admin-name">Decidido Mohabal</h4>
+        <div  className="admin-name">
+          <h4>Flint Marko</h4>
           <h6>Administrator</h6>
         </div>
       </div>

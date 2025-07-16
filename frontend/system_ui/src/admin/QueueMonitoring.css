@@ -1,69 +1,197 @@
-.queue-monitoring-container {
-  min-height: 100%;
-  width: 100%;
-  background-color: #0d0e1b;
-  color: #fff;
+/* QueueMonitoring.css */
+
+/* .queue-monitoring {
+  background-color: transparent;
   padding: 20px;
-}
+  border-radius: 10px;
+  color: white;
+} */
 
 
-
-.queue-monitoring-header {
+.date-range-filters {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  justify-content: flex-end;
+  gap: 20px;
+  margin-bottom: 20px;
   flex-wrap: wrap;
+  margin-right: 10px;
 }
 
-.date-range label {
-  margin: 0 10px;
+.date-field {
+  display: flex;
+  flex-direction: column;
+  color: white;
+}
+
+.date-field label {
+  margin-bottom: 4px;
   font-size: 14px;
+  
 }
 
-.tab-buttons {
-  display: flex;
-  gap: 10px;
-  margin: 20px 0;
+/* Target each part of the date for more control (Chrome/Edge) */
+input[type="date"]::-webkit-datetime-edit {
+  color: white; /* entire editable area */
 }
 
-.tab-buttons button {
-  padding: 8px 16px;
-  background: none;
-  border: 1px solid #444;
+input[type="date"]::-webkit-datetime-edit-year-field,
+input[type="date"]::-webkit-datetime-edit-month-field,
+input[type="date"]::-webkit-datetime-edit-day-field {
+  color: rgb(0, 0, 0); /* individual fields */
+}
+
+/* Optional: fix the slash too */
+input[type="date"]::-webkit-datetime-edit-text {
+  color: rgb(0, 0, 0);
+}
+
+
+/* Optional: placeholder for future content */
+.queue-monitoring-content {
+  margin-top: 40px;
+  text-align: center;
+  color: #f6f6f6;
+}
+input[type="date"] {
+  background-color: #FFCE4E;
+   /* This sets the number color */
+  border: 1px solid white;
+  padding: 6px 10px;
   border-radius: 6px;
-  color: #fff;
-  cursor: pointer;
+  font-family: 'Inter', sans-serif;
 }
-
-.tab-buttons .active-tab {
-  background-color: #1d1e30;
-  border-bottom: 2px solid #00bfff;
+.queue-history-title {
+  text-align: right;
+  font-size: medium;
+  margin-right: 110px;
+  margin-bottom: 15px;
+  font-weight: 300;
 }
-
-.queue-stats {
+.monitoring-tabs {
+  background-color: #000;
+  border-radius: 8px;
+  padding: 12px 16px;
   display: flex;
-  gap: 15px;
-  flex-wrap: wrap;
-  margin-bottom: 30px;
+  justify-content: space-around;
+  align-items: center;
+  margin-top: 40px;
+  max-width: inherit;
+  margin-left: auto;
+  margin-right: auto;
+}
+/* 
+.tab-button {
+  background-color: transparent;
+  /* border: 1px solid #FFCE4E; 
+  /* color: #FFCE4E; 
+  color: white;
+  padding: 8px 16px;
+  /* border-radius: 6px; 
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s, color 0.3s;
+}
+ */
+ /* .tab-button {
+  background: none;
+  border: none;
+  color: white;
+  padding: 0;
+  margin: 0 10px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 16px;
+  transition: color 0.2s, text-decoration 0.2s;
 }
 
-.stat-card {
-  background: #1c1c2e;
-  padding: 20px;
+.tab-button:hover {
+  color: #FFCE4E;
+} */
+.tab-button {
+  background: none;
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  margin: 0 8px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 16px;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.tab-button::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -5px;
+  width: 100%;
+  height: 3px;
+  background-color: transparent;
+  transition: background-color 0.3s, height 0.3s;
+}
+.tab-button:hover {
+  color: #FFCE4E;
+}
+
+.tab-button.active {
+  color: #FFCE4E; 
+}
+
+.tab-button.active::after {
+  background-color: #FFCE4E;
+  color: #FFCE4E;
+  height: 4px;
+}
+
+.queue-monitoring-cards {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  margin-top: 30px;
+  flex-wrap: wrap;
+}
+
+.monitoring-card {
+   background-color: #1f1f1f;
+  padding: 16px;
   border-radius: 12px;
   text-align: center;
-  flex: 1 1 150px;
-  min-width: 120px;
+  color: white;
+  width: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.stat-card .icon {
-  font-size: 24px;
-  margin-bottom: 8px;
+.monitoring-card:hover {
+  transform: translateY(-5px);
+}
+
+.monitoring-icon-box {
+  width: 40px;
+  height: 40px;
+  margin: 0 auto 8px;
+}
+.queue-monitoring-card-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.mcard-icon {
+  width: 100%;
+  height: auto;
+}
+
+.mcard-label {
+  font-size: 14px;
+  text-align: center;
+  color: #ccc;
+}
+.mcard-value {
+  font-size: 20px;
   font-weight: bold;
+  margin-bottom: 4px;
 }
 
-.chart-section {
-  background: #1a1a2e;
-  padding: 20px;
-  border-radius: 12px;
-}
+

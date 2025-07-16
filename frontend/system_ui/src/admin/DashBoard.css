@@ -1,4 +1,4 @@
-/* File: dashboard.css */
+/* File: Dashboard.css */
 
 /* General layout */
 
@@ -14,8 +14,13 @@
 
 /* Sidebar */
 .sidebar-header .admin-name{
-  color: #FFCE4E;
+   margin-left: 10px;
+  
 }
+.sidebar-header .admin-name h4{
+color: #FFCE4E;
+}
+
 .sidebar {
   width: 240px;
   background-color: #1C1C3A;
@@ -28,7 +33,6 @@
 .sidebar-header {
   display: flex;
   align-items: center;
-
   margin-bottom: 20px;
 }
 
@@ -54,6 +58,9 @@
   cursor: pointer;
  
 }
+/* .sidebar .admin-name{
+  margin-left: 10px;
+} */
 
 .sidebar-nav .active {
   background-color: #FFCE4E;
@@ -77,11 +84,12 @@
 .dashboard-header {
   position: relative;
   width: 100%;
-  padding: 20px 0;
+  padding: 30px 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
+
 }
 .dashboard-title {
   margin-top: 20px;
