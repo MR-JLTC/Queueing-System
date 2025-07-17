@@ -1,12 +1,8 @@
-/* QueueMonitoring.css */
 
-/* .queue-monitoring {
-  background-color: transparent;
-  padding: 20px;
-  border-radius: 10px;
-  color: white;
-} */
-
+.queue-monitoring {
+background-color: #1C1C3A;
+border-radius: 10px;
+}
 
 .date-range-filters {
   display: flex;
@@ -28,7 +24,6 @@
   
 }
 
-/* Target each part of the date for more control (Chrome/Edge) */
 input[type="date"]::-webkit-datetime-edit {
   color: white; /* entire editable area */
 }

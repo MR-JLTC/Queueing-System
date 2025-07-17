@@ -22,8 +22,8 @@ const DashboardHeader = ({ activeTab }) => {
   //   setShowDropdown(false);
   //};
 
-  return (
-   <div className="dashboard-header">
+ // return (
+  //  <div className="dashboard-header">
   {/* <div className="datetime">
     <h2>{currentTime.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: true })}</h2>
     <p>{currentTime.toLocaleDateString(undefined, {
@@ -54,8 +54,8 @@ const DashboardHeader = ({ activeTab }) => {
           </ul>
         )}
       </div> */}
-    </div>
-  );
+    //</div>
+ // );
 };
 
 export default DashboardHeader;

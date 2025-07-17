@@ -3,7 +3,7 @@ import React from "react";
 const data = [
   { label: <>Total<br />Queued</>, value: 120, icon: "/src/assets/hourglass.svg" },
   { label: "Served", value: 85, icon: "/src/assets/check.svg" },
-  { label: "Requeues", value: 10, icon: "/src/assets/icons/requeue.png" },
+  { label: "Requeues", value: 10, icon: "/src/assets/standard.svg" },
   { label: "Cancelled", value: 15, icon: "/src/assets/cancel.svg" }
 ];
 
