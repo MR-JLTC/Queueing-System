@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom"; // ✅ ADD THIS
 import Sidebar from "./Sidebar";
 import DashboardHeader from "./DashboardHeader";
 import SummaryCards from "./SummaryCards";
@@ -8,13 +9,25 @@ import "./dashboard.css";
 
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState("Dashboard");
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+
+  const navigate = useNavigate(); // ✅ Hook for navigation
+
+  const handleLogout = () => {
+    localStorage.clear();     // Optional: clear data
+    navigate("/login");       // ✅ Redirect to login
+  };
 
   return (
     <div className="dashboard-layout">
-      <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
-      <main className="dashboard-content">
-        <DashboardHeader activeTab={activeTab} />
+      <Sidebar 
+        activeTab={activeTab} 
+        setActiveTab={setActiveTab} 
+        onLogoutClick={() => setShowLogoutConfirm(true)} 
+      />
 
+      <main className={`dashboard-content ${showLogoutConfirm ? "blurred" : ""}`}>
+        <DashboardHeader activeTab={activeTab} />
 
         {activeTab === "Dashboard" && (
           <>
@@ -24,9 +37,20 @@ const Dashboard = () => {
         )}
 
         {activeTab === "Queue Monitoring" && <QueueMonitoring />}
-        
-        {/* You can add more conditions for other tabs if needed */}
       </main>
+
+      {/* Logout Confirmation Modal */}
+      {showLogoutConfirm && (
+        <div className="logout-modal">
+          <div className="modal-content">
+            <p>Are you sure you want to logout?</p>
+            <div className="modal-buttons">
+              <button className="confirm" onClick={handleLogout}>Yes</button>
+              <button className="cancel" onClick={() => setShowLogoutConfirm(false)}>No</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

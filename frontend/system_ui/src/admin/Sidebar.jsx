@@ -3,7 +3,7 @@ import "./Dashboard.css";
 
 // const branches = ["Main Branch", "Branch A", "Branch B"];
 
-const Sidebar = ({ activeTab, setActiveTab }) => {
+const Sidebar = ({ activeTab, setActiveTab, onLogoutClick }) => {
   const [currentTime, setCurrentTime] = useState(new Date());
   // const [selectedBranch, setSelectedBranch] = useState("Main Branch");
   // const [showDropdown, setShowDropdown] = useState(false);
@@ -52,44 +52,36 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
           >
             Window Assigned
           </button>
-          <button
-            className={activeTab === "Logout" ? "active" : ""}
-            onClick={() => setActiveTab("Logout")}
-          >
-            Logout
-          </button>
+          <button onClick={onLogoutClick}>Logout</button>
         </nav>
       </div>
 
-      {/* Bottom part: dropdown and datetime */}
+      {/* Bottom part: logo, datetime, and branch */}
       <div className="sidebar-bottom">
-  
-<div className="sidebar-logo">
-            <img src="/src/assets/sys_logo.png" alt="Bahandi Logo" />
-          </div>
-  <div className="datetime">
-    <h2>
-      {currentTime.toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: true,
-      })}
-    </h2>
-    <p>
-      {currentTime.toLocaleDateString(undefined, {
-        weekday: "long",
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      })}
-    </p>
-  </div>
-  <div className="branch-box">
-    Main Branch
-  </div>
-</div>
+        <div className="sidebar-logo">
+          <img src="/src/assets/sys_logo.png" alt="Bahandi Logo" />
+        </div>
 
-     
+        <div className="datetime">
+          <h2>
+            {currentTime.toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+              hour12: true,
+            })}
+          </h2>
+          <p>
+            {currentTime.toLocaleDateString(undefined, {
+              weekday: "long",
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            })}
+          </p>
+        </div>
+
+        <div className="branch-box">Main Branch</div>
+      </div>
     </aside>
   );
 };

@@ -116,17 +116,8 @@ color: #FFCE4E;
 .datetime {
   /* margin-top: auto; */
   text-align: center;
+  font-size: small;
 }
-/* .branch-button {
-  background-color: #1C1C3A;
-  color: white;
-  border: 1px solid #fff;
-  padding: 6px 12px;
-  border-radius: 6px;
-  cursor: pointer;
-  width: 75%;
-  text-align: left;
-} */
 .branch-box {
   background-color: #FFCE4E;
   color: rgb(0, 0, 0);
@@ -137,16 +128,6 @@ color: #FFCE4E;
   margin-bottom: 10px;
 }
 
-
-
-/* 
-
-.branch-dropdown {
-  position: relative; or remove this line entirely
-  width: 100%;
-  margin-top: 20px;
-  margin-bottom: 100px;
-} */
 
 .branch-menu {
   margin-top: 5px;
@@ -171,7 +152,6 @@ color: #FFCE4E;
   color: black;
 }
 
-/* Summary cards */
 .summary-cards {
   display: flex;
   justify-content: center;
@@ -247,7 +227,7 @@ color: #FFCE4E;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px; /* adds space between controls and table */
+  margin-bottom: 16px; 
   width: 100%;
   max-width: 800px;
   margin-left: auto;
@@ -256,7 +236,7 @@ color: #FFCE4E;
 }
 .queue-controls input[type="text"] {
   border: 1px solid white;
-  outline: none; /* optional: removes blue glow on focus */
+  outline: none;
   background-color: #2E2E5E;
   color: white;
   border-radius: 6px;
@@ -284,19 +264,19 @@ color: #FFCE4E;
   text-align: left;
 }
 .table-body-scroll {
-  max-height: 310px; /* Adjust as needed */
+  max-height: 310px; 
   overflow-y: auto;
 }
 .queue-status {
   background-color: #1C1C3A;
   padding: 20px;
   border-radius: 10px;
-  /* margin-bottom: 30px; */
+  
   max-width: 800px;
   margin-left: auto;
   margin-right: auto;
-  max-height: 390px; /* ✅ Adjust this as needed */
-  /* ✅ Makes only the table area scroll */
+  max-height: 390px; 
+ 
 }
 .queue-status-title {
   font-size: 24px;
@@ -306,18 +286,6 @@ color: #FFCE4E;
   text-align: center;
 }
 
-/* .queue-status table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 10px;
- 
-} */
-
-/* .queue-status th, .queue-status td {
-  padding: 10px;
-  border-bottom: 1px solid #444;
-  text-align: left;
-} */
 .status-completed {
   color: #4CAF50;
   
@@ -328,7 +296,7 @@ color: #FFCE4E;
  
 }
 .category-priority {
-  color: #FF4C4C; /* Red */
+  color: #FF4C4C; 
   font-weight: bold;
 }
 
@@ -363,13 +331,13 @@ color: #FFCE4E;
 .queue-search .search-button img {
   width: 18px;
   height: 18px;
-  filter: invert(1); /* Makes it white if it's black originally */
+  filter: invert(1); 
 }
 .search-button:hover {
   filter: brightness(1.3);
   transform: translateY(-50%) scale(1.1);
 }
-/* Queue Monitoring */
+
 .queue-monitoring {
   background-color: #1C1C3A;
   padding: 20px;
@@ -431,4 +399,62 @@ color: #FFCE4E;
   padding: 20px;
   background-color: #2E2E5E;
   border-radius: 10px;
+}
+.blurred {
+  filter: blur(4px);
+  pointer-events: none;
+  user-select: none;
+}
+
+.logout-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  
+  padding: 2rem;
+  border-radius: 10px;
+  text-align: center;
+  font-weight: 600;
+  font-size: 25px;
+  width: 500px;
+  
+}
+
+.modal-buttons {
+  margin-top: 1rem;
+  height: 40px;
+  display: flex;         
+  gap: 30px;           
+  justify-content: center; 
+}
+
+.modal-buttons button {
+  margin: 0 10px;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 26px;
+  cursor: pointer;
+  font-weight: bold;
+  width: 60px;
+
+}
+
+.modal-buttons .confirm {
+  background-color: #007BFF;
+  color: white;
+}
+
+.modal-buttons .cancel {
+  background-color: #ccc;
+  color: black;
 }
