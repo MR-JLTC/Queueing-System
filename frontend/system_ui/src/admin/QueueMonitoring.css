@@ -153,7 +153,7 @@ input[type="date"] {
 }
 
 .monitoring-card {
-   background-color: #1f1f1f;
+  background-color: #2E2E5E;
   padding: 16px;
   border-radius: 12px;
   text-align: center;
@@ -186,12 +186,13 @@ input[type="date"] {
 .mcard-label {
   font-size: 14px;
   text-align: center;
-  color: #ccc;
+  /* color: #ccc; */
 }
 .mcard-value {
   font-size: 20px;
   font-weight: bold;
   margin-bottom: 4px;
+  color: #FFCE4E;
 }
 
 
