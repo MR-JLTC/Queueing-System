@@ -116,7 +116,8 @@ color: #FFCE4E;
 .datetime {
   /* margin-top: auto; */
   text-align: center;
-  font-size: small;
+  font-size: smaller;
+  font-family: 'Inter';
 }
 .branch-box {
   background-color: #FFCE4E;
