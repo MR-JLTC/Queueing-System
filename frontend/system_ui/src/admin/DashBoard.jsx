@@ -6,12 +6,20 @@ import SummaryCards from "./SummaryCards";
 import QueueStatusTable from "./QueueStatusTable";
 import QueueMonitoring from "./QueueMonitoring"; 
 import "./dashboard.css";
+import { useEffect } from "react";
 
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState("Dashboard");
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
   const navigate = useNavigate(); // ✅ Hook for navigation
+  
+  useEffect(() => {
+    const isLoggedIn = localStorage.getItem("isLoggedIn");
+    if (isLoggedIn !== "true") {
+      navigate("/login");
+    }
+  }, []);
 
   const handleLogout = () => {
     localStorage.clear();     // Optional: clear data

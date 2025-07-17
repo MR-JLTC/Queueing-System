@@ -8,13 +8,11 @@ import { showPopupMessage } from "./utils/popupUtils";
 
 const LoginForm = () => {
   const navigate = useNavigate();
-
   const [formData, setFormData] = useState({
     username: '',
     email: '',
     password: ''
   });
-
   const [popup, setPopup] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
 

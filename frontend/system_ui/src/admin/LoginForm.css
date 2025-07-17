@@ -165,9 +165,11 @@ input:focus {
 
 
 .password-wrapper {
-  position: relative;
+  /* position: relative; */
   display: flex;
   align-items: center;
+  font-family: 'Inter';
+  font-size: medium;
   width: 100%;
 }
 
@@ -191,7 +193,7 @@ input:focus {
 
 .password-toggle:hover {
   color: #fff;
-} */
+} 
 .password-toggle img.password-icon {
   width: 20px;
   height: 20px;
