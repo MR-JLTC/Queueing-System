@@ -23,13 +23,25 @@ color: #FFCE4E;
 
 .sidebar {
   width: 240px;
+   height: 100vh;  
   background-color: #1C1C3A;
+  justify-content: space-between; 
   padding: 20px;
   display: flex;
   flex-direction: column;
 }
+ .sidebar-bottom {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
 
-
+.sidebar-logo img {
+    width: 45px;
+    height: 45px;
+  }
 .sidebar-header {
   display: flex;
   align-items: center;
@@ -102,29 +114,39 @@ color: #FFCE4E;
   color: #FFCE4E;
 }
 .datetime {
+  /* margin-top: auto; */
   text-align: center;
 }
-.branch-button {
-  position: absolute;
-  top: 0;
-  right: 0;
-  margin: 10px 20px;
+/* .branch-button {
   background-color: #1C1C3A;
   color: white;
   border: 1px solid #fff;
   padding: 6px 12px;
   border-radius: 6px;
   cursor: pointer;
+  width: 75%;
+  text-align: left;
+} */
+.branch-box {
+  background-color: #FFCE4E;
+  color: rgb(0, 0, 0);
+  padding: 10px 16px;
+  border-radius: 6px;
+  text-align: center;
+  font-weight: 500;
+  margin-bottom: 10px;
 }
 
 
-/* Summary cards */
+
+/* 
+
 .branch-dropdown {
-  position: absolute;
-  top: 10px;
-  right: 20px;
-  min-width: 190px;
-}
+  position: relative; or remove this line entirely
+  width: 100%;
+  margin-top: 20px;
+  margin-bottom: 100px;
+} */
 
 .branch-menu {
   margin-top: 5px;
@@ -148,10 +170,12 @@ color: #FFCE4E;
   background-color: #FFCE4E;
   color: black;
 }
+
+/* Summary cards */
 .summary-cards {
   display: flex;
   justify-content: center;
-  gap: 50px; /* ← Increase gap here for more spacing */
+  gap: 50px; 
   flex-wrap: wrap;
   margin-bottom: 30px;
 }
@@ -252,7 +276,6 @@ color: #FFCE4E;
   width: 100%;
   border-collapse: collapse;
   table-layout: fixed;
-  padding-bottom: 300px;
 }
 .queue-table th,
 .queue-table td {
@@ -260,49 +283,19 @@ color: #FFCE4E;
   border-bottom: 1px solid #444;
   text-align: left;
 }
-/* .table-body-scroll {
-  max-height: 290px; /* Adjust as needed */
-  /* overflow-y: auto;
-} */ 
-
 .table-body-scroll {
-  max-height: 290px; /* Limit the visible height */
-  overflow-y: auto; /* Enable vertical scroll */
-  overflow-x: hidden; /* Prevent horizontal scroll */
-  display: block; /* Ensures the container scrolls, not the table itself */
-  border-top: 1px solid #ddd; /* Optional: visual separation */
-  scrollbar-width: thin; /* For Firefox */
-  scrollbar-color: #888 #f1f1f1; /* For Firefox */
+  max-height: 310px; /* Adjust as needed */
+  overflow-y: auto;
 }
-
-/* Optional: For WebKit (Chrome, Edge, Safari) */
-.table-body-scroll::-webkit-scrollbar {
-  width: 8px;
-}
-
-.table-body-scroll::-webkit-scrollbar-track {
-  background: #f1f1f1;
-}
-
-.table-body-scroll::-webkit-scrollbar-thumb {
-  background-color: #888;
-  border-radius: 4px;
-}
-
-.table-body-scroll::-webkit-scrollbar-thumb:hover {
-  background: #555;
-}
-
-
 .queue-status {
   background-color: #1C1C3A;
   padding: 20px;
   border-radius: 10px;
-  margin-bottom: 30px;
+  /* margin-bottom: 30px; */
   max-width: 800px;
   margin-left: auto;
   margin-right: auto;
-  max-height: 350px; /* ✅ Adjust this as needed */
+  max-height: 390px; /* ✅ Adjust this as needed */
   /* ✅ Makes only the table area scroll */
 }
 .queue-status-title {
@@ -325,12 +318,12 @@ color: #FFCE4E;
   border-bottom: 1px solid #444;
   text-align: left;
 } */
-.status-ongoing {
+.status-completed {
   color: #4CAF50;
   
 }
 
-.status-waiting {
+.status-cancelled {
   color: #FFA500;
  
 }

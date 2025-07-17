@@ -1,17 +1,17 @@
 import React from "react";
 
 const dummyRows = [
-  { name: "John C.", number: "A131", category: "Standard", status: "Ongoing" },
-  { name: "Vhea M.", number: "A132", category: "Priority", status: "Ongoing" },
-  { name: "Zandrah O.", number: "A133", category: "Standard", status: "Waiting" },
-   { name: "Ilka O.", number: "A134", category: "Priority", status: "Ongoing" },
-   { name: "Ivy G.", number: "A135", category: "Standard", status: "Waiting" },
-   { name: "Desidido M.", number: "A136", category: "Standard", status: "Ongoing" },
-   { name: "Brenda M.", number: "A137", category: "Priority", status: "Waiting" },
-   { name: "Mike W.", number: "A138", category: "Priority", status: "Waiting" },
-   { name: "Frac S.", number: "A139", category: "Standard", status: "Waiting" },
-   { name: "Nemo R.", number: "A135", category: "Standard", status: "Waiting" },
-    { name: "Nemo R.", number: "A135", category: "Standard", status: "Waiting" }
+  { name: "John C.", number: "A131", category: "Standard", status: "Completed" },
+  { name: "Vhea M.", number: "A132", category: "Priority", status: "Completed" },
+  { name: "Zandrah O.", number: "A133", category: "Standard", status: "Cancelled" },
+   { name: "Ilka O.", number: "A134", category: "Priority", status: "Completed" },
+   { name: "Ivy G.", number: "A135", category: "Standard", status: "Cancelled" },
+   { name: "Desidido M.", number: "A136", category: "Standard", status: "Completed" },
+   { name: "Brenda M.", number: "A137", category: "Priority", status: "Cancelled" },
+   { name: "Mike W.", number: "A138", category: "Priority", status: "Cancelled" },
+   { name: "Frac S.", number: "A139", category: "Standard", status: "Cancelled" },
+   { name: "Nemo R.", number: "A135", category: "Standard", status: "Cancelled" },
+    { name: "Nemo R.", number: "A135", category: "Standard", status: "Cancelled" }
 ];
 
 const QueueStatusTable = () => (
@@ -54,7 +54,7 @@ const QueueStatusTable = () => (
             <td className={row.category === "Priority" ? "category-priority" : ""}>
               {row.category}
             </td>
-            <td className={row.status === "Ongoing" ? "status-ongoing" : "status-waiting"}>
+            <td className={row.status === "Completed" ? "status-completed" : "status-cancelled"}>
               {row.status}
             </td>
           </tr>

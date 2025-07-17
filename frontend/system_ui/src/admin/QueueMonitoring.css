@@ -10,11 +10,10 @@
 
 .date-range-filters {
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
   gap: 20px;
   margin-bottom: 20px;
   flex-wrap: wrap;
-  margin-right: 10px;
 }
 
 .date-field {
@@ -58,14 +57,15 @@ input[type="date"] {
   border: 1px solid white;
   padding: 6px 10px;
   border-radius: 6px;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Inter', sans-serif; 
 }
 .queue-history-title {
-  text-align: right;
-  font-size: medium;
-  margin-right: 110px;
+  text-align: center;
+  font-size: 30px;
+  font-weight: 500 !important;
   margin-bottom: 15px;
   font-weight: 300;
+  color: #FFCE4E;;
 }
 .monitoring-tabs {
   background-color: #000;
@@ -186,7 +186,7 @@ input[type="date"] {
 .mcard-label {
   font-size: 14px;
   text-align: center;
-  /* color: #ccc; */
+ 
 }
 .mcard-value {
   font-size: 20px;

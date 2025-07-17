@@ -26,12 +26,12 @@ const LoginForm = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const validUsername = 'admin';
+    // const validUsername = 'admin';
     const validPassword = '1234';
     const validEmail = 'admin@gmail.com';
 
     if (
-      formData.username === validUsername &&
+      // formData.username === validUsername &&
       formData.password === validPassword &&
       formData.email === validEmail
     ) {
@@ -68,15 +68,15 @@ const LoginForm = () => {
         </div>
       </div>
       <form className="login-container" onSubmit={handleSubmit}>
-        <div className="form-group horizontal">
+        {/* <div className="form-group horizontal">
           <label className="input-label">
             <img src="/src/assets/person.svg" alt="Username Icon" className="input-icon-svg" />
             Username:
           </label>
           <input type="text" name="username" value={formData.username} onChange={handleInputChange} required />
-        </div>
+        </div> */}
         <div className="form-group horizontal">
-          <label className="input-label">
+          <label className="email-label">
             <img src="/src/assets/mail.svg" alt="Mail Icon" className="input-icon-svg" />
             Email:
           </label>

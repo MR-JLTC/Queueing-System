@@ -79,6 +79,13 @@ const QueueMonitoring = () => {
     setActiveTab(tab);
   };
 
+  const tabLabels = {
+    Day: "Today",
+    Week: "This Week",
+    Month: "This Month",
+    Year: "This Year"
+  };
+
   return (
     <div className="queue-monitoring">
       <h3 className="queue-history-title">Queue History</h3>
@@ -108,13 +115,13 @@ const QueueMonitoring = () => {
       {/* Tabs */}
       <div className="queue-monitoring-content">
         <div className="monitoring-tabs">
-          {["Day", "Week", "Month", "Year"].map((tab) => (
+          {Object.keys(tabLabels).map((tab) => (
             <button
               key={tab}
               className={`tab-button ${activeTab === tab ? "active" : ""}`}
               onClick={() => handleTabClick(tab)}
             >
-              {tab}
+              {tabLabels[tab]}
             </button>
           ))}
         </div>
@@ -145,14 +152,14 @@ const QueueMonitoring = () => {
             alignItems: "center"
           }}
         >
-          <PieChart width={400} height={300}>
+          <PieChart width={600} height={500}>
             <Pie
               data={pieData}
               dataKey="value"
               nameKey="name"
               cx="50%"
               cy="50%"
-              outerRadius={100}
+              outerRadius={150}
               labelLine={false}
               label={({ value, cx, cy, midAngle, innerRadius, outerRadius }) => {
                 const RADIAN = Math.PI / 180;
@@ -167,7 +174,7 @@ const QueueMonitoring = () => {
                     fill="white"
                     textAnchor="middle"
                     dominantBaseline="central"
-                    fontSize={14}
+                    fontSize={25}
                   >
                     {value}
                   </text>
