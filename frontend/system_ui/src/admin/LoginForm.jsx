@@ -36,6 +36,7 @@ const LoginForm = () => {
       formData.email === validEmail
     ) {
       showPopupMessage(setPopup, "success", "Login successful!");
+      localStorage.setItem("isLoggedIn", "true");
       setTimeout(() => navigate('/dashboard'), 700);
     } else {
       showPopupMessage(setPopup, "error", "Invalid credentials. Please try again.");

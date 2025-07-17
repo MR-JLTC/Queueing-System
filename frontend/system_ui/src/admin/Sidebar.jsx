@@ -33,8 +33,8 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
         </button>
         <button
           className={activeTab === "Logout" ? "active" : ""}
-          onClick={() => setActiveTab("Logout")}
-        >
+          onClick={() => 
+            setActiveTab("Logout")}>
           Logout
         </button>
       </nav>

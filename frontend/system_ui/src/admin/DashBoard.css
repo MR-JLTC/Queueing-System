@@ -252,6 +252,7 @@ color: #FFCE4E;
   width: 100%;
   border-collapse: collapse;
   table-layout: fixed;
+  padding-bottom: 300px;
 }
 .queue-table th,
 .queue-table td {
@@ -259,10 +260,40 @@ color: #FFCE4E;
   border-bottom: 1px solid #444;
   text-align: left;
 }
+/* .table-body-scroll {
+  max-height: 290px; /* Adjust as needed */
+  /* overflow-y: auto;
+} */ 
+
 .table-body-scroll {
-  max-height: 300px; /* Adjust as needed */
-  overflow-y: auto;
+  max-height: 290px; /* Limit the visible height */
+  overflow-y: auto; /* Enable vertical scroll */
+  overflow-x: hidden; /* Prevent horizontal scroll */
+  display: block; /* Ensures the container scrolls, not the table itself */
+  border-top: 1px solid #ddd; /* Optional: visual separation */
+  scrollbar-width: thin; /* For Firefox */
+  scrollbar-color: #888 #f1f1f1; /* For Firefox */
 }
+
+/* Optional: For WebKit (Chrome, Edge, Safari) */
+.table-body-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+
+.table-body-scroll::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.table-body-scroll::-webkit-scrollbar-thumb {
+  background-color: #888;
+  border-radius: 4px;
+}
+
+.table-body-scroll::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+
 .queue-status {
   background-color: #1C1C3A;
   padding: 20px;
