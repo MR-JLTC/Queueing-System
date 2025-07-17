@@ -1,0 +1,359 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;700&display=swap'); 
+.sa_login-page {
+  width: 100%;
+  max-width: 100vw;
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: clamp(8px, 2.5vmin, 24px) clamp(4px, 1.5vmin, 16px);
+  background-image: url('/src/assets/sa_bg2.jpg'); 
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-position: center; /* Center the image */
+  background-size: cover; /* Cover the entire area */
+    background-origin: border-box;
+  background-repeat: no-repeat; /* Prevent repetition */
+  overflow-y: fixed;
+  gap: clamp(4px, 0.5vmin, 8px);
+}
+
+.sa_login-container {
+
+  width: 100%;
+  max-width: 650px;
+  height: 400px;
+  display: flex;
+  flex-direction: column;
+  background-color: #1e1e2f;
+  border: 1px solid #333;
+  margin-top: -10px; 
+  border-radius: 15px;
+  padding: 30px 20px;
+  align-items: center;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', sans-serif;
+  overflow: hidden;
+ 
+  background-position: center;
+ 
+}
+
+.sa_header-section2 {
+  max-width: 600px;
+  text-align: center;
+  background-color: #b5b0b000 !important;
+  margin-bottom: 20px;
+}
+
+.sa_inter-font {
+  font-family: 'Inter';
+  text-shadow: 2px 2px 4px rgba(75, 74, 74, 0.498);
+  font-size: 35px !important;
+  font-weight: 500;
+}
+
+
+
+.sa_logo-section {
+  margin-bottom: 20px;
+   background-color: #b5b0b000;
+}
+.sa_login-page .sa_logo-section .sa_logo img {
+  width: 90px;
+  height: auto;
+  border-radius: 0;
+  /* Lighten the image using a brightness filter */
+  filter: brightness(1.30); /* Values >1 make it lighter */
+}
+
+.sa_login-page .sa_logo-section h1 {
+  color: #22253b !important;
+  font-size: 50px;
+  
+}
+
+.sa_login-page .sa_logo-section p {
+  color: #e6e0e0 !important;
+  font-family: 'Inter';
+  text-shadow: 2px 2px 4px rgb(0, 0, 0);
+  padding-bottom: 20px;
+}
+
+.sa_form-group.horizontal {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  width: 100%;
+  max-width: 500px;
+  gap: 16px;
+  
+}
+
+.sa_email-label {
+  margin-top: 40px;
+  color: #fffefe;
+  opacity: 75%;
+  font: inherit;
+  font-size: 16px;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 120px;
+}
+
+
+.sa_input-label {
+  color: #fffefe;
+  opacity: 75%;
+  font: inherit;
+  font-size: 16px;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 120px;
+}
+
+
+.sa_input-icon {
+  font-size: 18px;
+  color: #999;
+}
+
+.sa_login-container input[type="email"]{
+  margin-top: 50px;
+  flex: 1;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #333;
+  border-radius: 11px;
+  background-color: #fefffe;
+  color: #000;
+  outline: none;
+  width: 100%;
+  height: 45px;
+
+}
+.sa_login-container input[type="password"] {
+  flex: 1;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #333;
+  border-radius: 11px;
+  background-color: #fefffe;
+  color: #000;
+  outline: none;
+  width: 100%;
+  height: 45px;
+}
+
+
+input:focus {
+  border-color: #007bff !important;
+}
+
+
+.sa_password-wrapper {
+  /* position: relative; */
+  display: flex;
+  align-items: center;
+  font-family: 'Inter';
+  font-size: medium;
+  width: 100%;
+}
+
+.sa_password-wrapper input {
+  width: 100%;
+  padding-right: 40px; /* Make space for the icon */
+}
+
+.sa_password-toggle {
+  position: absolute;
+  right: 12px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sa_password-toggle:hover {
+  color: #fff;
+} 
+.sa_password-toggle img.password-icon {
+  width: 20px;
+  height: 20px;
+  filter: invert(60%); /* Optional: makes dark SVGs lighter on dark backgrounds */
+  transition: filter 0.3s ease;
+}
+
+.sa_input-icon-svg {
+  width: 25px;      /* Adjust this value as needed */
+  height: 25px;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+
+
+.sa_input-wrapper:focus-within {
+  border-color: #007bff;
+}
+
+.sa_input-icon {
+  font-size: 20px;
+  padding: 0 5px;
+}
+
+.sa_input-wrapper input::placeholder {
+  color: #999999;
+}
+
+.sa_powered-by{
+  width: 100%;
+  max-width: 500px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: -20px;
+}
+ 
+ .sa_forgot-password-link {
+  width: 100%;
+  max-width: 500px;
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 12px;
+}
+
+.sa_forgot-password-link .link-button {
+  background: none;
+  border: none;
+  color: #fffefe00;
+  font-size: 14px;
+  cursor: pointer;
+  opacity: 75%;
+  padding: 0;
+  text-decoration: underline;
+  transition: color 0.3s ease;
+}
+
+.sa_signup-link {
+  text-align: center;
+  color: #88848400;
+  font-size: 14px;
+  gap: 4px;
+  margin-left: 175px;
+}
+
+.sa_signup-link .link-button {
+  background: none;
+  border: none;
+  color: #6ea9da;
+  font-size: 14px;
+  cursor: pointer;
+  opacity: 75%;
+  padding: 0;
+  transition: color 0.3s ease;
+  margin-right: 50px;
+}
+
+.sa_link-button:hover {
+  color: #0056b3;
+  text-decoration: underline;
+}
+
+.sa_login-button {
+  width: 60%;
+  background-color: #2b71ab00;
+  color: rgba(255, 255, 255, 0);
+  border: none;
+  padding: 14px;
+  border-radius: 18px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: 12px;
+  margin-left: 137px;
+  transition: background-color 0.3s ease;
+}
+
+.sa_login-button:hover {
+  background-color: #0056b3;
+}
+.sa_login-button:active {
+  background-color: #2a7ecc;
+}
+
+.sa_password-toggle:hover {
+  color: #ffffff;
+}
+
+.sa_powered-by {
+  margin-top: auto;
+  text-align: center;
+  padding-top: 16px;
+  font-size: 14px;
+  color: #ffffff;
+}
+
+@media (max-width: 480px) {
+  .sa_header-section {
+    margin-bottom: 40px;
+    padding: 15px;
+  }
+
+  .sa_logo-section {
+    margin-bottom: 15px;
+  }
+
+  .sa_logo img {
+    width: 80px;
+    height: 80px;
+  }
+
+  .sa_logo-section h1 {
+    font-size: 30px;
+    margin: 15px 0 10px 0;
+  }
+
+  .sa_logo-section p {
+    font-size: 16px;
+   
+  }
+
+  .sa_login-container {
+    max-width: 90%;
+    padding: 15px;
+  }
+
+  .sa_form-group {
+    font-size: 14px;
+  }
+
+  .sa_input-wrapper {
+    padding: 12px;
+  }
+
+  .sa_input-wrapper input {
+    font-size: 14px;
+  }
+
+  .sa_login-button {
+    font-size: 14px;
+    padding: 12px;
+  }
+
+  .sa_password-toggle {
+    font-size: 16px;
+  }
+}

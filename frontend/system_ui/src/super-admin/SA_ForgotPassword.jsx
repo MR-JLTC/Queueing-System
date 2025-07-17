@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "./ForgotPassword.css";
-import ChangePassword from "./ChangePassword";
+import "./SA_ForgotPassword.css";
+import ChangePassword from "./SA_ChangePassword";
 import PopupMessage from "../shared_comp/popup_menu/PopupMessage";
 import { showPopupMessage } from "../shared_comp/utils/popupUtils";
 
@@ -37,7 +37,7 @@ const ForgotPassword = () => {
   if (step === 2) return <ChangePassword onCancel={() => setStep(1)} />;
 
   return (
-    <div className="fullscreen-bg">
+    <div className="sa_fullscreen-bg">
       {popup && (
         <PopupMessage
           type={popup.type}
@@ -83,7 +83,7 @@ const ForgotPassword = () => {
         <button className="confirm-button" onClick={handleCodeSubmit}>
           Confirm
         </button>
-        <button className="link-button" onClick={() => navigate("/Adminlogin")}>
+        <button className="link-button" onClick={() => navigate("/SuperAdminlogin")}>
           Back to Login
         </button>
       </div>

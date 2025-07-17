@@ -13,17 +13,18 @@ const Dashboard = () => {
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
   const navigate = useNavigate(); // ✅ Hook for navigation
-  
   useEffect(() => {
     const isLoggedIn = localStorage.getItem("isLoggedIn");
     if (isLoggedIn !== "true") {
       navigate("/login");
     }
   }, []);
+  
 
   const handleLogout = () => {
-    localStorage.clear();     // Optional: clear data
-    navigate("/login");       // ✅ Redirect to login
+    localStorage.setItem("isLoggedIn", "false");
+    navigate("/login");
+    // window.location.reload();     // ✅ Redirect to login
   };
 
   return (

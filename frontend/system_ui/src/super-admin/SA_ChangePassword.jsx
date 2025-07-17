@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "./ForgotPassword.css";
+import "./SA_ForgotPassword.css";
 import PopupMessage from "../shared_comp/popup_menu/PopupMessage";
 import { showPopupMessage } from "../shared_comp/utils/popupUtils";
 // import { useNavigate } from "react-router-dom";
@@ -21,12 +21,12 @@ const ChangePassword = ({ onCancel }) => {
     // // Here you would send the password to the server
     showPopupMessage(setPopup, "success", "Password changed successfully!");
     setTimeout(() => {
-      window.location.href = "/Adminlogin";
+      window.location.href = "/SuperAdminlogin";
     }, 700);
   };
 
   return (
-    <div className="fullscreen-bg">
+    <div className="sa_fullscreen-bg">
       {/* ✅ POPUP */}
       {popup && (
         <PopupMessage

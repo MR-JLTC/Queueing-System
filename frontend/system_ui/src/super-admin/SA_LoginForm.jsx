@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './LoginForm.css';
+import './SA_LoginForm.css';
 import showIcon from '../assets/visibility_on.svg';
 import hideIcon from '../assets/visibility_off.svg';
 import PopupMessage from "../shared_comp/popup_menu/PopupMessage";
@@ -9,7 +9,7 @@ import { useEffect } from 'react';
 
 const LoginForm = () => {
   useEffect(() => {
-
+    
   const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
     if (isLoggedIn) {
       navigate("/dashboard", { replace: true }); // Prevent back navigation
@@ -55,7 +55,7 @@ const LoginForm = () => {
   };
 
   return (
-    <div className="login-page">
+    <div className="sa_login-page">
       {popup && (
         <PopupMessage
           type={popup.type}
@@ -63,18 +63,18 @@ const LoginForm = () => {
           onClose={() => setPopup(null)}
         />
       )}
-      <div className="header-section2">
-        <div className="logo-section">
-          <div className="logo">
+      <div className="sa_header-section2">
+        <div className="sa_logo-section">
+          <div className="sa_logo">
             <img src="/src/assets/sys_logo.png" alt="Bahandi Logo" />
           </div>
-          <h1 className="inter-font">
-            <span style={{ color: 'white' }}>Welcome to </span><span style={{ color: 'yellow' }}>QLine</span>
+          <h1 className="sa_inter-font">
+            <span style={{ color: 'white' }}>Super Admin Log In Portal</span>
           </h1>
           <p>Please log in to your account using the form below.</p>
         </div>
       </div>
-      <form className="login-container" onSubmit={handleSubmit}>
+      <form className="sa_login-container" onSubmit={handleSubmit}>
         {/* <div className="form-group horizontal">
           <label className="input-label">
             <img src="/src/assets/person.svg" alt="Username Icon" className="input-icon-svg" />
@@ -82,8 +82,8 @@ const LoginForm = () => {
           </label>
           <input type="text" name="username" value={formData.username} onChange={handleInputChange} required />
         </div> */}
-        <div className="form-group horizontal">
-          <label className="email-label">
+        <div className="sa_form-group horizontal">
+          <label className="sa_email-label">
             <img src="/src/assets/mail.svg" alt="Mail Icon" className="input-icon-svg" />
             Email:
           </label>
@@ -97,12 +97,12 @@ const LoginForm = () => {
             title="Please enter a valid email address that includes a '.'"
           />
         </div>
-        <div className="form-group horizontal">
-          <label className="input-label">
+        <div className="sa_form-group horizontal">
+          <label className="sa_input-label">
             <img src="/src/assets/lock.svg" alt="Password Icon" className="input-icon-svg" />
             Password:
           </label>
-          <div className="password-wrapper">
+          <div className="sa_password-wrapper">
             <input
               type={showPassword ? "text" : "password"}
               name="password"
@@ -111,29 +111,29 @@ const LoginForm = () => {
               required
               maxLength={9}
             />
-            <button type="button" className="password-toggle" onClick={togglePasswordVisibility}>
+            <button type="button" className="sa_password-toggle" onClick={togglePasswordVisibility}>
               <img
                 src={showPassword ? showIcon : hideIcon}
                 alt={showPassword ? "Hide password" : "Show password"}
-                className="password-icon"
+                className="sa_password-icon"
               />
             </button>
           </div>
         </div>
-        <div className="forgot-password-link">
+        <div className="sa_forgot-password-link">
           <button
             type="button"
-            className="link-button"
-            onClick={() => navigate('/AdminForgot')}
+            className="sa_link-button"
+            onClick={() => navigate('/SuperAdminForgot')}
           >
             Forgot password?
           </button>
         </div>
         <button type="submit" className="login-button">Login</button>
-        <div className="powered-by">
+        <div className="sa_powered-by">
           <p>
             Powered by{' '}
-            <img src="/src/assets/bahandi_logo.png" alt="Bahandi Logo" className="input-icon-svg" />
+            <img src="/src/assets/bahandi_logo.png" alt="Bahandi Logo" className="sa_input-icon-svg" />
           </p>
         </div>
       </form>
