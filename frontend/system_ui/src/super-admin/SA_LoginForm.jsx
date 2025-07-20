@@ -12,7 +12,7 @@ const LoginForm = () => {
     
   const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
     if (isLoggedIn) {
-      navigate("/dashboard", { replace: true }); // Prevent back navigation
+      // navigate("/dashboard", { replace: true }); // Prevent back navigation
     }
   }, []);
 
@@ -102,7 +102,7 @@ const LoginForm = () => {
             <img src="/src/assets/lock.svg" alt="Password Icon" className="input-icon-svg" />
             Password:
           </label>
-          <div className="sa_password-wrapper">
+          <div className="sa_password-input-container">
             <input
               type={showPassword ? "text" : "password"}
               name="password"
@@ -129,7 +129,20 @@ const LoginForm = () => {
             Forgot password?
           </button>
         </div>
-        <button type="submit" className="login-button">Login</button>
+        <button type="submit" className="sa_login-button">Login</button>
+        {/* Moved "Don't have an account? Signup" link below the Login button */}
+        <div className="sa_signup-link">
+          <p>
+            Don't have an account?{' '}
+            <button
+              type="button"
+              className="sa_link-button"
+              onClick={() => navigate('/SuperAdminSignup')}
+            >
+              Signup
+            </button>
+          </p>
+        </div>
         <div className="sa_powered-by">
           <p>
             Powered by{' '}

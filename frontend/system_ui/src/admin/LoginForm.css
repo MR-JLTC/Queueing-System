@@ -1,11 +1,11 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;700&display=swap'); 
+@import url('https://fonts.fonts.googleapis.com/css2?family=Inter:wght@100;700&display=swap');
 .login-page {
   width: 100%;
   max-width: 100vw;
   min-height: 100vh;
   margin: 0 auto;
   padding: clamp(8px, 2.5vmin, 24px) clamp(4px, 1.5vmin, 16px);
-  background-image: url('/src/assets/site_bg.jpg'); 
+  background-image: url('/src/assets/site_bg.jpg');
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -28,7 +28,7 @@
   flex-direction: column;
   background-color: #1e1e2f;
   border: 1px solid #333;
-  margin-top: -10px; 
+  margin-top: -10px;
   border-radius: 15px;
   padding: 30px 20px;
   align-items: center;
@@ -40,9 +40,9 @@ body {
   padding: 0;
   font-family: 'Inter', sans-serif;
   overflow: hidden;
- 
+
   background-position: center;
- 
+
 }
 
 .header-section2 {
@@ -79,7 +79,7 @@ body {
 
   color: #22253b !important;
   font-size: 50px;
-  
+
 }
 
 .login-page .logo-section p {
@@ -96,7 +96,7 @@ body {
   width: 100%;
   max-width: 500px;
   gap: 16px;
-  
+
 }
 
 .email-label {
@@ -145,8 +145,17 @@ body {
   height: 45px;
 
 }
-.login-container input[type="password"] {
-  flex: 1;
+
+/* New wrapper for password input and toggle */
+.password-input-container {
+  position: relative; /* Establish positioning context */
+  flex: 1; /* Allow it to grow like the email input */
+  width: 100%; /* Take full width of its flex item */
+}
+
+.password-input-container input[type="password"],
+.password-input-container input[type="text"] { /* Apply to both types */
+  width: 100%;
   padding: 10px;
   font-size: 16px;
   border: 1px solid #333;
@@ -154,8 +163,9 @@ body {
   background-color: #fefffe;
   color: #000;
   outline: none;
-  width: 100%;
   height: 45px;
+  padding-right: 40px; /* Make space for the icon */
+  box-sizing: border-box; /* Include padding in the element's total width and height */
 }
 
 
@@ -164,8 +174,8 @@ input:focus {
 }
 
 
-.password-wrapper {
-  /* position: relative; */
+.password-wrapper { /* This class is now primarily for the flex container if needed, but its styles are largely moved */
+  /* position: relative; */ /* Removed as the new container handles this */
   display: flex;
   align-items: center;
   font-family: 'Inter';
@@ -173,36 +183,34 @@ input:focus {
   width: 100%;
 }
 
-.password-wrapper input {
-  width: 100%;
-  padding-right: 40px; /* Make space for the icon */
-}
-
+/* Updated password-toggle styling */
 .password-toggle {
-  position: absolute;
-  right: 12px;
+  position: absolute; /* Position relative to .password-input-container */
+  right: 10px; /* Distance from the right edge of the input */
+  top: 50%; /* Center vertically */
+  transform: translateY(-50%); /* Adjust for perfect vertical centering */
   background: none;
   border: none;
   cursor: pointer;
   padding: 0;
-  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
+  z-index: 10; /* Ensure it's above the input */
 }
 
 .password-toggle:hover {
   color: #fff;
-} 
+}
 .password-toggle img.password-icon {
   width: 20px;
   height: 20px;
-  filter: invert(60%); /* Optional: makes dark SVGs lighter on dark backgrounds */
+  filter: invert(60%);
   transition: filter 0.3s ease;
 }
 
 .input-icon-svg {
-  width: 25px;      /* Adjust this value as needed */
+  width: 25px;
   height: 25px;
   margin-right: 6px;
   vertical-align: middle;
@@ -230,7 +238,7 @@ input:focus {
   align-items: center;
   margin-bottom: -20px;
 }
- 
+
  .forgot-password-link {
   width: 100%;
   max-width: 500px;
@@ -332,7 +340,7 @@ input:focus {
 
   .logo-section p {
     font-size: 16px;
-   
+
   }
 
   .login-container {

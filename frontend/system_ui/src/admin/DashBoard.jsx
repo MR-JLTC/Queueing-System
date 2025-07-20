@@ -17,7 +17,7 @@ const Dashboard = () => {
     const isLoggedIn = localStorage.getItem("isLoggedIn");
     if (isLoggedIn !== "true") {
       navigate("/login");
-    }
+    }else console.log("Value: " + isLoggedIn);
   }, []);
   
 

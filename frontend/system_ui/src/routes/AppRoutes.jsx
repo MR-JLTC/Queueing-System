@@ -11,7 +11,7 @@ import CounterQueueManagementSystem from "../counter/CounterQueueManagement";
 import QueueManagement from '../client/QueueManagement';
 import QueueMonitoring from "../admin/QueueMonitoring";
 import ProtectedRoute from "./ProtectedRoute"; // adjust the path if needed
-
+import SuperAdminSignup from "../super-admin/SA_SignupForm"; // Import the new signup form
 
 const AppRoutes = () => {
   return (
@@ -20,8 +20,9 @@ const AppRoutes = () => {
       <Route path="/AdminForgot" element={<ForgotPassword />} />
       <Route path="/SuperAdminlogin" element={<SA_LoginForm />} />
       <Route path="/SuperAdminForgot" element={<SA_ForgotPassword  />} />
+      <Route path="/SuperAdminSignup" element={<SuperAdminSignup />} />
       <Route
-        path="/dashboard"
+        path="/AdminDashboard"
         element={
           <ProtectedRoute>
             <Dashboard />
@@ -31,7 +32,7 @@ const AppRoutes = () => {
       <Route path="/counter" element={<CounterQueueManagementSystem />} />
       <Route path="/monitoring" element={<QueueMonitoring />} />
       <Route path="/queue" element={<QueueManagement />} /> {/* ✅ new route */}
-      <Route path="*" element={<Navigate to="/lAdminlogin" />} />
+      <Route path="*" element={<Navigate to="/Adminlogin" />} />
       {/* <Route path="/" element={<Navigate to="/login" />} /> */}
     </Routes>
   );

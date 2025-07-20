@@ -9,7 +9,7 @@ import { useEffect } from 'react';
 
 const LoginForm = () => {
   useEffect(() => {
-
+  localStorage.setItem("isLoggedIn", "false");
   const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
     if (isLoggedIn) {
       navigate("/dashboard", { replace: true }); // Prevent back navigation
@@ -44,8 +44,10 @@ const LoginForm = () => {
     ) {
       showPopupMessage(setPopup, "success", "Login successful!");
       localStorage.setItem("isLoggedIn", "true");
-      setTimeout(() => navigate('/dashboard'), 700);
+      console.log("Value: " + localStorage.getItem("isLoggedIn"));
+      setTimeout(() => navigate('/AdminDashboard'), 700);
     } else {
+      localStorage.setItem("isLoggedIn", "false");
       showPopupMessage(setPopup, "error", "Invalid credentials. Please try again.");
     }
   };
@@ -102,7 +104,8 @@ const LoginForm = () => {
             <img src="/src/assets/lock.svg" alt="Password Icon" className="input-icon-svg" />
             Password:
           </label>
-          <div className="password-wrapper">
+          {/* Apply the new wrapper div here */}
+          <div className="password-input-container">
             <input
               type={showPassword ? "text" : "password"}
               name="password"

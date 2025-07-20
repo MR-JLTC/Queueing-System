@@ -1,21 +1,25 @@
 import React, { useState } from 'react';
 import './QueueManagement.css';
+import engIcon from '/src/assets/eng_icon.svg'; // Used for language dropdown
+import SysIcon from '/src/assets/sys_logo.png'; // Used for form header
+
 
 const QueueManagement = () => {
   const [name, setName] = useState('');
+  const [nickname, setNickname] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedTransaction, setSelectedTransaction] = useState('');
   const [showNotification, setShowNotification] = useState(false);
   const [currentQueueNumber, setCurrentQueueNumber] = useState(131);
+  const [selectedLanguage, setSelectedLanguage] = useState('English');
   const [queueItems, setQueueItems] = useState(
     Array.from({ length: 20 }, (_, i) => ({
       queueNumber: 130 - i,
       transaction: ['New Application', 'Renewal', 'Correction', 'Duplicate Copy', 'Verification'][Math.floor(Math.random() * 5)],
-      counter: Math.floor(Math.random() * 5) + 1,
+      counter: Math.floor(Math.random() * 6) + 1,
     }))
   );
 
-  // Transaction-to-counter mapping
   const transactionToCounter = {
     'New Application': 1,
     'Renewal': 2,
@@ -27,6 +31,7 @@ const QueueManagement = () => {
     'Transfer': 3,
     'Cancellation': 4,
     'Inquiry': 5,
+    'Front Desk': 4
   };
 
   const handleCategorySelect = (category) => {
@@ -37,18 +42,21 @@ const QueueManagement = () => {
     setSelectedTransaction(e.target.value);
   };
 
+  const handleLanguageChange = (e) => {
+    setSelectedLanguage(e.target.value);
+  };
+
   const handleProceed = () => {
-    if (name && selectedCategory && selectedTransaction) {
-      const newQueueNumber = Math.floor(Math.random() * 200) + 100;
+    if (name && nickname && selectedCategory && selectedTransaction) {
+      const newQueueNumber = currentQueueNumber + 1;
       const newCounter = transactionToCounter[selectedTransaction] || 1;
       setCurrentQueueNumber(newQueueNumber);
       setQueueItems([
         { queueNumber: newQueueNumber, transaction: selectedTransaction, counter: newCounter },
-        ...queueItems.slice(0, 19),
+        ...queueItems.slice(0, 5),
       ]);
       setShowNotification(true);
       
-      // Auto-hide notification after 5 seconds
       setTimeout(() => {
         setShowNotification(false);
       }, 5000);
@@ -60,25 +68,22 @@ const QueueManagement = () => {
   };
 
   const transactionTypes = [
+    'Front Desk',
     'New Application', 'Renewal', 'Correction', 'Duplicate Copy',
     'Verification', 'Certification', 'Amendment', 'Transfer',
     'Cancellation', 'Inquiry'
   ];
 
+  const languages = ['English', 'Filipino', 'Cebuano'];
+
   return (
     <div className="queue-page">
-      {/* Floating Background Elements */}
-      <div className="floating-element-1"></div>
-      <div className="floating-element-2"></div>
-      
       <div className="queue-container">
         {/* LEFT - FORM */}
         <div className="queue-form">
           <div className="form-header">
             <div className="form-header-icon">
-              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
+              <img src={SysIcon} alt="System Icon" />
             </div>
             <h2 className="form-title">Queue Management</h2>
             <p className="form-subtitle">Get your queue number instantly</p>
@@ -87,13 +92,25 @@ const QueueManagement = () => {
           <div className="form-content">
             {/* Name Input */}
             <div className="name-section">
-              <label className="name-label">Full Name</label>
+              <label className="name-label">Name</label>
               <input
                 type="text"
-                placeholder="Enter your full name"
+                placeholder="Enter your name"
                 className="name-input"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
+              />
+            </div>
+
+            {/* Nickname Input */}
+            <div className="name-section">
+              <label className="name-label">Nickname</label>
+              <input
+                type="text"
+                placeholder="Enter your nickname"
+                className="name-input"
+                value={nickname}
+                onChange={(e) => setNickname(e.target.value)}
               />
             </div>
 
@@ -105,32 +122,28 @@ const QueueManagement = () => {
               </div>
 
               <div className="category-buttons">
-                {['Standard', 'Senior'].map((type) => (
-                  <button
-                    key={type}
-                    className={`category-btn ${selectedCategory === type ? 'selected' : ''}`}
-                    onClick={() => handleCategorySelect(type)}
-                  >
-                    <span>{type === 'Standard' ? '👤' : '👥'}</span>
-                    <span>{type}</span>
-                  </button>
-                ))}
+                <button
+                  className={`category-btn ${selectedCategory === 'Standard' ? 'selected' : ''}`}
+                  onClick={() => handleCategorySelect('Standard')}
+                >
+                  <span style={{ fontSize: '1.2em' }}>&nbsp;👤</span>
+                  <span>Standard</span>
+                </button>
+                <button
+                  className={`category-btn ${selectedCategory === 'Senior / PWD' ? 'selected' : ''}`}
+                  onClick={() => handleCategorySelect('Senior / PWD')}
+                >
+                  <span style={{ fontSize: '1.2em' }}>&nbsp;♿</span>
+                  <span>Senior / PWD</span>
+                </button>
               </div>
-
-              <button
-                className={`category-btn pwd-btn ${selectedCategory === 'PWD' ? 'selected' : ''}`}
-                onClick={() => handleCategorySelect('PWD')}
-              >
-                <span>♿</span>
-                <span>PWD</span>
-              </button>
             </div>
 
             {/* Transaction Type */}
             <div className="transaction-section">
               <div className="transaction-header">
                 <h3 className="transaction-title">TRANSACTION TYPE</h3>
-                <p className="transaction-subtitle">Please select a transaction type</p>
+                <p className="transaction-subtitle">Please select a transaction type.</p>
               </div>
 
               <select
@@ -138,8 +151,8 @@ const QueueManagement = () => {
                 value={selectedTransaction}
                 onChange={handleTransactionSelect}
               >
-                <option value="">Select transaction type</option>
-                {transactionTypes.map((type, idx) => (
+                <option value="Front Desk">Front Desk</option> 
+                {transactionTypes.slice(1).map((type, idx) => (
                   <option key={idx} value={type}>{type}</option>
                 ))}
               </select>
@@ -149,9 +162,9 @@ const QueueManagement = () => {
             <button
               className="proceed-btn"
               onClick={handleProceed}
-              disabled={!name || !selectedCategory || !selectedTransaction}
+              disabled={!name || !nickname || !selectedCategory || !selectedTransaction}
             >
-              Get Queue Number
+              Proceed
             </button>
           </div>
         </div>
@@ -159,9 +172,23 @@ const QueueManagement = () => {
         {/* RIGHT - DISPLAY */}
         <div className="queue-display">
           <div className="display-header">
-            <div className="display-header-icon">
-              🎯
+            {/* Language Selection Dropdown with Icon */}
+            <div className="language-selector-wrapper">
+              <img src={engIcon} alt="Language Icon" className="language-icon" />
+              <select
+                className="language-dropdown"
+                value={selectedLanguage}
+                onChange={handleLanguageChange}
+              >
+                {languages.map((lang, index) => (
+                  <option key={index} value={lang}>
+                    {lang}
+                  </option>
+                ))}
+              </select>
             </div>
+            {/* Removed the close button as per request */}
+            {/* <button className="display-header-close-btn">&times;</button> */}
           </div>
 
           {/* Current Queue Number */}
@@ -169,13 +196,18 @@ const QueueManagement = () => {
             <h3 className="queue-header">YOUR QUEUE NUMBER</h3>
             <div className="current-number">{currentQueueNumber}</div>
             <div className="counter-info">
-              Counter {transactionToCounter[selectedTransaction] || 1}
+              Proceed to Counter {transactionToCounter[selectedTransaction] || 4}
             </div>
           </div>
 
           {/* Recorded Queue */}
           <div className="recorded-queue">
             <h4 className="recorded-header">RECORDED QUEUE</h4>
+            <div className="queue-list-header">
+              <span className="queue-list-header-item queue-no-header">Queue No.</span>
+              <span className="queue-list-header-item transaction-header">Transaction</span>
+              <span className="queue-list-header-item counter-header">Counter</span>
+            </div>
             <div className="queue-list">
               {queueItems.map((item, i) => (
                 <div key={i} className="queue-item">
@@ -205,7 +237,7 @@ const QueueManagement = () => {
               </div>
               <div className="notification-text">Queue Number Assigned!</div>
               <div className="notification-counter">
-                Please proceed to Counter {transactionToCounter[selectedTransaction] || 1}
+                Please proceed to Counter {transactionToCounter[selectedTransaction] || 4}
               </div>
               <button
                 className="notification-close"
