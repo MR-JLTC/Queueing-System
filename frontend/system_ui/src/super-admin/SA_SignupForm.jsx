@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import './SA_SignupForm.css'; // Keep this for page-level/background styles
 import PopupMessage from "../shared_comp/popup_menu/PopupMessage";
 import { showPopupMessage } from "../shared_comp/utils/popupUtils";
-import bcrypt from 'bcryptjs'; // Ensure bcryptjs is imported if used for hashing on frontend (though typically backend)
+// import bcrypt from 'bcryptjs'; // Ensure bcryptjs is imported if used for hashing on frontend (though typically backend)
 import axios from 'axios';
 
 // Import Material UI components
@@ -31,7 +31,7 @@ const CustomTextField = styled(TextField)(({ theme }) => ({
     transition: 'border-color 0.3s ease, box-shadow 0.3s ease',
     height: '56px', // Explicit height for better consistency and to prevent cutting
     padding: '0 14px', // Adjust padding for inner text
-    fontSize: '18px', // Adjusted font size for input text to match LoginForm
+    fontSize: '20px', // Adjusted font size for input text to match LoginForm
     '&:hover fieldset': {
       borderColor: '#007bff !important', // Blue border on hover
     },
@@ -385,7 +385,8 @@ const SignupForm = () => {
               padding: 0,
               minWidth: 'auto',
               fontSize: '16px',
-              lineHeight: '1',
+              paddingLeft: '4px',
+              lineHeight: '1.1',
             }}
           >
             Login

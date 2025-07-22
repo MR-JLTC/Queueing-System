@@ -16,14 +16,14 @@ const Dashboard = () => {
   useEffect(() => {
     const isLoggedIn = localStorage.getItem("isLoggedIn");
     if (isLoggedIn !== "true") {
-      navigate("/login");
+      navigate("/Adminlogin");
     }else console.log("Value: " + isLoggedIn);
   }, []);
   
 
   const handleLogout = () => {
     localStorage.setItem("isLoggedIn", "false");
-    navigate("/login");
+    navigate("/Adminlogin"); // ✅ Redirect to login page
     // window.location.reload();     // ✅ Redirect to login
   };
 

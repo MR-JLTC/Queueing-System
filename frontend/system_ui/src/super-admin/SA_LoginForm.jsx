@@ -22,7 +22,7 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 // Styled TextField for consistent professional look and improved visibility
-const CustomTextField = styled(TextField)(({ theme }) => ({
+const CustomTextField = styled(TextField)(() => ({
   '& .MuiInputBase-root': {
     backgroundColor: '#333b4d', // Distinct dark blue-gray for input background
     color: '#e0e0e0', // Lighter text color
@@ -72,7 +72,7 @@ const CustomTextField = styled(TextField)(({ theme }) => ({
 }));
 
 
-const LoginForm = () => {
+const LoginForm = () => { // Component name is LoginForm as per your file
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     username: '',
@@ -86,11 +86,14 @@ const LoginForm = () => {
   const API_BASE_URL = 'http://localhost:3000';
 
   useEffect(() => {
+    // Check if already logged in as Super Admin
     const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
-    if (isLoggedIn) {
-      // navigate("/dashboard", { replace: true });
+    const roleId = localStorage.getItem("roleId");
+
+    if (isLoggedIn && roleId === "1") { // Only redirect if already logged in as Super Admin
+      navigate('/SuperAdminDashboard', { replace: true });
     }
-  }, []);
+  }, [navigate]);
 
   // Helper function to validate email format
   const validateEmail = (email) => {
@@ -133,6 +136,9 @@ const LoginForm = () => {
 
     try {
       // Fetch users from the backend
+      // It's more efficient to have a specific login endpoint on the backend
+      // that handles authentication and returns user data including role.
+      // For now, we'll fetch all users and filter, but consider a dedicated /auth/login endpoint.
       const response = await axios.get(`${API_BASE_URL}/users`);
       const users = response.data;
 
@@ -152,17 +158,22 @@ const LoginForm = () => {
         const isPasswordValid = await bcrypt.compare(formData.password, user.passwordHash);
 
         if (isPasswordValid) {
-          showPopupMessage(setPopup, "success", "Login successful!");
-          // Store user details in localStorage upon successful login
-          localStorage.setItem("isLoggedIn", "true");
-          localStorage.setItem("userEmail", user.email);
-          localStorage.setItem("userId", user.userId);
-          localStorage.setItem("roleId", user.roleId);
-          localStorage.setItem("username", user.username);
-          localStorage.setItem("fullName", user.fullName);
-
-          // Redirect to dashboard after a short delay for popup message visibility
-          setTimeout(() => navigate('/dashboard'), 700);
+          // --- START: MODIFIED LOGIC FOR ROLE CHECK ---
+          if (user.roleId === 1) { // Check if the user is a Super Admin (roleId 1)
+            localStorage.setItem("isLoggedIn", "true");
+            localStorage.setItem("userEmail", user.email);
+            localStorage.setItem("userId", user.userId);
+            localStorage.setItem("roleId", user.roleId);
+            localStorage.setItem("username", user.username);
+            localStorage.setItem("fullName", user.fullName);
+            showPopupMessage(setPopup, "success", "Login successful!");
+            setTimeout(() => navigate('/SuperAdminDashboard', { replace: true }), 700);
+          } else {
+            // If not a Super Admin, show error and do NOT log them in or redirect
+            localStorage.clear(); // Clear any potentially set items (defensive)
+            showPopupMessage(setPopup, "error", "Account is Not a SuperAdmin.");
+          }
+          // --- END: MODIFIED LOGIC FOR ROLE CHECK ---
         } else {
           showPopupMessage(setPopup, "error", "Invalid credentials. Please try again.");
         }
@@ -178,7 +189,7 @@ const LoginForm = () => {
         if (error.response) {
           // Server responded with a status code outside of 2xx range
           if (error.response.status === 404) {
-            errorMessage = "Login failed: API endpoint not found. Please check backend server.";
+            errorMessage = "Login failed: User not found. Please check your email/username.";
           } else if (error.response.data && error.response.data.message) {
             errorMessage = `Login failed: ${error.response.data.message}`;
           } else {
@@ -224,11 +235,11 @@ const LoginForm = () => {
         </div>
       </div>
       <form className="sa_login-container" onSubmit={handleSubmit}>
-        {/* Username Input Field
+        {/* Username Input Field (commented out in your provided code)
         <div className="sa_form-group horizontal">
           <CustomTextField
             fullWidth
-            label="Username" // Re-added label for Material UI standard
+            label="Username"
             name="username"
             value={formData.username}
             onChange={handleInputChange}

@@ -1,0 +1,405 @@
+/* SuperAdminDashboard.css */
+
+/* Ensure the root element fills the viewport */
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden; /* Prevent overall scrollbar unless content overflows specific areas */
+  font-family: 'Inter', sans-serif; /* Consistent font */
+  -webkit-font-smoothing: antialiased; /* Smoother font rendering */
+  -moz-osx-font-smoothing: grayscale; /* Smoother font rendering */
+}
+
+/* Base styles for the dashboard page */
+.sa-dashboard-page {
+  display: flex;
+  min-height: 100vh; /* Ensure it takes full viewport height */
+  background-color: #121212; /* Deep dark background from image */
+  color: #e0e0e0; /* Default text color for content */
+}
+
+/* General Material UI overrides for consistent theme */
+
+/* AppBar (Header) Styling */
+.MuiAppBar-root {
+  background-color: #1a1a1a !important; /* Slightly lighter dark for header, matches image */
+  color: #e0e0e0 !important; /* Light text color */
+  box-shadow: none !important; /* No shadow as per image */
+  border-bottom: 1px solid rgba(100, 110, 130, 0.1) !important; /* Very subtle bottom border */
+  height: 64px; /* Fixed height for AppBar */
+}
+
+/* Sidebar (Drawer) Styling */
+.MuiDrawer-paper {
+  background-color: #1a1a1a !important; /* Dark sidebar background, matches header and image */
+  color: #e0e0e0 !important; /* Light text color */
+  border-right: 1px solid rgba(100, 110, 130, 0.1) !important; /* Subtle sidebar border */
+  box-shadow: none !important; /* No shadow as per image */
+}
+
+/* Sidebar Profile Section */
+.MuiDrawer-paper .MuiBox-root:first-of-type { /* Targets the profile box */
+  background-color: #1a1a1a; /* Matches sidebar background */
+  padding: 20px 16px !important; /* Adjusted padding */
+  border-bottom: 1px solid rgba(100, 110, 130, 0.1); /* Subtle separator */
+}
+.MuiDrawer-paper .MuiBox-root:first-of-type .MuiAvatar-root {
+  background-color: #007bff !important; /* Blue avatar background */
+}
+/* Adjusted font sizes for profile name and administrator text */
+.MuiDrawer-paper .MuiBox-root:first-of-type .MuiTypography-body1 {
+  font-weight: 600 !important;
+  font-size: 1rem !important; /* Adjusted */
+  color: #e0e0e0 !important;
+}
+.MuiDrawer-paper .MuiBox-root:first-of-type .MuiTypography-caption {
+  color: rgba(255, 255, 255, 0.5) !important;
+  font-size: 0.75rem !important; /* Adjusted */
+}
+
+
+/* List Item Text within Drawer */
+.MuiListItemText-primary {
+  color: #e0e0e0 !important; /* Ensure list item text is light */
+  font-weight: 500; /* Medium weight */
+}
+
+/* List Item Buttons (Navigation) */
+.MuiListItemButton-root {
+  transition: background-color 0.2s ease, border-left 0.2s ease, padding-left 0.2s ease;
+  border-left: 4px solid transparent; /* Default transparent border */
+  padding-left: 24px !important; /* Default padding for alignment */
+}
+
+.MuiListItemButton-root:hover {
+  background-color: rgba(0, 123, 255, 0.1) !important; /* Very subtle blue hover */
+  border-left-color: #007bff !important; /* Highlight border on hover */
+  padding-left: calc(24px - 4px) !important; /* Adjust padding for border */
+}
+
+.MuiListItemButton-root.Mui-selected {
+  background-color: rgba(0, 123, 255, 0.15) !important; /* Subtle selected state */
+  border-left-color: #007bff !important; /* Solid blue border for selected */
+  padding-left: calc(24px - 4px) !important; /* Adjust padding for border */
+}
+
+.MuiListItemButton-root.Mui-selected:hover {
+  background-color: rgba(0, 123, 255, 0.2) !important; /* Slightly darker hover for selected */
+}
+
+/* Logout Button specific styling */
+.MuiListItemButton-root .MuiListItemIcon-root .MuiSvgIcon-root[data-testid="ExitToAppIcon"] {
+  color: #dc3545 !important; /* Red icon for logout */
+}
+.MuiListItemButton-root[onClick*="handleLogout"]:hover { /* Target logout button specifically */
+  background-color: rgba(255, 0, 0, 0.08) !important; /* Very subtle red hover for logout */
+  border-left-color: #dc3545 !important;
+}
+
+
+/* Main Content Area Styling */
+.MuiBox-root[component="main"] {
+  background-color: #121212; /* Deep dark background, matches image */
+  min-height: calc(100vh - 64px); /* Ensure it fills remaining height */
+  color: #e0e0e0; /* Default text color for content */
+  padding: 24px !important; /* Consistent padding */
+}
+
+/* Users Section Header (H4 and Body2) */
+.MuiBox-root[component="main"] .MuiTypography-h4 {
+  color: #f0f0f0 !important; /* Bright white for main title */
+  font-weight: 600 !important;
+  font-size: 2.2rem !important; /* Consistent with previous, looks good */
+}
+.MuiBox-root[component="main"] .MuiTypography-body2 {
+  color: rgba(255, 255, 255, 0.6) !important; /* Subtitle color */
+  font-size: 0.9rem !important; /* Consistent with previous */
+}
+
+/* Add Admin Button */
+.MuiButton-root[starticon] { /* Targets any button with a startIcon */
+  background-color: #007bff !important; /* Blue button */
+  color: white !important;
+  border-radius: 20px !important; /* Rounded button */
+  text-transform: none !important; /* No uppercase */
+  font-weight: 600 !important;
+  box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3) !important;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+  font-size: 0.9rem !important; /* Adjusted to match table header font size */
+}
+.MuiButton-root[starticon]:hover {
+  background-color: #0056b3 !important; /* Darker blue on hover */
+  box-shadow: 0 6px 15px rgba(0, 123, 255, 0.4) !important;
+}
+.MuiButton-root[starticon] .MuiButton-startIcon {
+  margin-right: 4px !important; /* Adjust icon spacing */
+}
+.MuiButton-root[starticon] .MuiButton-startIcon .MuiSvgIcon-root {
+  font-size: 1.2rem !important; /* Adjusted icon size for Add Admin button */
+}
+
+
+/* Table Container */
+.MuiTableContainer-root {
+  background-color: #1a1a1a !important; /* Dark container background, matches image */
+  border-radius: 12px !important; /* Rounded corners for the table container */
+  box-shadow: none !important; /* No shadow as per image */
+  border: 1px solid rgba(100, 110, 130, 0.1) !important; /* Subtle border matches image */
+  overflow: hidden; /* Ensures rounded corners apply to content */
+}
+
+/* Table Head */
+.MuiTableHead-root .MuiTableRow-root {
+  background-color: #1a1a1a !important; /* Darker header background for table, matches image */
+}
+
+/* Table Cell (Header) */
+.MuiTableHead-root .MuiTableCell-head {
+  color: #8ab4f8 !important; /* Blue color for header text */
+  font-weight: 600 !important;
+  font-size: 0.9rem !important; /* Adjusted to match Add Admin button, good balance */
+  border-bottom: 1px solid rgba(100, 110, 130, 0.1) !important; /* Separator line matches image */
+  padding: 12px 16px !important; /* Adjusted padding */
+}
+
+/* Table Cell (Body) */
+.MuiTableBody-root .MuiTableCell-body {
+  color: #e0e0e0 !important; /* Light text for body cells */
+  font-size: 0.9rem !important; /* Adjusted to match table header font size */
+  border-bottom: none !important; /* No bottom border for body cells */
+  padding: 10px 16px !important; /* Adjusted padding */
+}
+
+/* Table Row Hover & Stripe Effect */
+.MuiTableBody-root .MuiTableRow-root {
+  transition: background-color 0.2s ease;
+}
+.MuiTableBody-root .MuiTableRow-root:nth-of-type(odd) {
+  background-color: #1f1f1f !important; /* Subtle stripe from image */
+}
+.MuiTableBody-root .MuiTableRow-root:nth-of-type(even) {
+  background-color: #1a1a1a !important; /* Background for even rows, matches image */
+}
+.MuiTableBody-root .MuiTableRow-root:hover {
+  background-color: rgba(0, 123, 255, 0.05) !important; /* Light blue hover effect */
+}
+
+/* Status Badges */
+.status-active {
+  color: #28a745 !important; /* Green for Active */
+  font-weight: 600 !important;
+  font-size: 0.9rem !important; /* Consistent with table body text */
+}
+.status-inactive {
+  color: #dc3545 !important; /* Red for Inactive */
+  font-weight: 600 !important;
+  font-size: 0.9rem !important; /* Consistent with table body text */
+}
+
+/* Edit Button in Table */
+.MuiTableBody-root .MuiButton-outlined {
+  color: #007bff !important;
+  border-color: #007bff !important;
+  border-radius: 15px !important; /* Rounded edit button */
+  text-transform: none !important;
+  font-size: 0.8rem !important; /* Slightly smaller than table body text, for action */
+  padding: 4px 12px !important;
+  min-width: unset !important; /* Allow button to shrink */
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+.MuiTableBody-root .MuiButton-outlined:hover {
+  background-color: rgba(0, 123, 255, 0.1) !important;
+  border-color: #0056b3 !important;
+}
+.MuiTableBody-root .MuiButton-outlined .MuiButton-startIcon {
+  margin-right: 4px !important;
+}
+.MuiTableBody-root .MuiButton-outlined .MuiSvgIcon-root {
+  font-size: 1rem !important; /* Adjusted icon size for Edit button */
+}
+
+
+/* MODAL STYLES (AddAdminForm & EditAdminForm) */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.7); /* Dark semi-transparent overlay */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Ensure it's on top of everything */
+  backdrop-filter: blur(5px); /* Subtle blur effect */
+}
+
+.add-admin-modal,
+.edit-admin-modal {
+  background-color: #1a1a1a; /* Dark background for modal, matches image */
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7); /* Stronger shadow for modal */
+  width: 90%;
+  max-width: 500px; /* Max width for forms */
+  color: #e0e0e0;
+  overflow: hidden; /* Ensures rounded corners apply */
+  border: 1px solid rgba(100, 110, 130, 0.2); /* Subtle border */
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  background-color: #1a1a1a; /* Header matches modal background */
+  border-bottom: 1px solid rgba(100, 110, 130, 0.1); /* Subtle separator */
+}
+
+.modal-header h6 {
+  color: #f0f0f0; /* White title */
+  font-weight: 600;
+  font-size: 1.2rem; /* Title size */
+}
+
+.modal-header .MuiIconButton-root {
+  color: #e0e0e0; /* Close icon color */
+  transition: color 0.2s ease;
+}
+.modal-header .MuiIconButton-root:hover {
+  color: #dc3545; /* Red on hover for close button */
+}
+
+/* Styles for CustomTextField within modals */
+.add-admin-modal .MuiInputBase-root,
+.edit-admin-modal .MuiInputBase-root {
+  background-color: #1f1f1f; /* Slightly darker input background for modals */
+  border: 1px solid rgba(0, 123, 255, 0.1); /* More subtle border for modal inputs */
+}
+.add-admin-modal .MuiInputBase-root:hover,
+.edit-admin-modal .MuiInputBase-root:hover {
+  border-color: rgba(0, 123, 255, 0.3);
+}
+.add-admin-modal .MuiInputBase-root.Mui-focused,
+.edit-admin-modal .MuiInputBase-root.Mui-focused {
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.2);
+}
+
+/* Specific styling for Edit Admin Status Checkboxes */
+.edit-admin-modal .MuiTypography-subtitle1 {
+  color: #f0f0f0 !important;
+  font-weight: 600 !important;
+  font-size: 1.1rem !important;
+}
+.edit-admin-modal .MuiFormControlLabel-root .MuiTypography-root {
+  color: #e0e0e0 !important;
+}
+.edit-admin-modal .MuiCheckbox-root {
+  color: #8ab4f8 !important; /* Default checkbox color */
+}
+.edit-admin-modal .MuiCheckbox-root.Mui-checked[name="status"] {
+  color: #28a745 !important; /* Active green */
+}
+.edit-admin-modal .MuiCheckbox-root.Mui-checked[name="status"][value="false"] { /* For inactive checkbox if implemented this way */
+  color: #dc3545 !important; /* Inactive red */
+}
+
+
+/* Modal Button Styling */
+.add-admin-modal .MuiButton-contained,
+.edit-admin-modal .MuiButton-contained {
+  border-radius: 10px !important; /* Consistent with modal inputs */
+  font-size: 1rem !important; /* Slightly smaller for modal buttons */
+  padding: 12px 24px !important;
+}
+
+/* Delete Button specific style */
+.edit-admin-modal .MuiButton-contained[onClick*="handleDelete"] {
+  background-color: #6c757d !important; /* Gray for delete */
+  box-shadow: 0 4px 15px rgba(108, 117, 125, 0.4) !important;
+}
+.edit-admin-modal .MuiButton-contained[onClick*="handleDelete"]:hover {
+  background-color: #5a6268 !important;
+  box-shadow: 0 6px 20px rgba(108, 117, 125, 0.5) !important;
+}
+.edit-admin-modal .MuiButton-contained[onClick*="handleDelete"]:active {
+  background-color: #4e545a !important;
+}
+
+
+/* Responsive adjustments for smaller screens */
+@media (max-width: 768px) {
+  .modal-overlay {
+    padding: 10px;
+  }
+  .add-admin-modal,
+  .edit-admin-modal {
+    max-width: 95%;
+  }
+  .modal-header {
+    padding: 12px 16px;
+  }
+  .modal-header h6 {
+    font-size: 1.1rem;
+  }
+  .add-admin-modal .MuiInputBase-root,
+  .edit-admin-modal .MuiInputBase-root {
+    height: 50px;
+    font-size: 16px;
+  }
+  .add-admin-modal .MuiInputLabel-root,
+  .edit-admin-modal .MuiInputLabel-root {
+    font-size: 16px;
+    transform: translate(12px, 15px) scale(1);
+  }
+  .add-admin-modal .MuiInputLabel-root.MuiInputLabel-shrink,
+  .edit-admin-modal .MuiInputLabel-root.MuiInputLabel-shrink {
+    transform: translate(12px, -7px) scale(0.7);
+  }
+  .add-admin-modal .MuiButton-contained,
+  .edit-admin-modal .MuiButton-contained {
+    font-size: 0.95rem !important;
+    padding: 10px 20px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .add-admin-modal,
+  .edit-admin-modal {
+    border-radius: 8px;
+  }
+  .modal-header {
+    padding: 10px 12px;
+  }
+  .modal-header h6 {
+    font-size: 1rem;
+  }
+  .add-admin-modal .MuiInputBase-root,
+  .edit-admin-modal .MuiInputBase-root {
+    height: 45px;
+    font-size: 15px;
+  }
+  .add-admin-modal .MuiInputLabel-root,
+  .edit-admin-modal .MuiInputLabel-root {
+    font-size: 15px;
+    transform: translate(10px, 12px) scale(1);
+  }
+  .add-admin-modal .MuiInputLabel-root.MuiInputLabel-shrink,
+  .edit-admin-modal .MuiInputLabel-root.MuiInputLabel-shrink {
+    transform: translate(10px, -5px) scale(0.65);
+  }
+  .add-admin-modal .MuiButton-contained,
+  .edit-admin-modal .MuiButton-contained {
+    font-size: 0.85rem !important;
+    padding: 8px 16px !important;
+  }
+  .edit-admin-modal .MuiTypography-subtitle1 {
+    font-size: 1rem !important;
+  }
+  .edit-admin-modal .MuiFormControlLabel-root .MuiTypography-root {
+    font-size: 0.9rem !important;
+  }
+}

@@ -44,7 +44,6 @@ const LoginForm = () => {
     ) {
       showPopupMessage(setPopup, "success", "Login successful!");
       localStorage.setItem("isLoggedIn", "true");
-      console.log("Value: " + localStorage.getItem("isLoggedIn"));
       setTimeout(() => navigate('/AdminDashboard'), 700);
     } else {
       localStorage.setItem("isLoggedIn", "false");

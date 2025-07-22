@@ -41,7 +41,8 @@
   display: flex;
   height: 400px;
   flex-direction: column;
-  background-color: rgba(31, 42, 58, 0.98); /* A deeper, more opaque dark blue-gray */
+  /* background-color: rgba(31, 42, 58, 0.98); A deeper, more opaque dark blue-gray */
+  background-color:#1E1E2F;
   border: 1px solid rgba(100, 110, 130, 0.7); /* Softer, more integrated border */
   margin-top: -20px;
   border-radius: 18px; /* Slightly more rounded corners for a modern feel */
@@ -80,7 +81,7 @@ body {
 .sa_inter-font {
   font-family: 'Inter', sans-serif;
   text-shadow: 0 3px 10px rgba(0, 0, 0, 0.8); /* Stronger text shadow for title */
-  font-size: clamp(32px, 5.5vw, 48px) !important; /* Slightly larger title */
+  font-size: clamp(32px, 5.5vw, 40px) !important; /* Slightly larger title */
   font-weight: 700; /* Bolder title */
   color: #f0f0f0; /* Slightly brighter white for main title */
 }
@@ -93,6 +94,10 @@ body {
 .sa_logo-section {
   margin-bottom: 25px;
   background-color: transparent;
+}
+
+.sa_logo-section p{
+  font-size: 20px; /* Adjusted font size for better readability */
 }
 
 .sa_login-page .sa_logo-section .sa_logo img {
