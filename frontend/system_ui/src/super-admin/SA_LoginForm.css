@@ -1,375 +1,234 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;700&display=swap');
+/* SA_LoginForm.css */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* Overall page background and layout */
 .sa_login-page {
   width: 100%;
-  max-width: 100vw;
+  max-width: 100vw;;
   min-height: 100vh;
   margin: 0 auto;
   padding: clamp(8px, 2.5vmin, 24px) clamp(4px, 1.5vmin, 16px);
   background-image: url('/src/assets/sa_bg2.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-position: center; /* Center the image */
-  background-size: cover; /* Cover the entire area */
-    background-origin: border-box;
-  background-repeat: no-repeat; /* Prevent repetition */
-  overflow-y: fixed;
-  gap: clamp(4px, 0.5vmin, 8px);
+  overflow-y: auto;
+  gap: clamp(10px, 1.5vmin, 20px);
+  position: relative;
+  z-index: 1;
 }
 
-.sa_login-container {
+/* Overlay for background image to ensure readability and logo visibility */
+.sa_login-page::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.9); /* Slightly darker overlay for more contrast and depth */
+  z-index: -1;
+}
 
+/* Login container styling */
+.sa_login-container {
   width: 100%;
   max-width: 650px;
-  height: 400px;
+  min-height: 500px;
   display: flex;
+  height: 400px;
   flex-direction: column;
-  background-color: #1e1e2f;
-  border: 1px solid #333;
-  margin-top: -10px;
-  border-radius: 15px;
-  padding: 30px 20px;
+  background-color: rgba(31, 42, 58, 0.98); /* A deeper, more opaque dark blue-gray */
+  border: 1px solid rgba(100, 110, 130, 0.7); /* Softer, more integrated border */
+  margin-top: -20px;
+  border-radius: 18px; /* Slightly more rounded corners for a modern feel */
+  padding: 50px 40px;
   align-items: center;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 20px 70px rgba(0, 0, 0, 0.9); /* Deeper, more diffused shadow */
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); /* Smoother transition */
+  z-index: 2;
 }
 
+.sa_login-container:hover {
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.95); /* Even stronger shadow on hover */
+  transform: translateY(-5px); /* More pronounced lift on hover */
+}
+
+/* Global body font */
 body {
   margin: 0;
   padding: 0;
   font-family: 'Inter', sans-serif;
-  overflow: hidden;
+  overflow-x: hidden;
   background-position: center;
- 
 }
 
+/* Header section styling */
 .sa_header-section2 {
-  max-width: 600px;
+  max-width: 650px;
   text-align: center;
-  background-color: #b5b0b000 !important;
-  margin-bottom: 20px;
+  background-color: transparent !important;
+  margin-bottom: 30px;
 }
 
+/* Inter font styling for titles */
 .sa_inter-font {
-  font-family: 'Inter';
-  text-shadow: 2px 2px 4px rgba(75, 74, 74, 0.498);
-  font-size: 35px !important;
-  font-weight: 500;
+  font-family: 'Inter', sans-serif;
+  text-shadow: 0 3px 10px rgba(0, 0, 0, 0.8); /* Stronger text shadow for title */
+  font-size: clamp(32px, 5.5vw, 48px) !important; /* Slightly larger title */
+  font-weight: 700; /* Bolder title */
+  color: #f0f0f0; /* Slightly brighter white for main title */
 }
 
+.sa_inter-font span {
+  color: #f0f0f0; /* Ensure span color is consistent */
+}
+
+/* Logo section styling */
 .sa_logo-section {
-  margin-bottom: 20px;
-   background-color: #b5b0b000;
+  margin-bottom: 25px;
+  background-color: transparent;
 }
 
 .sa_login-page .sa_logo-section .sa_logo img {
-  width: 90px;
+  width: clamp(90px, 15vw, 130px); /* Slightly larger logo */
   height: auto;
   border-radius: 0;
-  /* Lighten the image using a brightness filter */
-  filter: brightness(1.30); /* Values >1 make it lighter */
+  /* filter: drop-shadow(0 0 20px rgba(0, 180, 255, 0.9)); More vibrant blue glow for logo */
+  transition: filter 0.4s ease;
+}
+
+.sa_login-page .sa_logo-section .sa_logo img:hover {
+  filter: drop-shadow(0 0 30px rgba(0, 200, 255, 1)); /* Enhanced glow on hover */
 }
 
 .sa_login-page .sa_logo-section h1 {
-  color: #22253b !important;
-  font-size: 50px;
-  
+  color: #e0e0e0 !important;
+  font-size: clamp(32px, 6vw, 50px);
+  margin: 15px 0 10px 0;
+  font-weight: 700;
 }
 
-.sa_login-page .sa_logo-section p {
-  color: #e6e0e0 !important;
-  font-family: 'Inter';
-  text-shadow: 2px 2px 4px rgb(0, 0, 0);
-  padding-bottom: 20px;
-}
-
+/* Form group layout */
 .sa_form-group.horizontal {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   margin-bottom: 20px;
   width: 100%;
-  max-width: 500px;
-  gap: 16px;
-  
+  max-width: 450px;
 }
 
-.sa_email-label {
-  margin-top: 40px;
-  color: #fffefe;
-  opacity: 75%;
-  font: inherit;
-  font-size: 18px;
-  white-space: nowrap;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  min-width: 120px;
-}
-
-
-.sa_input-label {
-  color: #fffefe;
-  opacity: 75%;
-  font: inherit;
-  font-size: 18px;
-  white-space: nowrap;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  min-width: 120px;
-}
-
-
-.sa_input-icon {
-  font-size: 18px;
-  color: #999;
-}
-
-.sa_login-container input[type="email"]{
-  margin-top: 50px;
-  flex: 1;
-  padding: 10px;
-  font-size: 16px;
-  border: 1px solid #333;
-  border-radius: 11px;
-  background-color: #fefffe;
-  color: #000;
-  outline: none;
+/* Link containers */
+.sa_forgot-password-link,
+.sa_signup-link {
   width: 100%;
-  height: 45px;
-
-}
-
-/* New wrapper for password input and toggle */
-.sa_password-input-container {
-  position: relative; /* Establish positioning context */
-  flex: 1; /* Allow it to grow like the email input */
-  width: 100%; /* Take full width of its flex item */
-}
-
-.sa_password-input-container input[type="password"],
-.sa_password-input-container input[type="text"] { /* Apply to both types */
-  width: 100%;
-  padding: 10px;
-  font-size: 16px;
-  border: 1px solid #333;
-  border-radius: 11px;
-  background-color: #fefffe;
-  color: #000;
-  outline: none;
-  height: 45px;
-  padding-right: 40px; /* Make space for the icon */
-  box-sizing: border-box; /* Include padding in the element's total width and height */
-}
-
-
-input:focus {
-  border-color: #007bff !important;
-}
-
-
-.sa_password-wrapper { /* This class is now primarily for the flex container if needed, but its styles are largely moved */
-  /* position: relative; */ /* Removed as the new container handles this */
+  max-width: 450px;
   display: flex;
-  align-items: center;
-  font-family: 'Inter';
-  font-size: medium;
-  width: 100%;
-}
-
-/* Updated sa_password-toggle styling */
-.sa_password-toggle {
-  position: absolute; /* Position relative to .sa_password-input-container */
-  right: 10px; /* Distance from the right edge of the input */
-  top: 50%; /* Center vertically */
-  transform: translateY(-50%); /* Adjust for perfect vertical centering */
+  margin-bottom: 15px;
   background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 10; /* Ensure it's above the input */
 }
 
-.sa_password-toggle:hover {
-  color: #fff;
-} 
-.sa_password-toggle img.password-icon {
-  width: 20px;
-  height: 20px;
-  filter: invert(60%); /* Optional: makes dark SVGs lighter on dark backgrounds */
-  transition: filter 0.3s ease;
-}
-
-.sa_input-icon-svg {
-  width: 25px;      /* Adjust this value as needed */
-  height: 25px;
-  margin-right: 6px;
-  vertical-align: middle;
-}
-
-
-.sa_input-wrapper:focus-within {
-  border-color: #007bff;
-}
-
-.sa_input-icon {
-  font-size: 20px;
-  padding: 0 5px;
-}
-
-.sa_input-wrapper input::placeholder {
-  color: #999999;
-}
-
-.sa_powered-by{
-  width: 100%;
-  max-width: 500px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 12px; /* Adjusted margin */
-}
- 
- .sa_forgot-password-link {
-  width: 100%;
-  max-width: 500px;
-  display: flex;
+.sa_forgot-password-link {
   justify-content: flex-end;
-  margin-bottom: 12px;
-  background: none; /* Ensure no background on this container */
-}
-
-.sa_forgot-password-link .sa_link-button {
-  background: none; /* Make background transparent */
-  border: none; /* Remove border */
-  color: #ffffff; /* Use the desired link color */
-  font-size: 16px;
-  cursor: pointer;
-  opacity: 75%;
-  padding: 0;
-  text-decoration: underline;
-  transition: color 0.3s ease;
 }
 
 .sa_signup-link {
-  text-align: center;
-  color: #e6e0e0; /* Changed to a visible color for the "Don't have an account?" text */
-  font-size: 16px;
-  gap: 4px;
-  margin-left: 265px;
-  margin-top:5px; /* Added margin-top for spacing */
-  margin-bottom: 30px;
-  /* Removed margin-left: 175px; to center it */
+  justify-content: center;
+  margin-top: 15px;
 }
 
-.sa_signup-link p {
-    margin: 0; /* Remove default paragraph margin */
-}
-
-.sa_signup-link .sa_link-button {
-  background: none;
-  border: none;
-  color: #9bc6ea; /* A distinct blue for the "Signup" link */
-  font-size: 14px;
-  cursor: pointer;
-  opacity: 100%; /* Full opacity for the clickable link */
-  padding: 0;
-  transition: color 0.3s ease;
-  margin-right: 0; /* No right margin */
-  text-decoration: underline; /* Ensure it looks like a link */
-}
-
-.sa_link-button:hover {
-  color: #4f96e3;
-  text-decoration: underline;
-}
-
-.sa_login-button {
-  width: 59%;
-  background-color: #2b71ab;
-  color: white;
-  border: none;
-  padding: 14px;
-  margin-left: 138px;
-  border-radius: 18px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  margin-bottom: 12px;
-  /* Removed margin-left to allow flexbox to center it if needed */
-  transition: background-color 0.3s ease;
-}
-
-.sa_login-button:hover {
-  background-color: #0056b3;
-}
-.sa_login-button:active {
-  background-color: #2a7ecc;
-}
-
-.sa_password-toggle:hover {
-  color: #ffffff;
-}
-
+/* Powered by section */
 .sa_powered-by {
   margin-top: auto;
   text-align: center;
-  padding-top: 16px;
-  font-size: 14px;
-  color: #ffffff;
+  padding-top: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.sa_powered-by img {
+  width: 35px; /* Slightly larger logo */
+  height: auto;/* Make it lighter for dark background */
+}
+
+/* Media Queries for responsiveness */
+@media (max-width: 768px) {
+  .sa_login-container {
+    max-width: 90%;
+    padding: 30px 20px;
+    min-height: auto;
+  }
+  .sa_form-group.horizontal {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .sa_forgot-password-link,
+  .sa_signup-link {
+    max-width: 100%;
+  }
 }
 
 @media (max-width: 480px) {
-  .sa_header-section {
-    margin-bottom: 40px;
-    padding: 15px;
+  .sa_header-section2 {
+    margin-bottom: 20px;
   }
-
-  .sa_logo-section {
-    margin-bottom: 15px;
-  }
-
-  .sa_logo img {
-    width: 80px;
-    height: 80px;
-  }
-
   .sa_logo-section h1 {
-    font-size: 30px;
-    margin: 15px 0 10px 0;
+    font-size: 30px !important;
   }
-
-  .sa_logo-section p {
-    font-size: 16px;
-   
-  }
-
   .sa_login-container {
-    max-width: 90%;
-    padding: 15px;
+    padding: 25px 15px;
   }
+}
 
-  .sa_form-group {
-    font-size: 14px;
-  }
+/* --- Autofill Styles for Webkit Browsers (Chrome, Safari, Edge, Bing) --- */
+/* Target the actual input element within Material UI's structure */
+.MuiInputBase-input:-webkit-autofill,
+.MuiInputBase-input:-webkit-autofill:last-of-type,
+.MuiInputBase-input:-webkit-autofill:hover,
+.MuiInputBase-input:-webkit-autofill:checked,
+.MuiInputBase-input:-webkit-autofill:focus,
+.MuiInputBase-input:-webkit-autofill:active {
+    /* Set background to transparent */
+    background-color: transparent !important;
+    background-image: none !important;
+    /* Remove any box-shadow that might create a background */
+    -webkit-box-shadow: none !important;
+    box-shadow: none !important;
 
-  .sa_input-wrapper {
-    padding: 12px;
-  }
+    /* Force text color */
+    -webkit-text-fill-color: #e0e0e0 !important; /* Retain light text color */
+    color: #e0e0e0 !important;
 
-  .sa_input-wrapper input {
-    font-size: 14px;
-  }
+    /* Ensure cursor is visible */
+    caret-color: #e0e0e0 !important;
 
-  .sa_login-button {
-    font-size: 14px;
-    padding: 12px;
-  }
+    /* Force border color - use a slightly brighter blue for autofill border */
+    border-color: rgba(0, 150, 255, 0.6) !important;
 
-  .sa_password-toggle {
-    font-size: 16px;
-  }
+    /* Apply a long transition to hide the browser's default autofill background animation */
+    transition: background-color 5000s ease-in-out 0s;
+
+    /* Ensure text is not cut off by explicitly setting padding and height */
+    height: 56px !important; /* Matches CustomTextField height */
+    padding: 0 14px !important; /* Explicit padding for consistency */
+
+    /* Crucial for preventing zoom: Ensure font size is 16px or higher */
+    font-size: 20px !important; /* Explicitly set to 17px to prevent zoom */
+    line-height: normal !important; /* Ensure line height doesn't cause clipping */
+
+    /* Additional property for robustness in some Chromium versions */
+    appearance: none !important;
+
+    /* Crucial: Ensure no outline or text-shadow is applied after autofill/focus */
+    outline: none !important;
+    text-shadow: none !important;
 }

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import './QueueManagement.css';
-import engIcon from '/src/assets/eng_icon.svg'; // Used for language dropdown
 import SysIcon from '/src/assets/sys_logo.png'; // Used for form header
-
+import personicon from '/src/assets/person.svg'; 
+import careicon from '/src/assets/care.svg'; 
 
 const QueueManagement = () => {
   const [name, setName] = useState('');
@@ -126,14 +126,14 @@ const QueueManagement = () => {
                   className={`category-btn ${selectedCategory === 'Standard' ? 'selected' : ''}`}
                   onClick={() => handleCategorySelect('Standard')}
                 >
-                  <span style={{ fontSize: '1.2em' }}>&nbsp;👤</span>
+                  <img src={personicon} alt="Standard Icon" className="category-icon" />
                   <span>Standard</span>
                 </button>
                 <button
                   className={`category-btn ${selectedCategory === 'Senior / PWD' ? 'selected' : ''}`}
                   onClick={() => handleCategorySelect('Senior / PWD')}
                 >
-                  <span style={{ fontSize: '1.2em' }}>&nbsp;♿</span>
+                  <img src={careicon} alt="Senior / PWD Icon" className="category-icon" />
                   <span>Senior / PWD</span>
                 </button>
               </div>
@@ -174,7 +174,6 @@ const QueueManagement = () => {
           <div className="display-header">
             {/* Language Selection Dropdown with Icon */}
             <div className="language-selector-wrapper">
-              <img src={engIcon} alt="Language Icon" className="language-icon" />
               <select
                 className="language-dropdown"
                 value={selectedLanguage}

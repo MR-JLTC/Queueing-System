@@ -1,4 +1,7 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;700&display=swap');
+/* SA_SignupForm.css */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* Overall page background and layout */
 .sa_signup-page_sf {
   width: 100%;
   max-width: 100vw;
@@ -6,371 +9,215 @@
   margin: 0 auto;
   padding: clamp(8px, 2.5vmin, 24px) clamp(4px, 1.5vmin, 16px);
   background-image: url('/src/assets/sa_bg2.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-position: center; /* Center the image */
-  background-size: cover; /* Cover the entire area */
-  background-origin: border-box;
-  background-repeat: no-repeat; /* Prevent repetition */
-  overflow-y: fixed;
-  gap: clamp(4px, 0.5vmin, 8px);
+  overflow-y: auto;
+  gap: clamp(10px, 1.5vmin, 20px);
+  position: relative;
+  z-index: 1;
 }
 
-.sa_login-container_sf { /* Renamed from sa_login-container to sa_login-container_sf */
+/* Overlay for background image to ensure readability and logo visibility */
+.sa_signup-page_sf::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.9); /* Matched to LoginForm: Slightly darker overlay for more contrast and depth */
+  z-index: -1;
+}
+
+/* Signup container styling - Matched to LoginForm */
+.sa_login-container_sf {
   width: 100%;
   max-width: 650px;
-  min-height: 450px; /* Changed to min-height to ensure content containment while allowing growth */
+  min-height: 650px;
   display: flex;
+  height: 500px;
   flex-direction: column;
-  background-color: #1e1e2f;
-  border: 1px solid #333;
-  margin-top: -10px;
-  border-radius: 15px;
-  margin-top: -40px;
-  padding: 10px 20px;
-  padding-top: 60px; /* Adjusted padding-top */
-  align-items: center; /* Ensure items inside are centered horizontally */
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  background-color: rgba(31, 42, 58, 0.98); /* Matched to LoginForm: A deeper, more opaque dark blue-gray */
+  border: 1px solid rgba(100, 110, 130, 0.7); /* Matched to LoginForm: Softer, more integrated border */
+  margin-top: -20px;
+  border-radius: 18px; /* Matched to LoginForm: Slightly more rounded corners for a modern feel */
+  padding: 40px 60px;
+  align-items: center;
+  box-shadow: 0 20px 70px rgba(0, 0, 0, 0.9); /* Matched to LoginForm: Deeper, more diffused shadow */
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); /* Matched to LoginForm: Smoother transition */
+  z-index: 2;
 }
 
-body { /* This will apply globally, consider moving to a base CSS if not intended for only this form */
+.sa_login-container_sf:hover {
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.95); /* Matched to LoginForm: Even stronger shadow on hover */
+  transform: translateY(-5px); /* Matched to LoginForm: More pronounced lift on hover */
+}
+
+/* Global body font */
+body {
   margin: 0;
   padding: 0;
   font-family: 'Inter', sans-serif;
-  overflow: hidden;
+  overflow-x: hidden;
   background-position: center;
 }
 
-.sa_header-section2_sf { /* Renamed from sa_header-section2 to sa_header-section2_sf */
-  max-width: 600px;
+/* Header section styling */
+.sa_header-section2_sf {
+  max-width: 650px;
   text-align: center;
-  background-color: #b5b0b000 !important;
-  margin-bottom: 20px;
+  background-color: transparent !important;
+  margin-bottom: 30px;
 }
 
-.sa_header-section2_sf p{
-    margin-top: 10px;
+/* Inter font styling for titles */
+.sa_inter-font_sf {
+  font-family: 'Inter', sans-serif;
+  text-shadow: 0 3px 10px rgba(0, 0, 0, 0.8); /* Matched to LoginForm: Stronger text shadow for title */
+  font-size: clamp(32px, 5.5vw, 48px) !important; /* Matched to LoginForm: Slightly larger title */
+  font-weight: 700; /* Matched to LoginForm: Bolder title */
+  color: #f0f0f0; /* Matched to LoginForm: Slightly brighter white for main title */
 }
 
-.sa_inter-font_sf { /* Renamed from sa_inter-font to sa_inter-font_sf */
-  font-family: 'Inter';
-  text-shadow: 2px 2px 4px rgba(75, 74, 74, 0.498);
-  font-size: 35px !important;
-  font-weight: 500;
+.sa_inter-font_sf span {
+  color: #f0f0f0; /* Ensure span color is consistent */
 }
 
-.sa_signup-page_sf { /* Renamed from sa_logo-section to sa_logo-section_sf */
-  margin-bottom: 20px;
-  background-color: #b5b0b000;
+/* Logo section styling */
+.sa_logo-section_sf {
+  margin-bottom: 25px;
+  background-color: transparent;
 }
-.sa_signup-page_sf .sa_logo-section_sf .sa_logo_sf img { /* Adjusted logo size */
-  width: 90px; /* Adjusted width to a more reasonable size */
+
+.sa_signup-page_sf .sa_logo-section_sf .sa_logo_sf img {
+  width: clamp(90px, 15vw, 130px); /* Matched to LoginForm: Slightly larger logo */
   height: auto;
   border-radius: 0;
-  /* Lighten the image using a brightness filter */
-  filter: brightness(1.30); /* Values >1 make it lighter */
+  filter: drop-shadow(0 0 20px rgba(0, 180, 255, 0.9)); /* Matched to LoginForm: More vibrant blue glow for logo */
+  transition: filter 0.4s ease;
+}
+
+.sa_signup-page_sf .sa_logo-section_sf .sa_logo_sf img:hover {
+  filter: drop-shadow(0 0 30px rgba(0, 200, 255, 1)); /* Matched to LoginForm: Enhanced glow on hover */
 }
 
 .sa_signup-page_sf .sa_logo-section_sf h1 {
-  color: #22253b !important;
-  font-size: 50px;
+  color: #e0e0e0 !important;
+  font-size: clamp(32px, 6vw, 50px);
+  margin: 15px 0 10px 0;
+  font-weight: 700;
 }
 
-.sa_signup-page_sf .sa_logo-section_sf p {
-  color: #e6e0e0 !important;
-  font-family: 'Inter';
-  text-shadow: 2px 2px 4px rgb(0, 0, 0);
-  padding-bottom: 30px; /* Increased padding-bottom for more space */
-}
-
-.sa_form-group.horizontal_sf { /* Renamed from sa_form-group.horizontal to sa_form-group.horizontal_sf */
-  display: flex;
-  align-items: center; /* This should align the label and input vertically */
-  justify-content: space-between; /* Distributes space between label and input */
-  margin-bottom: 20px; /* Consistent margin for all form groups */
-  width: 100%;
-  max-width: 500px;
-  gap: 16px; /* Gap between label and input */
-}
-
-.sa_email-label_sf, /* Renamed from sa_email-label to sa_email-label_sf */
-.sa_input-label_sf { /* Renamed from sa_input-label to sa_input-label_sf */
-  color: #fffefe;
-  opacity: 75%;
-  font: inherit;
-  font-size: 16px; /* Adjusted to 16px for all labels */
-  white-space: nowrap;
-  display: flex;
-  align-items: center; /* Vertically center icon and text */
-  gap: 6px;
-  flex: 0 0 120px; /* Fixed width for labels to ensure consistent input width */
-  height: 45px; /* Match height of input for better alignment in flex container */
-  box-sizing: border-box; /* Ensure padding is included */
-  margin: 0; /* Ensure no external margins */
-}
-
-.sa_input-icon_sf { /* Renamed from sa_input-icon to sa_input-icon_sf */
-  font-size: 18px;
-  color: #999;
-}
-
-/* Standardized input styles for all types */
-/* Removed direct styling from .sa_login-container_sf inputs and moved to .sa_password-input-container_sf input */
-.sa_login-container_sf input[type="email"],
-.sa_login-container_sf input[type="text"] {
-  flex: 1; /* Allows input to take remaining space */
-  padding: 10px;
-  font-size: 16px;
-  border: 1px solid #333; /* Kept border for non-password inputs */
-  border-radius: 11px;
-  background-color: #fefffe;
-  color: #000;
-  outline: none;
-  width: 100%;
-  height: 45px;
-  box-sizing: border-box;
-  margin: 0;
-  vertical-align: middle;
-}
-
-
-/* New styling for password input container and its contents */
-.sa_password-input-container_sf {
-  position: relative; /* Keep relative for containing the icon */
-  flex: 1;
-  width: 100%;
-  display: flex; /* Make it a flex container */
-  align-items: center; /* Vertically center items */
-  border: 1px solid #333; /* Border for the entire input box */
-  border-radius: 11px; /* Border-radius for the entire input box */
-  background-color: #fefffe; /* Background for the entire input box */
-  height: 45px; /* Ensure container has height */
-  box-sizing: border-box; /* Crucial for consistent sizing */
-  overflow: hidden; /* Ensure content stays within bounds */
-}
-
-.sa_form-group.horizontal_sf .sa_password-input-container_sf:has(input[name="confirmPassword"]) {
-  max-width: 4000px; /* Adjust this value to your desired width for confirm password */
-  margin-left: 137px; /* Add padding to the left for spacing */
-}
-
-
-.sa_password-input-container_sf input[type="password"],
-.sa_password-input-container_sf input[type="text"] {
-  flex-grow: 1; /* Allow input to grow */
-  padding: 10px;
-  font-size: 16px;
-  border: none; /* Remove border from input, it's on the container now */
-  border-radius: 0; /* Remove border-radius from input */
-  background-color: transparent; /* Make input background transparent */
-  color: #000;
-  outline: none;
-  height: 100%; /* Fill parent container height */
-  width: 100%; /* Fill parent container width */
-  padding-right: 40px; /* Add padding-right to input to make space for the icon */
-  box-sizing: border-box;
-  margin: 0;
-  vertical-align: middle;
-}
-
-input:focus {
-  border-color: #007bff !important;
-}
-
-.sa_password-wrapper_sf { /* This class is now primarily for the flex container if needed, but its styles are largely moved */
-  /* position: relative; */ /* Removed as the new container handles this */
-  display: flex;
-  align-items: center;
-  font-family: 'Inter';
-  font-size: medium;
-  width: 100%;
-}
-
-/* Updated sa_password-toggle styling */
-.sa_password-toggle_sf { /* Renamed from sa_password-toggle to sa_password-toggle_sf */
-  position: absolute; /* Changed back to absolute positioning for precise control */
-  right: 10px; /* Position from the right edge of the container */
-  top: 50%; /* Center vertically */
-  transform: translateY(-50%); /* Adjust for perfect vertical centering */
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0; /* Remove padding here, let the image size control it */
+/* Form group layout */
+.sa_form-group.horizontal_sf {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 10;
-  height: auto; /* Let height be determined by content */
-  flex-shrink: 0;
-}
-
-.sa_password-toggle_sf:hover { /* Renamed from sa_password-toggle to sa_password-toggle_sf */
-  color: #fff;
-} 
-.sa_password-toggle_sf img.password-icon { /* Renamed from sa_password-toggle to sa_password-toggle_sf */
-  width: 20px;
-  height: 20px;
-  filter: invert(60%); /* Optional: makes dark SVGs lighter on dark backgrounds */
-  transition: filter 0.3s ease;
-}
-
-.sa_input-icon-svg_sf { /* Renamed from sa_input-icon-svg to sa_input-icon-svg_sf */
-  width: 25px;      /* Adjust this value as needed */
-  height: 25px;
-  margin-right: 6px;
-  vertical-align: middle;
-}
-
-.sa_input-wrapper_sf:focus-within { /* Renamed from sa_input-wrapper to sa_input-wrapper_sf */
-  border-color: #007bff;
-}
-
-.sa_input-icon_sf { /* Renamed from sa_input-icon to sa_input-icon_sf */
-  font-size: 20px;
-  padding: 0 5px;
-}
-
-.sa_input-wrapper_sf input::placeholder { /* Renamed from sa_input-wrapper to sa_input-wrapper_sf */
-  color: #999999;
-}
-
-.sa_powered-by_sf{ /* Renamed from sa_powered-by to sa_powered-by_sf */
+  margin-bottom: 20px;
   width: 100%;
-  max-width: 500px;
+  max-width: 450px;
+}
+
+/* Link containers */
+.sa_signup-link_sf {
+  width: 100%;
+  max-width: 450px;
   display: flex;
   justify-content: center;
-  align-items: center;
-  margin-top: 30px; /* Consistent margin-top */
-  text-align: center;
-  padding-top: 30px;
-  font-size: 14px;
-  color: #ffffff;
-}
- 
-.sa_forgot-password-link_sf { /* Renamed from sa_forgot-password-link to sa_forgot-password-link_sf */
-  width: 100%;
-  max-width: 500px;
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 20px; /* Consistent margin-bottom with form groups */
-  background: none; /* Ensure no background on this container */
-}
-
-.sa_signup-link_sf { /* Renamed from sa_signup-link to sa_signup-link_sf */
-  text-align: center;
-  color: #e6e0e0;
-  font-size: 16px;
-  gap: 4px;
-  margin-left:260px;
-  margin-top: 10px; /* Consistent margin-top */
-  margin-bottom: 10px; /* Added margin-bottom for spacing after link */
-}
-
-.sa_signup-link_sf p { /* Renamed from sa_signup-link to sa_signup-link_sf */
-    margin: 0; /* Remove default paragraph margin */
-}
-
-.sa_signup-link_sf .sa_link-button_sf { /* Renamed from sa_link-button to sa_link-button_sf */
+  margin-top: 15px;
+  margin-bottom: 15px;
   background: none;
-  border: none;
-  color: #9bc6ea;
-  font-size: 14px;
-  cursor: pointer;
-  opacity: 100%;
-  padding: 0;
-  transition: color 0.3s ease;
-  margin-right: 0;
-  text-decoration: underline;
 }
 
-.sa_link-button_sf:hover { /* Renamed from sa_link-button to sa_link-button_sf */
-  color: #4f96e3;
-  text-decoration: underline;
-}
-
-.sa_login-button_sf { /* Renamed from sa_login-button to sa_login-button_sf */
-  width: 60%;
-  background-color: #2b71ab;
-  color: white;
-  border: none;
-  padding: 14px;
-  border-radius: 18px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  margin-bottom: 12px; /* Consistent margin-bottom */
-  margin-left:190px; /* Center button horizontally */
-  margin-right: auto; /* Center button horizontally */
-  transition: background-color 0.3s ease;
-}
-
-.sa_login-button_sf:hover { /* Renamed from sa_login-button to sa_login-button_sf */
-  background-color: #0056b3;
-}
-.sa_login-button_sf:active { /* Renamed from sa_login-button to sa_login-button_sf */
-  background-color: #2a7ecc;
-}
-
-.sa_password-toggle_sf:hover { /* Renamed from sa_password-toggle to sa_password-toggle_sf */
-  color: #ffffff;
-}
-
-.sa_powered-by_sf { /* Renamed from sa_powered-by to sa_powered-by_sf */
-  margin-top: 30px;
+/* Powered by section */
+.sa_powered-by_sf {
+  margin-top: auto;
   text-align: center;
-  padding-top: 30px;
-  font-size: 14px;
-  color: #ffffff;
+  padding-top: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.sa_powered-by_sf img {
+  width: 35px; /* Matched to LoginForm: Slightly larger logo */
+  height: auto;
+}
+
+/* Media Queries for responsiveness */
+@media (max-width: 768px) {
+  .sa_login-container_sf {
+    max-width: 90%;
+    padding: 30px 20px;
+    min-height: auto;
+  }
+  .sa_form-group.horizontal_sf {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .sa_signup-link_sf {
+    max-width: 100%;
+  }
 }
 
 @media (max-width: 480px) {
-  .sa_header-section_sf { /* Renamed from sa_header-section to sa_header-section_sf */
-    margin-bottom: 40px;
-    padding: 15px;
+  .sa_header-section2_sf {
+    margin-bottom: 20px;
   }
+  .sa_logo-section_sf h1 {
+    font-size: 30px !important;
+  }
+  .sa_login-container_sf {
+    padding: 25px 15px;
+  }
+}
 
-  .sa_logo-section_sf { /* Renamed from sa_logo-section to sa_logo-section_sf */
-    margin-bottom: 15px;
-  }
+/* --- Autofill Styles for Webkit Browsers (Chrome, Safari, Edge, Bing) --- */
+/* Target the actual input element within Material UI's structure */
+.MuiInputBase-input:-webkit-autofill,
+.MuiInputBase-input:-webkit-autofill:hover,
+.MuiInputBase-input:-webkit-autofill:focus,
+.MuiInputBase-input:-webkit-autofill:active {
+    /* Set background to transparent */
+    background-color: transparent !important;
+    background-image: none !important;
+    /* Remove any box-shadow that might create a background */
+    -webkit-box-shadow: none !important;
+    box-shadow: none !important;
 
-  .sa_logo_sf img { /* Renamed from sa_logo to sa_logo_sf */
-    width: 80px;
-    height: 80px;
-  }
+    /* Force text color */
+    -webkit-text-fill-color: #e0e0e0 !important;
+    color: #e0e0e0 !important;
 
-  .sa_logo-section_sf h1 { /* Renamed from sa_logo-section to sa_logo-section_sf */
-    font-size: 30px;
-    margin: 15px 0 10px 0;
-  }
+    /* Ensure cursor is visible */
+    caret-color: #e0e0e0 !important;
 
-  .sa_logo-section_sf p { /* Renamed from sa_logo-section to sa_logo-section_sf */
-    font-size: 16px;
-  }
+    /* Force border color - use a slightly brighter blue for autofill border */
+    border-color: rgba(0, 150, 255, 0.6) !important;
 
-  .sa_login-container_sf { /* Renamed from sa_login-container to sa_login-container_sf */
-    max-width: 90%;
-    padding: 15px;
-  }
+    /* Apply a long transition to hide the browser's default autofill background animation */
+    transition: background-color 5000s ease-in-out 0s;
 
-  .sa_form-group_sf { /* Renamed from sa_form-group to sa_form-group_sf */
-    font-size: 14px;
-  }
+    /* Ensure text is not cut off by explicitly setting padding and height */
+    height: 56px !important; /* Matches CustomTextField height */
+    padding: 0 14px !important; /* Explicit padding for consistency */
 
-  .sa_input-wrapper_sf { /* Renamed from sa_input-wrapper to sa_input-wrapper_sf */
-    padding: 12px;
-  }
+    /* Crucial for preventing zoom: Ensure font size is 16px or higher */
+    font-size: 17px !important; /* Explicitly set to 17px to prevent zoom */
+    line-height: normal !important; /* Ensure line height doesn't cause clipping */
 
-  .sa_input-wrapper_sf input { /* Renamed from sa_input-wrapper to sa_input-wrapper_sf */
-    font-size: 14px;
-  }
+    /* Additional property for robustness in some Chromium versions */
+    appearance: none !important;
 
-  .sa_login-button_sf { /* Renamed from sa_login-button to sa_login-button_sf */
-    font-size: 14px;
-    padding: 12px;
-  }
-
-  .sa_password-toggle_sf { /* Renamed from sa_password-toggle to sa_password-toggle_sf */
-    font-size: 16px;
-  }
+    /* Crucial: Ensure no outline or text-shadow is applied after autofill/focus */
+    outline: none !important;
+    text-shadow: none !important;
 }

@@ -22,7 +22,6 @@ body .floating-element-2 {
   display: none; /* Hide these elements */
 }
 
-
 /* Main Container (queue-page) now acts as a content wrapper */
 .queue-page {
   min-height: 100vh;
@@ -58,11 +57,11 @@ body .floating-element-2 {
   min-width: 320px;
   height: auto;
   /* --- RE-ADDED VISUAL STYLES FOR INDIVIDUAL BOXES --- */
-  background: rgba(255, 255, 255, 0.05); /* Subtle transparent background */
-  border: 1px solid rgba(255, 255, 255, 0.1); /* Subtle border */
-  border-radius: 20px; /* Rounded corners */
-  backdrop-filter: blur(15px); /* Glassmorphism effect */
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4); /* Soft shadow */
+  background-color: #1E1E2F; /* This is the subtle background you're seeing */
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  backdrop-filter: blur(15px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
   /* --------------------------------------------------- */
   
   padding: clamp(1.5rem, 3vw, 2rem); /* Kept padding for content spacing */
@@ -163,6 +162,13 @@ body .floating-element-2 {
   flex-direction: column;
   gap: 0.75rem;
   margin-bottom: 1rem;
+}
+
+/* Styling for SVG icons */
+.category-icon {
+  width: 1.5em; 
+  height: 1.5em; 
+  margin-right: 8px;
 }
 
 .category-header {
@@ -332,11 +338,11 @@ body .floating-element-2 {
   gap: 8px;
 }
 
-.language-icon {
+/* .language-icon {
   width: 24px;
   height: 24px;
   filter: brightness(1.2);
-}
+} */
 
 .language-dropdown {
   padding: 0.6rem 1rem;
@@ -350,10 +356,21 @@ body .floating-element-2 {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
-  background-image: url('data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2220%22%20height%3D%2220%22%20viewBox%3D%220%200%2020%2020%22%20fill%3D%22none%22%3E%3Cpath%20d%3D%22M6%208L10%2012L14%208%22%20stroke%3D%22%23A0AEC0%22%20stroke-width%3D%221.5%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fsvg%3E');
-  background-repeat: no-repeat;
-  background-position: right 0.75rem center;
-  background-size: 1em;
+  
+  /* --- NEW STYLES FOR GLOBE ICON AND CHECKBOX ARROW --- */
+  /* Two background images: globe on left, checkbox on right */
+  background-image: 
+    url('data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23e2e8f0%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%2212%22%20r%3D%2210%22%2F%3E%3Cpath%20d%3D%22M12%202a14.5%2014.5%200%200%201%200%2020%2014.5%2014.5%200%200%201%200-20%22%2F%3E%3Cpath%20d%3D%22M2%2012h20%22%2F%3E%3C%2Fsvg%3E'), /* Globe icon SVG */
+    /* url('data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2220%22%20height%3D%2220%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23A0AEC0%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%2220%206%209%2017%204%2012%22%2F%3E%3C%2Fsvg%3E'); Checkbox/Tick icon SVG */
+    url('data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2220%22%20height%3D%2220%22%20viewBox%3D%220%200%2020%2020%22%20fill%3D%22none%22%3E%3Cpath%20d%3D%22M6%208L10%2012L14%208%22%20stroke%3D%22%23A0AEC0%22%20stroke-width%3D%221.5%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fsvg%3E');
+  
+  background-repeat: no-repeat, no-repeat;
+  background-position: 0.75rem center, right 0.75rem center; /* Globe on left, Checkbox on right */
+  background-size: 1.2em, 1em; /* Adjust size of globe and checkbox icons */
+
+  padding-left: 2.5rem; /* Make space for the globe icon on the left */
+  padding-right: 2.25rem; /* Make space for the checkbox icon on the right */
+  /* --- END NEW STYLES --- */
 }
 
 .language-dropdown:focus {

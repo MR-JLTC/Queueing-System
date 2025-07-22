@@ -1,21 +1,78 @@
-import React, { useState } from 'react';
+// SA_LoginForm.jsx
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './SA_LoginForm.css';
-import showIcon from '../assets/visibility_on.svg';
-import hideIcon from '../assets/visibility_off.svg';
+import './SA_LoginForm.css'; // Keep this for page-level/background styles
 import PopupMessage from "../shared_comp/popup_menu/PopupMessage";
 import { showPopupMessage } from "../shared_comp/utils/popupUtils";
-import { useEffect } from 'react';
+import bcrypt from 'bcryptjs';
+import axios from 'axios';
+
+// Import Material UI components
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
+import InputAdornment from '@mui/material/InputAdornment';
+import IconButton from '@mui/material/IconButton';
+import { styled } from '@mui/material/styles';
+
+// Import Material UI Icons
+import AccountCircle from '@mui/icons-material/AccountCircle';
+import MailOutline from '@mui/icons-material/MailOutline';
+import LockOutlined from '@mui/icons-material/LockOutlined';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
+
+// Styled TextField for consistent professional look and improved visibility
+const CustomTextField = styled(TextField)(({ theme }) => ({
+  '& .MuiInputBase-root': {
+    backgroundColor: '#333b4d', // Distinct dark blue-gray for input background
+    color: '#e0e0e0', // Lighter text color
+    borderRadius: '10px',
+    border: '1px solid rgba(0, 123, 255, 0.4)', // Subtle blue border
+    transition: 'border-color 0.3s ease, box-shadow 0.3s ease',
+    height: '56px', // Explicit height for better consistency and to prevent cutting
+    padding: '0 14px', // Adjust padding for inner text
+    fontSize: '18px', // Adjusted font size for input text to fit comfortably and be readable
+    '&:hover fieldset': {
+      borderColor: '#007bff !important', // Blue border on hover
+    },
+    '&.Mui-focused fieldset': {
+      borderColor: '#007bff !important', // Bright blue border on focus
+      boxShadow: '0 0 0 3px rgba(0, 123, 255, 0.25)', // Subtle blue glow
+    },
+    '& fieldset': {
+      borderColor: 'transparent', // Hide default border
+    },
+  },
+  '& .MuiInputLabel-root': {
+    color: 'rgba(224, 224, 224, 0.9)', // Label color, slightly transparent
+    fontSize: '18px', // Increased font size for labels (unshrunk)
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    // Adjusted label position to ensure it's not cut off with increased font size and height
+    transform: 'translate(14px, 18px) scale(1)',
+    '&.MuiInputLabel-shrink': {
+      transform: 'translate(14px, -9px) scale(0.75)', // Adjusted shrunk label position
+      fontSize: '15px', // Smaller font size when shrunk
+    },
+  },
+  '& .MuiInputLabel-root.Mui-focused': {
+    color: '#007bff', // Label color when focused
+  },
+  '& .MuiInputBase-input::placeholder': {
+    color: '#a0a0a0', // Placeholder color for better visibility
+    opacity: 1,
+  },
+  // Style for the helper text (e.g., for pattern validation)
+  '& .MuiFormHelperText-root': {
+    color: '#ffc107', // A warning color for hints
+    fontSize: '14px', // Adjusted font size for helper text (less prominent than input text)
+    marginLeft: '14px', // Align with input padding
+  },
+}));
+
 
 const LoginForm = () => {
-  useEffect(() => {
-    
-  const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
-    if (isLoggedIn) {
-      // navigate("/dashboard", { replace: true }); // Prevent back navigation
-    }
-  }, []);
-
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     username: '',
@@ -24,29 +81,121 @@ const LoginForm = () => {
   });
   const [popup, setPopup] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
+  const [emailError, setEmailError] = useState(false);
+
+  const API_BASE_URL = 'http://localhost:3000';
+
+  useEffect(() => {
+    const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+    if (isLoggedIn) {
+      // navigate("/dashboard", { replace: true });
+    }
+  }, []);
+
+  // Helper function to validate email format
+  const validateEmail = (email) => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+
+    if (name === 'email') {
+      if (value && !validateEmail(value)) {
+        setEmailError(true);
+      } else {
+        setEmailError(false);
+      }
+    }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // const validUsername = 'admin';
-    const validPassword = '1234';
-    const validEmail = 'admin@gmail.com';
+    // Validate that at least one of username or email is provided
+    if (!formData.username && !formData.email) {
+      showPopupMessage(setPopup, "error", "Please enter either a username or an email.");
+      return;
+    }
+    // Validate password is provided
+    if (!formData.password) {
+      showPopupMessage(setPopup, "error", "Please enter your password.");
+      return;
+    }
 
-    if (
-      // formData.username === validUsername &&
-      formData.password === validPassword &&
-      formData.email === validEmail
-    ) {
-      showPopupMessage(setPopup, "success", "Login successful!");
-      localStorage.setItem("isLoggedIn", "true");
-      setTimeout(() => navigate('/dashboard'), 700);
-    } else {
-      showPopupMessage(setPopup, "error", "Invalid credentials. Please try again.");
+    // Final email validation before submission
+    if (formData.email && !validateEmail(formData.email)) {
+      showPopupMessage(setPopup, "error", "Please enter a valid email address.");
+      setEmailError(true); // Ensure error state is set for visual feedback
+      return;
+    }
+
+    try {
+      // Fetch users from the backend
+      const response = await axios.get(`${API_BASE_URL}/users`);
+      const users = response.data;
+
+      if (!users || users.length === 0) {
+        showPopupMessage(setPopup, "error", "No users found in the system. Please sign up first.");
+        return;
+      }
+
+      // Find user by email or username (case-insensitive)
+      const user = users.find(u =>
+        (formData.email && u.email.toLowerCase() === formData.email.toLowerCase()) ||
+        (formData.username && u.username.toLowerCase() === formData.username.toLowerCase())
+      );
+
+      if (user) {
+        // Compare provided password with hashed password from database
+        const isPasswordValid = await bcrypt.compare(formData.password, user.passwordHash);
+
+        if (isPasswordValid) {
+          showPopupMessage(setPopup, "success", "Login successful!");
+          // Store user details in localStorage upon successful login
+          localStorage.setItem("isLoggedIn", "true");
+          localStorage.setItem("userEmail", user.email);
+          localStorage.setItem("userId", user.userId);
+          localStorage.setItem("roleId", user.roleId);
+          localStorage.setItem("username", user.username);
+          localStorage.setItem("fullName", user.fullName);
+
+          // Redirect to dashboard after a short delay for popup message visibility
+          setTimeout(() => navigate('/dashboard'), 700);
+        } else {
+          showPopupMessage(setPopup, "error", "Invalid credentials. Please try again.");
+        }
+      } else {
+        showPopupMessage(setPopup, "error", "Invalid credentials. Please try again.");
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      let errorMessage = "An unexpected error occurred. Please try again later.";
+
+      // Detailed error handling for Axios errors
+      if (axios.isAxiosError(error)) {
+        if (error.response) {
+          // Server responded with a status code outside of 2xx range
+          if (error.response.status === 404) {
+            errorMessage = "Login failed: API endpoint not found. Please check backend server.";
+          } else if (error.response.data && error.response.data.message) {
+            errorMessage = `Login failed: ${error.response.data.message}`;
+          } else {
+            errorMessage = `Login failed: Server responded with status ${error.response.status}.`;
+          }
+        } else if (error.request) {
+          // Request was made but no response was received
+          errorMessage = "Login failed: No response from server. Please ensure the backend is running.";
+        } else {
+          // Something happened in setting up the request that triggered an Error
+          errorMessage = `Login failed: ${error.message}`;
+        }
+      } else {
+        // Generic error
+        errorMessage = `Login failed: ${error.message}`;
+      }
+      showPopupMessage(setPopup, "error", errorMessage);
     }
   };
 
@@ -66,88 +215,176 @@ const LoginForm = () => {
       <div className="sa_header-section2">
         <div className="sa_logo-section">
           <div className="sa_logo">
-            <img src="/src/assets/sys_logo.png" alt="Bahandi Logo" />
+            <img src="/src/assets/sys_logo.png" alt="System Logo" />
           </div>
           <h1 className="sa_inter-font">
             <span style={{ color: 'white' }}>Super Admin Log In Portal</span>
           </h1>
-          <p>Please log in to your account using the form below.</p>
+          <p className="text-gray-300 font-light">Please log in to your account using the form below.</p>
         </div>
       </div>
       <form className="sa_login-container" onSubmit={handleSubmit}>
-        {/* <div className="form-group horizontal">
-          <label className="input-label">
-            <img src="/src/assets/person.svg" alt="Username Icon" className="input-icon-svg" />
-            Username:
-          </label>
-          <input type="text" name="username" value={formData.username} onChange={handleInputChange} required />
-        </div> */}
+        {/* Username Input Field
         <div className="sa_form-group horizontal">
-          <label className="sa_email-label">
-            <img src="/src/assets/mail.svg" alt="Mail Icon" className="input-icon-svg" />
-            Email:
-          </label>
-          <input
-            type="email"
+          <CustomTextField
+            fullWidth
+            label="Username" // Re-added label for Material UI standard
+            name="username"
+            value={formData.username}
+            onChange={handleInputChange}
+            inputProps={{ autocomplete: 'off' }}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start" sx={{ ml: '2px' }}>
+                  <AccountCircle sx={{ color: '#a0a0a0', fontSize: '24px' }} />
+                </InputAdornment>
+              ),
+            }}
+            variant="outlined"
+            sx={{ mb: 2 }}
+          />
+        </div> */}
+
+        {/* Email Input Field */}
+        <div className="sa_form-group horizontal">
+          <CustomTextField
+            fullWidth
             name="email"
+            type="email"
+            placeholder='Enter your email'
             value={formData.email}
             onChange={handleInputChange}
-            required
-            pattern=".+@.+\..+"
-            title="Please enter a valid email address that includes a '.'"
+            error={emailError}
+            helperText={emailError ? "Please enter a valid email address." : "e.g., user@example.com"}
+            inputProps={{ autocomplete: 'off' }}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start" sx={{ ml: '2px' }}>
+                  <MailOutline sx={{ color: '#a0a0a0', fontSize: '24px' }} />
+                </InputAdornment>
+              ),
+            }}
+            variant="outlined"
+            sx={{ mb: 2 }}
           />
         </div>
+
+        {/* Password Input Field */}
         <div className="sa_form-group horizontal">
-          <label className="sa_input-label">
-            <img src="/src/assets/lock.svg" alt="Password Icon" className="input-icon-svg" />
-            Password:
-          </label>
-          <div className="sa_password-input-container">
-            <input
-              type={showPassword ? "text" : "password"}
-              name="password"
-              value={formData.password}
-              onChange={handleInputChange}
-              required
-              maxLength={9}
-            />
-            <button type="button" className="sa_password-toggle" onClick={togglePasswordVisibility}>
-              <img
-                src={showPassword ? showIcon : hideIcon}
-                alt={showPassword ? "Hide password" : "Show password"}
-                className="sa_password-icon"
-              />
-            </button>
-          </div>
+          <CustomTextField
+            fullWidth
+            placeholder='Enter your password'
+            name="password"
+            type={showPassword ? "text" : "password"}
+            value={formData.password}
+            onChange={handleInputChange}
+            required
+            inputProps={{ maxLength: 9, autocomplete: 'new-password' }}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start" sx={{ ml: '2px' }}>
+                  <LockOutlined sx={{ color: '#a0a0a0', fontSize: '24px' }} />
+                </InputAdornment>
+              ),
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={togglePasswordVisibility}
+                    edge="end"
+                    sx={{ color: '#a0a0a0', '&:hover': { color: '#e0e0e0' } }}
+                  >
+                    {showPassword ? <VisibilityOff sx={{ fontSize: '24px' }} /> : <Visibility sx={{ fontSize: '24px' }} />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+            variant="outlined"
+            sx={{ mb: 2 }}
+          />
         </div>
-        <div className="sa_forgot-password-link">
-          <button
-            type="button"
-            className="sa_link-button"
+
+        {/* Forgot Password Link */}
+        <div className="sa_forgot-password-link w-full max-w-md flex justify-end">
+          <Button
             onClick={() => navigate('/SuperAdminForgot')}
+            sx={{
+              color: '#8ab4f8',
+              textTransform: 'none',
+              '&:hover': {
+                color: '#a8c7fa',
+                textDecoration: 'underline',
+                backgroundColor: 'transparent'
+              },
+              padding: 0,
+              minWidth: 'auto',
+              fontSize: '16px'
+            }}
           >
             Forgot password?
-          </button>
+          </Button>
         </div>
-        <button type="submit" className="sa_login-button">Login</button>
-        {/* Moved "Don't have an account? Signup" link below the Login button */}
-        <div className="sa_signup-link">
-          <p>
-            Don't have an account?{' '}
-            <button
-              type="button"
-              className="sa_link-button"
-              onClick={() => navigate('/SuperAdminSignup')}
-            >
-              Signup
-            </button>
-          </p>
+
+        {/* Login Button */}
+        <Button
+          type="submit"
+          variant="contained"
+          sx={{
+            width: '80%',
+            maxWidth: '300px',
+            paddingY: '16px',
+            borderRadius: '28px',
+            backgroundColor: '#3498db',
+            color: 'white',
+            fontWeight: 600,
+            fontSize: '18px',
+            boxShadow: '0 4px 15px rgba(52, 152, 219, 0.4)',
+            transition: 'background-color 0.3s ease, transform 0.1s ease, box-shadow 0.3s ease',
+            '&:hover': {
+              backgroundColor: '#2980b9',
+              transform: 'translateY(-2px)',
+              boxShadow: '0 6px 20px rgba(52, 152, 219, 0.5)',
+            },
+            '&:active': {
+              backgroundColor: '#21618c',
+              transform: 'translateY(0)',
+              boxShadow: '0 2px 10px rgba(52, 152, 219, 0.3)',
+            },
+            mt: 1,
+            mb: 2,
+          }}
+        >
+          Login
+        </Button>
+
+        {/* Signup Link */}
+        <div className="sa_signup-link text-gray-300 text-sm mt-4 flex items-center justify-center gap-1">
+          <p className="m-0" style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '16px', lineHeight: '1' }}>Don't have an account?</p>
+          <Button
+            onClick={() => navigate('/SuperAdminSignup')}
+            sx={{
+              color: '#8ab4f8',
+              textTransform: 'none',
+              '&:hover': {
+                color: '#a8c7fa',
+                textDecoration: 'underline',
+                backgroundColor: 'transparent'
+              },
+              padding: 0,
+              minWidth: 'auto',
+              fontSize: '16px',
+              paddingLeft: '4px',
+              lineHeight: '1.2',
+            }}
+          >
+            Signup
+          </Button>
         </div>
-        <div className="sa_powered-by">
-          <p>
-            Powered by{' '}
-            <img src="/src/assets/bahandi_logo.png" alt="Bahandi Logo" className="sa_input-icon-svg" />
-          </p>
+
+        {/* Powered By Section */}
+        <div className="sa_powered-by text-gray-400 text-xs mt-auto pt-4 flex items-center justify-center gap-2">
+          <p className="m-0" style={{ color: 'rgba(255, 255, 255, 0.6)' }}>Powered by</p>
+          <img src="/src/assets/bahandi_logo.png" alt="Bahandi Logo" className="w-5 h-auto opacity-70" />
         </div>
       </form>
     </div>
