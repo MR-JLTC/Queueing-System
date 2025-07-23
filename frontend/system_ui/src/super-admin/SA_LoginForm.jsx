@@ -146,7 +146,7 @@ const LoginForm = () => { // Component name is LoginForm as per your file
         showPopupMessage(setPopup, "error", "No users found in the system. Please sign up first.");
         return;
       }
-
+      
       // Find user by email or username (case-insensitive)
       const user = users.find(u =>
         (formData.email && u.email.toLowerCase() === formData.email.toLowerCase()) ||

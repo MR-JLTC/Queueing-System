@@ -1,462 +1,180 @@
-/* File: Dashboard.css */
+/* src/admin/Dashboard.css */
 
-/* General layout */
+/* Ensure the root element fills the viewport */
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden; /* Prevent overall scrollbar unless content overflows specific areas */
+  font-family: 'Inter', sans-serif; /* Consistent font */
+}
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
-.dashboard-layout {
+/* Base styles for the dashboard page */
+.admin-dashboard-page {
   display: flex;
-  height: 100vh;
-  background-color: #14142B;
-  color: white;
-  font-family: 'Inter', sans-serif;
-  font-weight: 400;
+  min-height: 100vh; /* Ensure it takes full viewport height */
+  background-color: #1E1E2F; /* NEW: Darker background color */
+  color: #e0e0e0; /* Default text color */
 }
 
-/* Sidebar */
-.sidebar-header .admin-name{
-   margin-left: 10px;
-   font-size: 23px;
-  
-}
-.sidebar-header .admin-name h4{
-color: #FFCE4E;
-}
-
-.sidebar {
-  width: 240px;
-   height: 100vh;  
-  background-color: #1C1C3A;
-  justify-content: space-between; 
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-}
- .sidebar-bottom {
-  margin-top: auto;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-}
-
-.sidebar-logo img {
-    width: 45px;
-    height: 45px;
-  }
-.sidebar-header {
-  display: flex;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.admin-avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%; /* Makes it round */
-}
-.sidebar-nav {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-.sidebar-nav button {
-  display: block;
-  width: 100%;
-  padding: 10px;
-  background: none;
-  border: none;
-  color: white;
-  text-align: left;
-  font-size: 16px;
-  cursor: pointer;
- 
-}
-/* .sidebar .admin-name{
-  margin-left: 10px;
-} */
-
-.sidebar-nav .active {
-  background-color: #FFCE4E;
-  color: black;
-  border-radius: 6px;
-  font-weight: bold;
-}
-
-/* Main content */
-.dashboard-content {
-  flex-grow: 1;
-  padding: 20px;
-  min-height: 100vh;
-  background-color: #14142B;
+/* Custom scrollbar for content areas if needed */
+.MuiBox-root[component="main"] {
   overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #555 #333;
 }
 
+.MuiBox-root[component="main"]::-webkit-scrollbar {
+  width: 8px;
+}
 
+.MuiBox-root[component="main"]::-webkit-scrollbar-track {
+  background: #333;
+  border-radius: 10px;
+}
 
-/* Header */
-.dashboard-header {
-  position: relative;
+.MuiBox-root[component="main"]::-webkit-scrollbar-thumb {
+  background-color: #555;
+  border-radius: 10px;
+  border: 2px solid #333;
+}
+
+/* General Material UI overrides for consistent theme */
+.MuiAppBar-root {
+  background-color: #1a2430 !important; /* Darker header */
+  color: #e0e0e0 !important;
+}
+
+.MuiDrawer-paper {
+  background-color: #1a2430 !important; /* Darker sidebar background */
+  color: #e0e0e0 !important;
+}
+
+/* Table styling */
+.data-table {
   width: 100%;
-  padding: 30px 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-
-}
-.dashboard-title {
+  border-collapse: separate; /* Use separate for rounded corners on cells */
+  border-spacing: 0 8px; /* Space between rows */
   margin-top: 20px;
-
 }
 
-.dashboard-title h1 {
-  font-size: 30px;
-  font-weight: bold;
-  color: #FFCE4E;
-}
-.datetime {
-  /* margin-top: auto; */
-  text-align: center;
-  font-size: smaller;
-  font-family: 'Inter';
-}
-.branch-box {
-  background-color: #FFCE4E;
-  color: rgb(0, 0, 0);
-  padding: 10px 16px;
-  border-radius: 6px;
-  text-align: center;
-  font-weight: 500;
-  margin-bottom: 10px;
+.data-table thead tr {
+  background-color: #1f2a3a; /* Darker header background */
+  color: #8ab4f8; /* Header text color */
+  font-weight: 600;
+  border-radius: 8px; /* Rounded corners for header row */
+  overflow: hidden; /* Ensures border-radius applies */
 }
 
-
-.branch-menu {
-  margin-top: 5px;
-  background-color: #2E2E5E;
-  border: 1px solid #444;
-  border-radius: 6px;
-  list-style: none;
-  padding: 0;
-  position: absolute;
-  right: 0;
-  z-index: 10;
-  width: 160px;
-}
-.branch-menu li {
-  padding: 10px;
-  cursor: pointer;
-  color: white;
-}
-
-.branch-menu li:hover {
-  background-color: #FFCE4E;
-  color: black;
-}
-
-.summary-cards {
-  display: flex;
-  justify-content: center;
-  gap: 50px; 
-  flex-wrap: wrap;
-  margin-bottom: 30px;
-}
-
-
-
-.summary-card {
-  background-color: #2E2E5E;
-  padding: 0 10px 0 10px;
-  border-radius: 10px;
-  width: 200px;
-  height: 110px;
-  text-align: center;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.summary-card h3 {
-  font-size: 30px;
-  font-weight: 500 !;
-  text-shadow: #FFCE4E;
-  color: #FFCE4E;
-  margin-top: -30px; 
-}
-.card-label {
-  margin-top: 10px;
-  display: flex;
-  align-items: flex-start; 
-  gap: 10px;
-  position: relative;
+.data-table th {
+  padding: 15px;
   text-align: left;
-} 
-.label-text {
-  display: inline-block;
-  line-height: 1.2;
-  font-weight: 300 !important;
-}
-.card-icon {
-  width: 32px;
-  height: 32px;
-}
-.icon-label-row {
-  display: flex;
-  align-items: center;
- margin-right: 40px;
-  margin-bottom: 10px;
-  justify-content: center;
-}
-.icon-box {
-  background-color: #1C1C3A;
-  padding: 10px;
-  border-radius: 10px;
-  box-shadow: 0 0 12px #FFCE4E;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  align-self: flex-start;      
-  margin-top: 30px; 
-  margin-right: 15px;            
+  border-bottom: 2px solid rgba(0, 123, 255, 0.1); /* Subtle separator */
+  white-space: nowrap; /* Prevent text wrapping in headers */
 }
 
-
-
-
-
-.queue-controls {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px; 
-  width: 100%;
-  max-width: 800px;
-  margin-left: auto;
-  margin-right: auto;
-  gap: 10px;
-}
-.queue-controls input[type="text"] {
-  border: 1px solid white;
-  outline: none;
-  background-color: #2E2E5E;
-  color: white;
-  border-radius: 6px;
-  padding: 8px 12px;
+.data-table tbody tr {
+  background-color: #283747; /* Row background */
+  color: #e0e0e0; /* Row text color */
+  border-radius: 8px; /* Rounded corners for rows */
+  overflow: hidden;
+  transition: background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
 }
 
-
-.queue-controls input,
-.queue-controls select {
-  background-color: #2E2E5E;
-  color: white;
-  border: 1px solid white;
-  padding: 8px 12px;
-  border-radius: 6px;
-}
-.queue-table {
-  width: 100%;
-  border-collapse: collapse;
-  table-layout: fixed;
-}
-.queue-table th,
-.queue-table td {
-  padding: 10px;
-  border-bottom: 1px solid #444;
-  text-align: left;
-}
-.table-body-scroll {
-  max-height: 310px; 
-  overflow-y: auto;
-}
-.queue-status {
-  background-color: #1C1C3A;
-  padding: 20px;
-  border-radius: 10px;
-  
-  max-width: 800px;
-  margin-left: auto;
-  margin-right: auto;
-  max-height: 390px; 
- 
-}
-.queue-status-title {
-  font-size: 24px;
-  font-weight: bold;
-  color: #FFCE4E;
-  margin-bottom: 12px;
-  text-align: center;
+.data-table tbody tr:hover {
+  background-color: #334455; /* Darker on hover */
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
 }
 
-.status-completed {
-  color: #4CAF50;
-  
+.data-table td {
+  padding: 15px;
+  border-bottom: 1px solid rgba(255,255,255,0.05); /* Lighter separator between cells */
+  white-space: nowrap; /* Prevent text wrapping in cells */
 }
 
-.status-cancelled {
-  color: #FFA500;
- 
-}
-.category-priority {
-  color: #FF4C4C; 
-  font-weight: bold;
+/* Remove bottom border for the last row's cells */
+.data-table tbody tr:last-child td {
+  border-bottom: none;
 }
 
-
-.queue-search {
-  position: relative;
-  width: 100%;
-}
-.queue-search ::placeholder {
-  color: #ebe6db;
-}
-.queue-search input {
-  width: 100%;
-  padding: 8px 36px 8px 12px;
-  border: 1px solid white;
-  background-color: #2E2E5E;
-  color: white;
-  border-radius: 6px;
-  outline: none;
-}
-.queue-search .search-button {
-  position: absolute;
-  top: 50%;
-  right: 8px;
-  transform: translateY(-50%);
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  transition: filter 0.2s ease, transform 0.2s ease;
-}
-.queue-search .search-button img {
-  width: 18px;
-  height: 18px;
-  filter: invert(1); 
-}
-.search-button:hover {
-  filter: brightness(1.3);
-  transform: translateY(-50%) scale(1.1);
+/* Specific style for priority rows */
+.data-table .priority-row {
+  background-color: #4a3030; /* Dark red background for priority */
+  color: #ffc107; /* Yellow text for priority */
+  font-weight: 600;
 }
 
-.queue-monitoring {
-  background-color: #1C1C3A;
-  padding: 20px;
-  border-radius: 10px;
+.data-table .priority-row:hover {
+  background-color: #5c3a3a; /* Darker red on hover */
 }
 
-.history-controls {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 10px;
-}
-
-.history-controls input[type="date"] {
-  background-color: #2E2E5E;
-  color: white;
-  border: none;
-  padding: 6px 10px;
-  border-radius: 6px;
-}
-
-.time-filters {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
-}
-
-.time-filters button {
-  background-color: #2E2E5E;
-  color: white;
-  border: none;
-  padding: 6px 10px;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-.time-filters .active {
-  background-color: #FFCE4E;
-  color: black;
-  font-weight: bold;
-}
-
-.queue-stats {
-  display: flex;
-  gap: 20px;
-  justify-content: space-around;
-  margin-bottom: 20px;
-  text-align: center;
-}
-
-.queue-stats div strong {
-  display: block;
-  font-size: 20px;
-  color: #FFCE4E;
-  margin-top: 4px;
-}
-
-.pie-chart {
-  text-align: center;
-  padding: 20px;
-  background-color: #2E2E5E;
-  border-radius: 10px;
-}
-.blurred {
-  filter: blur(4px);
-  pointer-events: none;
-  user-select: none;
-}
-
-.logout-modal {
+/* Modal Overlay */
+.modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.7); /* Dark semi-transparent overlay */
   display: flex;
-  align-items: center;
   justify-content: center;
-  z-index: 1000;
+  align-items: center;
+  z-index: 1300; /* Above Material-UI drawers/appbars */
 }
 
-.modal-content {
-  
-  padding: 2rem;
-  border-radius: 10px;
+.logout-modal {
+  background-color: #1f2a3a; /* Dark modal background */
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
   text-align: center;
-  font-weight: 600;
-  font-size: 25px;
-  width: 500px;
-  
+  max-width: 400px;
+  width: 90%;
+  border: 1px solid rgba(0, 123, 255, 0.2);
 }
 
-.modal-buttons {
-  margin-top: 1rem;
-  height: 40px;
-  display: flex;         
-  gap: 30px;           
-  justify-content: center; 
+/* Responsive adjustments for tables */
+@media (max-width: 768px) {
+  .data-table, .data-table tbody, .data-table tr, .data-table td {
+    display: block;
+  }
+
+  .data-table thead {
+    display: none; /* Hide table headers on small screens */
+  }
+
+  .data-table tr {
+    margin-bottom: 15px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+  }
+
+  .data-table td {
+    text-align: right;
+    padding-left: 50%;
+    position: relative;
+    border: none;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+
+  .data-table td::before {
+    content: attr(data-label); /* Use data-label for pseudo-elements */
+    position: absolute;
+    left: 15px;
+    width: calc(50% - 30px);
+    padding-right: 10px;
+    white-space: nowrap;
+    text-align: left;
+    font-weight: 600;
+    color: #8ab4f8;
+  }
 }
 
-.modal-buttons button {
-  margin: 0 10px;
-  padding: 8px 16px;
-  border: none;
-  border-radius: 26px;
-  cursor: pointer;
-  font-weight: bold;
-  width: 60px;
-
+/* Ensure font size for autofill inputs is 16px or higher to prevent zoom on mobile */
+/* This is a common issue with Material-UI TextFields and autofill */
+.MuiInputBase-input:-webkit-autofill,
+.MuiInputBase-input:-webkit-autofill:hover,
+.MuiInputBase-input:-webkit-autofill:focus,
+.MuiInputBase-input:-webkit-autofill:active {
+  font-size: 16px !important; /* Crucial for preventing mobile zoom */
 }
 
-.modal-buttons .confirm {
-  background-color: #007BFF;
-  color: white;
-}
-
-.modal-buttons .cancel {
-  background-color: #ccc;
-  color: black;
-}
