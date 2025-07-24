@@ -12,6 +12,7 @@ import { QueueTicketsModule } from './queue-tickets/queue-tickets.module';
 import { TicketStatusHistoryModule } from './ticket-status-history/ticket-status-history.module';
 import { DailyQueueSummaryModule } from './daily-queue-summary/daily-queue-summary.module';
 import { BranchesModule } from './branches/branches.module'; 
+import { DashboardModule } from './dashboard/dashboard.module';
 
 @Module({
   imports: [
@@ -26,7 +27,8 @@ import { BranchesModule } from './branches/branches.module';
     QueueTicketsModule,
     TicketStatusHistoryModule,
     DailyQueueSummaryModule,
-    BranchesModule
+    BranchesModule,
+    DashboardModule
   ],
   controllers: [],
   providers: [],
