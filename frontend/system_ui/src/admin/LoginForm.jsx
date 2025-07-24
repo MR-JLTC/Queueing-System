@@ -38,7 +38,7 @@ const CustomTextField = styled(TextField)(() => ({
       boxShadow: '0 0 0 3px rgba(0, 123, 255, 0.25)', // Subtle blue glow
     },
     '& fieldset': {
-      borderColor: 'transparent', // Hide default border
+      border: 'none', // Hide default border
     },
   },
   '& .MuiInputLabel-root': {
@@ -120,7 +120,7 @@ const LoginForm = () => {
 
     console.log("[LoginForm] Attempting login...");
     console.log("[LoginForm] Email entered:", formData.email);
-    console.log("[LoginForm] Password entered (plain):", formData.password); // For debugging, REMOVE IN PRODUCTION!
+    // console.log("[LoginForm] Password entered (plain):", formData.password); // For debugging, REMOVE IN PRODUCTION!
 
     // Validate email and password presence
     if (!formData.email || !formData.password) {
@@ -173,6 +173,16 @@ const LoginForm = () => {
           localStorage.setItem("roleId", userData.roleId);
           localStorage.setItem("username", userData.username); // Store username if available
           localStorage.setItem("fullName", userData.fullName);
+
+          // Store branchId if available
+          if (userData.branchId !== undefined && userData.branchId !== null) {
+            localStorage.setItem("branchId", userData.branchId.toString()); // Ensure it's stored as a string
+            console.log("[LoginForm] Stored branchId:", userData.branchId);
+          } else {
+            localStorage.removeItem("branchId"); // Ensure no old branchId is left if not assigned
+            console.warn("[LoginForm] No branchId found for this admin user.");
+          }
+
           showPopupMessage(setPopup, "success", "Login successful!");
           setTimeout(() => navigate('/AdminDashboard', { replace: true }), 700);
         } else {
@@ -236,10 +246,10 @@ const LoginForm = () => {
       <div className="header-section2">
         <div className="logo-section">
           <div className="logo">
-            <img src="/src/assets/sys_logo.png" alt="System Logo" /> {/* Assuming sys_logo.png is your main logo */}
+            <img src="/src/assets/sys_logo.png" alt="System Logo" />
           </div>
           <h1 className="inter-font">
-            <span style={{ color: 'white' }}>Welcome to </span><span style={{ color: '#007bff' }}>QLine</span> {/* Changed yellow to blue for consistency */}
+            <span style={{ color: 'white' }}>Welcome to </span><span style={{ color: '#007bff' }}>QLine</span>
           </h1>
           <p className="text-gray-300 font-light">Please log in to your account using the form below.</p>
         </div>
@@ -348,7 +358,7 @@ const LoginForm = () => {
             '&:active': {
               backgroundColor: '#21618c',
               transform: 'translateY(0)',
-              boxboxShadow: '0 2px 10px rgba(52, 152, 219, 0.3)',
+              boxShadow: '0 2px 10px rgba(52, 152, 219, 0.3)',
             },
             mt: 1,
             mb: 2,

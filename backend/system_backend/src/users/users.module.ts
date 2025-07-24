@@ -3,10 +3,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersService } from './users.service';
 import { UsersController } from './users.controller';
 import { User } from './entities/user.entity';
-import { Role } from '../roles/entities/role.entity'; // Import Role for relationship
+import { Role } from '../roles/entities/role.entity';
+import { Branch } from '../branches/entities/branch.entity'; // Import Branch entity
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, Role])], // Include Role here if not already in RolesModule
+  imports: [TypeOrmModule.forFeature([User, Role, Branch])], // Include Branch entity here
   controllers: [UsersController],
   providers: [UsersService],
   exports: [UsersService],

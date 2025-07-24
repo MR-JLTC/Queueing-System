@@ -1,0 +1,76 @@
+-- Insert Sample Roles (if not already done)
+INSERT INTO `roles` (`role_id`, `role_name`, `visibility_status`) VALUES
+(1, 'SuperAdmin', 'ON_LIVE'),
+(2, 'Admin', 'ON_LIVE'),
+(3, 'Staff', 'ON_LIVE'),
+(4, 'Client', 'ON_LIVE')
+ON DUPLICATE KEY UPDATE role_name=role_name;
+
+-- Insert Sample Branches
+INSERT INTO `branches` (`branch_name`, `branch_location`, `contact_number`, `visibility_status`) VALUES
+('Default Branch', 'Default', '000', 'ON_LIVE');
+
+-- Insert Sample Users
+-- Passwords are 'password123' hashed with bcrypt (cost 10)
+-- You should generate these hashes securely.
+-- Use a tool to generate bcrypt hash for 'password123' for example.
+-- Example hash for 'password123': $2a$10$abcdefghijklmnopqrstuvwx.abcdefghijklmnopqrstuvwx
+INSERT INTO `users` (`user_id`, `role_id`, `branch_id`, `full_name`, `username`, `email`, `password_hash`, `is_active`, `visibility_status`, `created_at`) VALUES
+(1, 1, NULL, 'Super Admin User', 'superadmin', 'superadmin@example.com', '$2a$10$eR/Nf8Z4Q5Y6X7Y8Z9A0O.2aBcDeFgHiJkLmNoPqRsTuVwXyZ12', TRUE, 'ON_LIVE', NOW()),
+(2, 2, 1, 'Admin Main Branch', 'adminmain', 'admin@example.com', '$2a$10$eR/Nf8Z4Q5Y6X7Y8Z9A0O.2aBcDeFgHiJkLmNoPqRsTuVwXyZ12', TRUE, 'ON_LIVE', NOW()),
+(3, 3, 1, 'Jhon Cruz', 'jhoncruz', 'jhon.cruz@example.com', '$2a$10$eR/Nf8Z4Q5Y6X7Y8Z9A0O.2aBcDeFgHiJkLmNoPqRsTuVwXyZ12', TRUE, 'ON_LIVE', NOW()),
+(4, 3, 1, 'Zandrah Orion', 'zandrah', 'zandrah.o@example.com', '$2a$10$eR/Nf8Z4Q5Y6X7Y8Z9A0O.2aBcDeFgHiJkLmNoPqRsTuVwXyZ12', TRUE, 'ON_LIVE', NOW()),
+(5, 2, 2, 'Admin North Branch', 'adminnorth', 'adminnorth@example.com', '$2a$10$eR/Nf8Z4Q5Y6X7Y8Z9A0O.2aBcDeFgHiJkLmNoPqRsTuVwXyZ12', TRUE, 'ON_LIVE', NOW())
+ON DUPLICATE KEY UPDATE full_name=full_name;
+
+-- Insert Sample Customer Categories
+INSERT INTO `customer_categories` (`category_id`, `category_name`, `visibility_status`) VALUES
+(1, 'Standard', 'ON_LIVE'),
+(2, 'PWD', 'ON_LIVE'),
+(3, 'Senior Citizen', 'ON_LIVE'),
+(4, 'Other', 'ON_LIVE')
+ON DUPLICATE KEY UPDATE category_name=category_name;
+
+-- Insert Sample Ticket Statuses
+INSERT INTO `ticket_statuses` (`status_code`, `status_label`, `visibility_status`) VALUES
+('Q', 'Queued', 'ON_LIVE'),
+('C', 'Called', 'ON_LIVE'),
+('S', 'Served', 'ON_LIVE'),
+('X', 'Cancelled', 'ON_LIVE'),
+('R', 'Requeued', 'ON_LIVE'),
+('N', 'No Show', 'ON_LIVE'),
+('D', 'Completed', 'ON_LIVE') -- Assuming 'D' for completed
+ON DUPLICATE KEY UPDATE status_label=status_label;
+
+-- Insert Sample Service Windows for Main Branch (branch_id = 1)
+INSERT INTO `service_windows` (`window_id`, `branch_id`, `counter_label`, `service_area`, `is_open`, `visibility_status`) VALUES
+(1, 1, 'Window 1', 'Front Desk', TRUE, 'ON_LIVE'),
+(2, 1, 'Window 2', 'Registrar', TRUE, 'ON_LIVE'),
+(3, 1, 'Window 3', 'Cashier', TRUE, 'ON_LIVE');
+
+-- Insert Sample Staff Window Assignments for Main Branch (branch_id = 1)
+INSERT INTO `staff_window_assignments` (`assignment_id`, `branch_id`, `staff_id`, `window_id`, `assigned_from`, `assigned_to`, `visibility_status`) VALUES
+(1, 1, (SELECT user_id FROM users WHERE username = 'jhoncruz' LIMIT 1), (SELECT window_id FROM service_windows WHERE counter_label = 'Window 1' AND branch_id = 1 LIMIT 1), NOW() - INTERVAL 1 DAY, NULL, 'ON_LIVE'),
+(2, 1, (SELECT user_id FROM users WHERE username = 'zandrah' LIMIT 1), (SELECT window_id FROM service_windows WHERE counter_label = 'Window 2' AND branch_id = 1 LIMIT 1), NOW() - INTERVAL 1 DAY, NULL, 'ON_LIVE')
+ON DUPLICATE KEY UPDATE staff_id=staff_id;
+
+-- Insert Sample Queue Tickets for Main Branch (branch_id = 1)
+INSERT INTO `queue_tickets` (`ticket_id`, `branch_id`, `queue_number`, `customer_name`, `category_id`, `issued_at`, `window_id`, `current_status`, `requeue_count`, `served_at`, `completed_at`, `cancelled_by`, `record_status`) VALUES
+(1, 1, 'A001', 'Alice Smith', (SELECT category_id FROM customer_categories WHERE category_name = 'Standard'), NOW() - INTERVAL 2 HOUR, (SELECT window_id FROM service_windows WHERE counter_label = 'Window 1' AND branch_id = 1 LIMIT 1), 'S', 0, NOW() - INTERVAL 1 HOUR, NOW() - INTERVAL 1 HOUR, NULL, 'ON_LIVE'),
+(2, 1, 'A002', 'Bob Johnson', (SELECT category_id FROM customer_categories WHERE category_name = 'PWD'), NOW() - INTERVAL 30 MINUTE, NULL, 'Q', 0, NULL, NULL, NULL, 'ON_LIVE'),
+(3, 1, 'A003', 'Charlie Brown', (SELECT category_id FROM customer_categories WHERE category_name = 'Standard'), NOW() - INTERVAL 15 MINUTE, NULL, 'Q', 0, NULL, NULL, NULL, 'ON_LIVE'),
+(4, 1, 'A004', 'Diana Prince', (SELECT category_id FROM customer_categories WHERE category_name = 'Senior Citizen'), NOW() - INTERVAL 4 HOUR, (SELECT window_id FROM service_windows WHERE counter_label = 'Window 1' AND branch_id = 1 LIMIT 1), 'S', 0, NOW() - INTERVAL 3 HOUR, NOW() - INTERVAL 3 HOUR, NULL, 'ON_LIVE'),
+(5, 1, 'A005', 'Eve Adams', (SELECT category_id FROM customer_categories WHERE category_name = 'Standard'), NOW() - INTERVAL 1 HOUR, NULL, 'X', 0, NULL, NULL, (SELECT user_id FROM users WHERE username = 'adminmain' LIMIT 1), 'ON_LIVE'),
+(6, 1, 'A006', 'Frank Green', (SELECT category_id FROM customer_categories WHERE category_name = 'Standard'), NOW() - INTERVAL 20 MINUTE, NULL, 'Q', 0, NULL, NULL, NULL, 'ON_LIVE'),
+(7, 1, 'A007', 'Grace Hall', (SELECT category_id FROM customer_categories WHERE category_name = 'PWD'), NOW() - INTERVAL 25 MINUTE, NULL, 'Q', 0, NULL, NULL, NULL, 'ON_LIVE'),
+(8, 1, 'A008', 'Henry King', (SELECT category_id FROM customer_categories WHERE category_name = 'Senior Citizen'), NOW() - INTERVAL 10 MINUTE, NULL, 'Q', 0, NULL, NULL, NULL, 'ON_LIVE'),
+(9, 1, 'A009', 'Ivy Lee', (SELECT category_id FROM customer_categories WHERE category_name = 'Standard'), NOW() - INTERVAL 5 MINUTE, NULL, 'Q', 0, NULL, NULL, NULL, 'ON_LIVE');
+
+-- Insert Sample Ticket Status History (example)
+INSERT INTO `ticket_status_history` (`history_id`, `ticket_id`, `status_code`, `changed_by`, `changed_at`, `notes`, `record_status`) VALUES
+(1, 1, 'Q', (SELECT user_id FROM users WHERE username = 'adminmain' LIMIT 1), NOW() - INTERVAL 2 HOUR - INTERVAL 5 MINUTE, 'Ticket issued', 'ON_LIVE'),
+(2, 1, 'C', (SELECT user_id FROM users WHERE username = 'jhoncruz' LIMIT 1), NOW() - INTERVAL 1 HOUR - INTERVAL 30 MINUTE, 'Called customer', 'ON_LIVE'),
+(3, 1, 'S', (SELECT user_id FROM users WHERE username = 'jhoncruz' LIMIT 1), NOW() - INTERVAL 1 HOUR, 'Customer served', 'ON_LIVE'),
+(4, 5, 'Q', (SELECT user_id FROM users WHERE username = 'adminmain' LIMIT 1), NOW() - INTERVAL 1 HOUR - INTERVAL 5 MINUTE, 'Ticket issued', 'ON_LIVE'),
+(5, 5, 'X', (SELECT user_id FROM users WHERE username = 'adminmain' LIMIT 1), NOW() - INTERVAL 1 HOUR, 'Customer cancelled', 'ON_LIVE')
+ON DUPLICATE KEY UPDATE ticket_id=ticket_id;

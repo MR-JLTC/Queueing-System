@@ -10,6 +10,11 @@ import {
   FormControlLabel,
   Checkbox,
   styled,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  CircularProgress,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import AccountCircle from '@mui/icons-material/AccountCircle';
@@ -18,6 +23,7 @@ import LockOutlined from '@mui/icons-material/LockOutlined'; // For password fie
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import GroupIcon from '@mui/icons-material/Group'; // For Role icon
+import BusinessIcon from '@mui/icons-material/Business'; // For branch icon
 import axios from 'axios';
 
 // Styled TextField for consistent professional look
@@ -72,96 +78,87 @@ const CustomTextField = styled(TextField)(() => ({
 
 const API_BASE_URL = 'http://localhost:3000'; // Your backend URL
 
-const EditAdminForm = ({ onClose, userData, onAdminUpdated, onAdminDeleted, onAdminOperationError }) => {
+const EditAdminForm = ({ onClose, userData, onAdminUpdated, onAdminDeleted, onAdminOperationError,  branches, loadingBranches }) => {
   const [formData, setFormData] = useState({
     fullName: userData.name || '',
     email: userData.email || '',
-    role: userData.role || '', // Role is read-only
-    status: userData.status === 'Active', // Convert 'Active'/'Inactive' to boolean
-    newPassword: '', // New field for password change
-    confirmNewPassword: '', // New field for password confirmation
+    isActive: userData.status === 'Active',
+    branchId: userData.branchId || '',
+    password: '',
+    confirmPassword: '',
   });
-  const [emailError, setEmailError] = useState(false);
-  const [showNewPassword, setShowNewPassword] = useState(false);
-  const [showConfirmNewPassword, setShowConfirmNewPassword] = useState(false);
-
-  // Define password constraints
-  const MIN_PASSWORD_LENGTH = 8;
-  const MAX_PASSWORD_LENGTH = 9; // Strict max password length
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
-    console.log("[EditAdminForm] userData received:", userData); // DEBUG: Log userData prop
     setFormData({
       fullName: userData.name || '',
       email: userData.email || '',
-      role: userData.role || '',
-      status: userData.status === 'Active',
-      newPassword: '', // Reset password fields on user change
-      confirmNewPassword: '', // Reset password fields on user change
+      isActive: userData.status === 'Active',
+      branchId: userData.branchId || '',
+      password: '',
+      confirmPassword: '',
     });
   }, [userData]);
 
-  const validateEmail = (email) => {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-  };
-
   const handleInputChange = (e) => {
     const { name, value, checked, type } = e.target;
-    // Apply max length directly to input value before setting state
-    if (name === 'newPassword' || name === 'confirmNewPassword') {
-      if (value.length > MAX_PASSWORD_LENGTH) {
-        // Do not update state if value exceeds max length
-        return;
-      }
-    }
     setFormData(prev => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
+    setErrors(prev => ({ ...prev, [name]: '' }));
+  };
 
-    if (name === 'email') {
-      if (value && !validateEmail(value)) {
-        setEmailError(true);
-      } else {
-        setEmailError(false);
+  const togglePasswordVisibility = () => setShowPassword(!showPassword);
+  const toggleConfirmPasswordVisibility = () => setShowConfirmPassword(!showConfirmPassword);
+
+  const validateForm = (isPasswordChange = false) => {
+    let newErrors = {};
+    let isValid = true;
+
+    if (!formData.fullName) { newErrors.fullName = "Full Name is required."; isValid = false; }
+    if (!formData.email) {
+      newErrors.email = "Email is required."; isValid = false;
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = "Email is invalid."; isValid = false;
+    }
+    if (!formData.branchId) {
+      newErrors.branchId = "Branch is required."; isValid = false;
+    }
+
+    if (isPasswordChange) {
+      if (!formData.password) {
+        newErrors.password = "New password is required."; isValid = false;
+      } else if (formData.password.length < 6) {
+        newErrors.password = "Password must be at least 6 characters."; isValid = false;
+      } else if (formData.password.length > 9) {
+        newErrors.password = "Password cannot exceed 9 characters."; isValid = false;
+      }
+      if (!formData.confirmPassword) {
+        newErrors.confirmPassword = "Confirm new password is required."; isValid = false;
+      } else if (formData.confirmPassword.length > 9) {
+        newErrors.confirmPassword = "Confirm password cannot exceed 9 characters."; isValid = false;
+      }
+      if (formData.password !== formData.confirmPassword) {
+        newErrors.confirmPassword = "Passwords do not match."; isValid = false;
       }
     }
-  };
 
-  const toggleNewPasswordVisibility = () => {
-    setShowNewPassword(!showNewPassword);
-  };
-
-  const toggleConfirmNewPasswordVisibility = () => {
-    setShowConfirmNewPassword(!showConfirmNewPassword);
+    setErrors(newErrors);
+    return isValid;
   };
 
   const handleSave = async (e) => {
     e.preventDefault();
 
-    if (!formData.fullName || !formData.email) {
-      onAdminOperationError("Name and Email are required.");
+    const isPasswordChangeAttempt = formData.password.length > 0 || formData.confirmPassword.length > 0;
+
+    if (!validateForm(isPasswordChangeAttempt)) {
+      onAdminOperationError("Please correct the errors in the form.");
       return;
     }
 
-    if (!validateEmail(formData.email)) {
-      onAdminOperationError("Please enter a valid email address.");
-      setEmailError(true);
-      return;
-    }
-
-    // Validate new password fields ONLY if they are being changed
-    if (formData.newPassword || formData.confirmNewPassword) {
-      if (formData.newPassword !== formData.confirmNewPassword) {
-        onAdminOperationError("New passwords do not match!");
-        return;
-      }
-      if (formData.newPassword.length < MIN_PASSWORD_LENGTH || formData.newPassword.length > MAX_PASSWORD_LENGTH) {
-        onAdminOperationError(`New password must be between ${MIN_PASSWORD_LENGTH} and ${MAX_PASSWORD_LENGTH} characters long.`);
-        return;
-      }
-    }
-
-    // Ensure userData.id is a valid number before sending
-    const userIdToUpdate = Number(userData.id);
-    if (isNaN(userIdToUpdate)) {
+    const userIdToUpdate = userData.id;
+    if (isNaN(Number(userIdToUpdate))) {
       console.error("[EditAdminForm] Cannot update: Invalid user ID (NaN). UserData:", userData);
       onAdminOperationError("Invalid user ID for update. Please try again.");
       return;
@@ -171,55 +168,48 @@ const EditAdminForm = ({ onClose, userData, onAdminUpdated, onAdminDeleted, onAd
       const payload = {
         fullName: formData.fullName,
         email: formData.email,
-        isActive: formData.status, // <--- This is the boolean value
+        isActive: formData.isActive,
+        branchId: Number(formData.branchId),
       };
 
-      // Add password to payload ONLY if it's provided
-      if (formData.newPassword) {
-        payload.password = formData.newPassword;
+      if (isPasswordChangeAttempt) {
+        payload.password = formData.password;
       }
-
-      console.log(`[EditAdminForm] Sending PATCH request for user ID: ${userIdToUpdate}`);
-      console.log(`[EditAdminForm] Payload being sent:`, payload);
-      console.log(`[EditAdminForm] Type of isActive in payload:`, typeof payload.isActive, `Value:`, payload.isActive); // <--- CRITICAL DEBUG LOG
 
       const response = await axios.patch(`${API_BASE_URL}/users/${userIdToUpdate}`, payload);
 
       if (response.status === 200) {
-        onAdminUpdated("Admin updated successfully!"); // Call success handler
+        onAdminUpdated("Admin user updated successfully!");
       } else {
-        onAdminOperationError(response.data?.message || "Failed to update admin.");
+        onAdminOperationError(response.data?.message || "Failed to update admin user.");
       }
     } catch (error) {
       console.error("[EditAdminForm] Update Admin Error:", error.response?.data || error.message);
-      const errorMessage = error.response?.data?.message || "An error occurred while updating admin.";
+      const errorMessage = error.response?.data?.message || "An error occurred while updating admin user.";
       onAdminOperationError(errorMessage);
     }
   };
 
   const handleDelete = async () => {
-    // Using a simple window.confirm for now, consider a custom modal for better UX
-    if (window.confirm("Are you sure you want to delete this admin? This action cannot be undone.")) {
-      // Ensure userData.id is a valid number before sending
-      const userIdToDelete = Number(userData.id);
-      if (isNaN(userIdToDelete)) {
+    if (window.confirm("Are you sure you want to delete this admin user? This action cannot be undone.")) {
+      const userIdToDelete = userData.id;
+      if (isNaN(Number(userIdToDelete))) {
         console.error("[EditAdminForm] Cannot delete: Invalid user ID (NaN). UserData:", userData);
         onAdminOperationError("Invalid user ID for delete. Please try again.");
         return;
       }
 
       try {
-        console.log(`[EditAdminForm] Attempting to DELETE user ID: ${userIdToDelete}`);
         const response = await axios.delete(`${API_BASE_URL}/users/${userIdToDelete}`);
 
-        if (response.status === 200 || response.status === 204) { // 204 No Content is common for successful DELETE
-          onAdminDeleted("Admin deleted successfully!"); // Call success handler
+        if (response.status === 200 || response.status === 204) {
+          onAdminDeleted("Admin user deleted successfully!");
         } else {
-          onAdminOperationError(response.data?.message || "Failed to delete admin.");
+          onAdminOperationError(response.data?.message || "Failed to delete admin user.");
         }
       } catch (error) {
         console.error("[EditAdminForm] Delete Admin Error:", error.response?.data || error.message);
-        const errorMessage = error.response?.data?.message || "An error occurred while deleting admin.";
+        const errorMessage = error.response?.data?.message || "An error occurred while deleting admin user.";
         onAdminOperationError(errorMessage);
       }
     }
@@ -236,12 +226,36 @@ const EditAdminForm = ({ onClose, userData, onAdminUpdated, onAdminDeleted, onAd
         </Box>
         <Box component="form" onSubmit={handleSave} sx={{ p: 3, display: 'flex', flexDirection: 'column', gap: 2 }}>
           <CustomTextField
-            placeholder='Enter full name'
+            label="User ID (Read-only)"
+            name="userId"
+            value={userData.id || ''}
+            fullWidth
+            InputProps={{
+              readOnly: true,
+              startAdornment: (
+                <InputAdornment position="start">
+                  <AccountCircle />
+                </InputAdornment>
+              ),
+            }}
+            sx={{
+              '& .MuiInputBase-input.Mui-disabled': {
+                '-webkit-text-fill-color': '#a0a0a0',
+              },
+              '& .MuiInputLabel-root.Mui-disabled': {
+                color: 'rgba(224, 224, 224, 0.5)',
+              }
+            }}
+          />
+          <CustomTextField
+            label="Full Name"
             name="fullName"
             value={formData.fullName}
             onChange={handleInputChange}
             fullWidth
             required
+            error={!!errors.fullName}
+            helperText={errors.fullName}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
@@ -250,16 +264,17 @@ const EditAdminForm = ({ onClose, userData, onAdminUpdated, onAdminDeleted, onAd
               ),
             }}
           />
+          {/* Username field removed */}
           <CustomTextField
-            placeholder='Enter email'
+            label="Email"
             name="email"
             type="email"
             value={formData.email}
             onChange={handleInputChange}
             fullWidth
             required
-            error={emailError}
-            helperText={emailError ? "Please enter a valid email address." : ""}
+            error={!!errors.email}
+            helperText={errors.email}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
@@ -268,123 +283,143 @@ const EditAdminForm = ({ onClose, userData, onAdminUpdated, onAdminDeleted, onAd
               ),
             }}
           />
-          <CustomTextField
-            placeholder='Role (Read-only)'
-            name="role"
-            value={formData.role}
-            fullWidth
-            InputProps={{
-              readOnly: true, // Role is read-only as per image
-              startAdornment: (
-                <InputAdornment position="start">
-                  <GroupIcon />
-                </InputAdornment>
-              ),
-            }}
-            sx={{
-              '& .MuiInputBase-input.Mui-disabled': {
-                '-webkit-text-fill-color': '#a0a0a0', // Keep text color for disabled input
+
+          {/* Branch Selection Dropdown */}
+          <FormControl fullWidth required error={!!errors.branchId} sx={{
+            '& .MuiOutlinedInput-root': {
+              backgroundColor: '#1f1f1f',
+              borderRadius: '10px',
+              border: '1px solid rgba(0, 123, 255, 0.1)',
+              color: '#e0e0e0',
+              '&.Mui-focused': {
+                borderColor: '#007bff',
+                boxShadow: '0 0 0 2px rgba(0, 123, 255, 0.2)',
               },
-              '& .MuiInputLabel-root.Mui-disabled': {
-                color: 'rgba(224, 224, 224, 0.5)', // Dim label for disabled input
+              '& .MuiSelect-icon': {
+                color: '#8ab4f8',
+              },
+            },
+            '& .MuiInputLabel-root': {
+              color: '#8ab4f8',
+              fontSize: '18px',
+              transform: 'translate(14px, 18px) scale(1)',
+              '&.MuiInputLabel-shrink': {
+                transform: 'translate(14px, -9px) scale(0.75)',
+              },
+            },
+            '& .MuiInputLabel-root.Mui-focused': {
+              color: '#007bff',
+            },
+            '& .MuiFormHelperText-root': {
+              color: '#ffc107',
+              fontSize: '14px',
+              marginLeft: '14px',
+            },
+          }}>
+            <Select
+              id="branch-select"
+              name="branchId"
+              value={formData.branchId}
+              onChange={handleInputChange}
+              displayEmpty
+               sx={{ fontSize: '19px', height: '56px' }} 
+              startAdornment={
+                <InputAdornment position="start" sx={{ ml: 1 }}>
+                  <BusinessIcon sx={{ color: '#8ab4f8' }} />
+                </InputAdornment>
               }
+            >
+              <MenuItem value="" disabled>
+                Select a branch
+              </MenuItem>
+
+              {loadingBranches ? (
+                <MenuItem disabled>
+                  <CircularProgress size={20} sx={{ mr: 1 }} /> Loading Branches...
+                </MenuItem>
+              ) : branches.length === 0 ? (
+                <MenuItem disabled>No Branches Available</MenuItem>
+              ) : (
+                branches.map((branch) => (
+                  <MenuItem key={branch.branchId} value={branch.branchId}>
+                    {branch.branchName}
+                  </MenuItem>
+                ))
+              )}
+            </Select>
+            {errors.branchId && <Typography sx={{ color: '#ffc107', fontSize: '14px', ml: '14px', mt: '3px' }}>{errors.branchId}</Typography>}
+          </FormControl>
+
+          <CustomTextField
+            label="New Password (optional)"
+            name="password"
+            type={showPassword ? "text" : "password"}
+            value={formData.password}
+            onChange={handleInputChange}
+            fullWidth
+            error={!!errors.password}
+            helperText={errors.password}
+            inputProps={{ maxLength: 9 }}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <LockOutlined />
+                </InputAdornment>
+              ),
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton onClick={togglePasswordVisibility} edge="end" sx={{ color: 'white' }}> {/* Added color: 'white' */}
+                    {showPassword ? <Visibility /> : < VisibilityOff/>}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+          />
+          <CustomTextField
+            label="Confirm New Password"
+            name="confirmPassword"
+            type={showConfirmPassword ? "text" : "password"}
+            value={formData.confirmPassword}
+            onChange={handleInputChange}
+            fullWidth
+            error={!!errors.confirmPassword}
+            helperText={errors.confirmPassword}
+            inputProps={{ maxLength: 9 }}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <LockOutlined />
+                </InputAdornment>
+              ),
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton onClick={toggleConfirmPasswordVisibility} edge="end" sx={{ color: 'white' }}> {/* Added color: 'white' */}
+                    {showPassword ? <Visibility /> : < VisibilityOff/>}
+                  </IconButton>
+                </InputAdornment>
+              ),
             }}
           />
 
-          <Typography variant="subtitle1" sx={{ color: '#e0e0e0', mt: 2, mb: 1, textAlign: 'center' }}>
-            Change Password (Optional)
-          </Typography>
-          <CustomTextField
-            placeholder='Enter new password'
-            name="newPassword"
-            type={showNewPassword ? 'text' : 'password'}
-            value={formData.newPassword}
-            onChange={handleInputChange}
-            fullWidth
-            helperText={
-              formData.newPassword && (formData.newPassword.length < MIN_PASSWORD_LENGTH || formData.newPassword.length > MAX_PASSWORD_LENGTH)
-                ? `Password must be ${MIN_PASSWORD_LENGTH}-${MAX_PASSWORD_LENGTH} characters.`
-                : ""
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={formData.isActive}
+                onChange={handleInputChange}
+                name="isActive"
+                sx={{
+                  color: '#8ab4f8',
+                  '&.Mui-checked': { color: '#28a745' },
+                }}
+              />
             }
-            InputProps={{
-              maxLength: MAX_PASSWORD_LENGTH, // <--- Strict max length applied here
-              startAdornment: (
-                <InputAdornment position="start">
-                  <LockOutlined />
-                </InputAdornment>
-              ),
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton onClick={toggleNewPasswordVisibility} edge="end">
-                    {showNewPassword ? <VisibilityOff /> : <Visibility />}
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
+            label={<Typography sx={{ color: '#e0e0e0' }}>Active User</Typography>}
+            sx={{ mt: 1 }}
           />
-          <CustomTextField
-            placeholder='Confirm new password'
-            name="confirmNewPassword"
-            type={showConfirmNewPassword ? 'text' : 'password'}
-            value={formData.confirmNewPassword}
-            onChange={handleInputChange}
-            fullWidth
-            error={formData.confirmNewPassword && formData.newPassword !== formData.confirmNewPassword}
-            helperText={formData.confirmNewPassword && formData.newPassword !== formData.confirmNewPassword ? "Passwords do not match." : ""}
-            InputProps={{
-              maxLength: MAX_PASSWORD_LENGTH, // <--- Strict max length applied here
-              startAdornment: (
-                <InputAdornment position="start">
-                  <LockOutlined />
-                </InputAdornment>
-              ),
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton onClick={toggleConfirmNewPasswordVisibility} edge="end">
-                    {showConfirmNewPassword ? <VisibilityOff /> : <Visibility />}
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
-          />
-
-          <Typography variant="subtitle1" sx={{ color: '#e0e0e0', mt: 2, mb: 1, textAlign: 'center' }}>
-            Status
-          </Typography>
-          <Box sx={{ display: 'flex', justifyContent: 'center', gap: 4 }}>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={formData.status}
-                  onChange={handleInputChange}
-                  name="status"
-                  sx={{
-                    color: '#8ab4f8',
-                    '&.Mui-checked': { color: '#28a745' }, // Green for active
-                  }}
-                />
-              }
-              label={<Typography sx={{ color: '#e0e0e0' }}>Active</Typography>}
-            />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={!formData.status} // Inactive is opposite of active
-                  onChange={(e) => setFormData(prev => ({ ...prev, status: !e.target.checked }))}
-                  name="status"
-                  sx={{
-                    color: '#8ab4f8',
-                    '&.Mui-checked': { color: '#dc3545' }, // Red for inactive
-                  }}
-                />
-              }
-              label={<Typography sx={{ color: '#e0e0e0' }}>Inactive</Typography>}
-            />
-          </Box>
 
           <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mt: 3 }}>
             <Button
-              type="submit" // This button will trigger handleSave
+              type="submit"
               variant="contained"
               sx={{
                 backgroundColor: '#007bff',
@@ -413,22 +448,22 @@ const EditAdminForm = ({ onClose, userData, onAdminUpdated, onAdminDeleted, onAd
               variant="contained"
               onClick={handleDelete}
               sx={{
-                backgroundColor: '#6c757d', // Gray for Delete
+                backgroundColor: '#dc3545', // Red for Delete
                 color: 'white',
                 py: 1.5,
                 borderRadius: '10px',
                 fontSize: '1.1rem',
                 fontWeight: 600,
-                boxShadow: '0 4px 15px rgba(108, 117, 125, 0.4)',
+                boxShadow: '0 4px 15px rgba(220, 53, 69, 0.4)',
                 '&:hover': {
-                  backgroundColor: '#5a6268',
+                  backgroundColor: '#c82333',
                   transform: 'translateY(-1px)',
-                  boxShadow: '0 6px 20px rgba(108, 117, 125, 0.5)',
+                  boxShadow: '0 6px 20px rgba(220, 53, 69, 0.5)',
                 },
                 '&:active': {
-                  backgroundColor: '#4e545a',
+                  backgroundColor: '#a71d2a',
                   transform: 'translateY(0)',
-                  boxShadow: '0 2px 10px rgba(108, 117, 125, 0.3)',
+                  boxShadow: '0 2px 10px rgba(220, 53, 69, 0.3)',
                 },
                 flex: 1,
               }}

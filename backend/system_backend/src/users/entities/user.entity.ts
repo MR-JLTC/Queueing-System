@@ -1,5 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
 import { Role } from '../../roles/entities/role.entity';
+import { Branch } from '../../branches/entities/branch.entity';
 import { EmailOtp } from '../../email-otp/entities/email-otp.entity';
 import { StaffWindowAssignment } from '../../staff-window-assignments/entities/staff-window-assignment.entity';
 import { QueueTicket } from '../../queue-tickets/entities/queue-ticket.entity';
@@ -20,8 +21,9 @@ export class User {
   @Column({ name: 'full_name', length: 255 })
   fullName: string;
 
-  @Column({ unique: true, length: 255 })
-  username: string;
+  // REMOVE THIS COLUMN FOR USERNAME
+  // @Column({ unique: true, length: 255 })
+  // username: string;
 
   @Column({ unique: true, length: 255 })
   email: string;
@@ -37,6 +39,13 @@ export class User {
 
   @Column({ name: 'created_at', type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
+
+  @Column({ name: 'branch_id' })
+  branchId: number;
+
+  @ManyToOne(() => Branch, (branch) => branch.users)
+  @JoinColumn({ name: 'branch_id' })
+  branch: Branch;
 
   @OneToMany(() => EmailOtp, emailOtp => emailOtp.user)
   emailOtps: EmailOtp[];

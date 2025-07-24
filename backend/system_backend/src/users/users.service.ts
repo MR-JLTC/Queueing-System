@@ -16,7 +16,7 @@ export class UsersService {
   async create(createUserDto: CreateUserDto): Promise<User> {
     const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
     const user = this.usersRepository.create({
-      ...createUserDto,
+      ...createUserDto, // This will now include branchId
       passwordHash: hashedPassword,
       createdAt: new Date(),
     });

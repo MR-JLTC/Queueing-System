@@ -10,10 +10,11 @@ export class CreateUserDto {
   @MaxLength(255)
   fullName: string;
 
-  @IsString()
-  @MinLength(3)
-  @MaxLength(255)
-  username: string;
+  // REMOVE THIS BLOCK FOR USERNAME
+  // @IsString()
+  // @MinLength(3)
+  // @MaxLength(255)
+  // username: string;
 
   @IsEmail()
   @MaxLength(255)
@@ -29,4 +30,7 @@ export class CreateUserDto {
 
   @IsEnum(VisibilityStatus)
   visibilityStatus: VisibilityStatus;
+
+  @IsInt() // Assuming branchId is still required
+  branchId: number;
 }

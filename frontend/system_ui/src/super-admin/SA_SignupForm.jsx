@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import './SA_SignupForm.css'; // Keep this for page-level/background styles
 import PopupMessage from "../shared_comp/popup_menu/PopupMessage";
 import { showPopupMessage } from "../shared_comp/utils/popupUtils";
-// import bcrypt from 'bcryptjs'; // Ensure bcryptjs is imported if used for hashing on frontend (though typically backend)
 import axios from 'axios';
 
 // Import Material UI components
@@ -22,7 +21,7 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 // Styled TextField for consistent professional look and improved visibility
-const CustomTextField = styled(TextField)(({ theme }) => ({
+const CustomTextField = styled(TextField)(() => ({
   '& .MuiInputBase-root': {
     backgroundColor: '#333b4d', // Distinct dark blue-gray for input background
     color: '#e0e0e0', // Lighter text color
@@ -84,7 +83,7 @@ const SignupForm = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [emailError, setEmailError] = useState(false); // New state for email validation error
 
-  const API_BASE_URL = 'http://localhost:3000';
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
 
   // Helper function to validate email format
   const validateEmail = (email) => {
@@ -105,29 +104,29 @@ const SignupForm = () => {
     }
   };
 
-  const generateSuperAdminUsername = async () => {
-    try {
-      const response = await axios.get(`${API_BASE_URL}/users`);
-      const users = response.data;
+  // REMOVED: generateSuperAdminUsername as username column is being removed
+  // const generateSuperAdminUsername = async () => {
+  //   try {
+  //     const response = await axios.get(`${API_BASE_URL}/users`);
+  //     const users = response.data;
 
-      let maxSuperAdminNumber = 0;
-      users.forEach(user => {
-        const match = user.username.match(/^SuperAdmin_(\d+)$/);
-        if (match) {
-          const num = parseInt(match[1], 10);
-          if (!isNaN(num) && num > maxSuperAdminNumber) {
-            maxSuperAdminNumber = num;
-          }
-        }
-      });
-      return `SuperAdmin_${maxSuperAdminNumber + 1}`;
-    } catch (error) {
-      console.error("Error generating SuperAdmin username:", error);
-      const errorMessage = axios.isAxiosError(error) && error.response?.data?.message ? error.response.data.message : error.message || "Failed to generate username.";
-      showPopupMessage(setPopup, "error", `Error: ${errorMessage}`);
-      return "SuperAdmin_Fallback";
-    }
-  };
+  //     let maxSuperAdminNumber = 0;
+  //     users.forEach(user => {
+  //       const match = user.username.match(/^SuperAdmin_(\d+)$/);
+  //       if (match) {
+  //         const num = parseInt(match[1], 10);
+  //         if (!isNaN(num) && num > maxSuperAdminNumber) {
+  //           maxSuperAdminNumber = num;
+  //         }
+  //       });
+  //     return `SuperAdmin_${maxSuperAdminNumber + 1}`;
+  //   } catch (error) {
+  //     console.error("Error generating SuperAdmin username:", error);
+  //     const errorMessage = axios.isAxiosError(error) && error.response?.data?.message ? error.response.data.message : error.message || "Failed to generate username.";
+  //     showPopupMessage(setPopup, "error", `Error: ${errorMessage}`);
+  //     return "SuperAdmin_Fallback";
+  //   }
+  // };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -144,20 +143,30 @@ const SignupForm = () => {
       return;
     }
 
+    // Password length validation for submission
+    if (formData.password.length < 6 || formData.password.length > 9) { // Min 6, Max 9
+      showPopupMessage(setPopup, "error", "Password must be between 6 and 9 characters long.");
+      return;
+    }
+
     try {
-      const generatedUsername = await generateSuperAdminUsername();
-      if (generatedUsername === "SuperAdmin_Fallback") {
-        return;
-      }
+      // REMOVED: Call to generateSuperAdminUsername
+      // const generatedUsername = await generateSuperAdminUsername();
+      // if (generatedUsername === "SuperAdmin_Fallback") {
+      //   return;
+      // }
 
       const payload = {
         fullName: formData.fullName,
-        username: generatedUsername,
+        // REMOVED: username: generatedUsername, // No longer send username
         email: formData.email,
         password: formData.password,
-        roleId: 1,
+        roleId: 1, // Explicitly set roleId to 1 for Super Admin
         isActive: true,
-        visibilityStatus: "ON_LIVE"
+        visibilityStatus: "ON_LIVE",
+        branchId: 1, // Assuming a default branch ID for Super Admins if they don't have one
+                      // You might need to adjust this if Super Admins are not tied to a branch
+                      // or if you want to select one during signup. For simplicity, setting 1.
       };
 
       const response = await axios.post(`${API_BASE_URL}/users`, payload);
@@ -174,7 +183,7 @@ const SignupForm = () => {
       if (axios.isAxiosError(error)) {
         if (error.response) {
           if (error.response.status === 409) {
-            errorMessage = error.response.data.message || "User with this email or username already exists.";
+            errorMessage = error.response.data.message || "User with this email already exists."; // Updated message
           } else if (error.response.data && error.response.data.message) {
             errorMessage = `Signup failed: ${error.response.data.message}`;
           } else {
@@ -225,12 +234,12 @@ const SignupForm = () => {
         <div className="sa_form-group horizontal_sf">
           <CustomTextField
             fullWidth
-            placeholder='Enter your full name'
+            placeholder='Enter full name' // Changed from label to placeholder
             name="fullName"
             value={formData.fullName}
             onChange={handleInputChange}
             required
-            inputProps={{ maxLength: 255, autocomplete: 'off' }} // Added autocomplete="off"
+            inputProps={{ maxLength: 255, autocomplete: 'off' }}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start" sx={{ ml: '2px' }}>
@@ -247,14 +256,14 @@ const SignupForm = () => {
         <div className="sa_form-group horizontal_sf">
           <CustomTextField
             fullWidth
-            placeholder='Enter your email'
+            placeholder='Enter email' // Changed from label to placeholder
             name="email"
             type="email"
             value={formData.email}
             onChange={handleInputChange}
-            error={emailError} // Pass emailError state to 'error' prop
-            helperText={emailError ? "Please enter a valid email address." : "e.g., user@example.com"} // Dynamic helper text
-            inputProps={{ autocomplete: 'off' }} // Added autocomplete="off"
+            error={emailError}
+            helperText={emailError ? "Please enter a valid email address." : "e.g., user@example.com"}
+            inputProps={{ autocomplete: 'off' }}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start" sx={{ ml: '2px' }}>
@@ -271,13 +280,13 @@ const SignupForm = () => {
         <div className="sa_form-group horizontal_sf">
           <CustomTextField
             fullWidth
-            placeholder='Enter your password'
+            placeholder='Enter password' // Changed placeholder to label
             name="password"
             type={showPassword ? "text" : "password"}
             value={formData.password}
             onChange={handleInputChange}
             required
-            inputProps={{ maxLength: 9, autocomplete: 'new-password' }} // Use 'new-password' for password fields
+            inputProps={{ maxLength: 9, autocomplete: 'new-password' }}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start" sx={{ ml: '2px' }}>
@@ -290,7 +299,7 @@ const SignupForm = () => {
                     aria-label="toggle password visibility"
                     onClick={togglePasswordVisibility}
                     edge="end"
-                    sx={{ color: '#a0a0a0', '&:hover': { color: '#e0e0e0' } }}
+                    sx={{ color: 'white', '&:hover': { color: 'white' } }}
                   >
                     {showPassword ? <VisibilityOff sx={{ fontSize: '24px' }} /> : <Visibility sx={{ fontSize: '24px' }} />}
                   </IconButton>
@@ -306,13 +315,13 @@ const SignupForm = () => {
         <div className="sa_form-group horizontal_sf">
           <CustomTextField
             fullWidth
-            placeholder='Confirm Password'
+            placeholder='Confirm password' // Changed placeholder to label
             name="confirmPassword"
             type={showConfirmPassword ? "text" : "password"}
             value={formData.confirmPassword}
             onChange={handleInputChange}
             required
-            inputProps={{ maxLength: 9, autocomplete: 'new-password' }} // Use 'new-password' for password fields
+            inputProps={{ maxLength: 9, autocomplete: 'new-password' }}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start" sx={{ ml: '2px' }}>
@@ -325,7 +334,7 @@ const SignupForm = () => {
                     aria-label="toggle confirm password visibility"
                     onClick={toggleConfirmPasswordVisibility}
                     edge="end"
-                    sx={{ color: '#a0a0a0', '&:hover': { color: '#e0e0e0' } }}
+                    sx={{ color: 'white', '&:hover': { color: 'white' } }}
                   >
                     {showConfirmPassword ? <VisibilityOff sx={{ fontSize: '24px' }} /> : <Visibility sx={{ fontSize: '24px' }} />}
                   </IconButton>

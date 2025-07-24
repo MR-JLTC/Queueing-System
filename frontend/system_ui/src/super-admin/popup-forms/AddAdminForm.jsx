@@ -8,6 +8,11 @@ import {
   IconButton,
   InputAdornment,
   styled,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  CircularProgress,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import AccountCircle from '@mui/icons-material/AccountCircle';
@@ -15,8 +20,8 @@ import MailOutline from '@mui/icons-material/MailOutline';
 import LockOutlined from '@mui/icons-material/LockOutlined';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import BusinessIcon from '@mui/icons-material/Business'; // For branch icon
 import axios from 'axios';
-// Removed: import bcrypt from 'bcryptjs'; // No longer needed for client-side hashing
 
 // Styled TextField for consistent professional look
 const CustomTextField = styled(TextField)(() => ({
@@ -70,130 +75,91 @@ const CustomTextField = styled(TextField)(() => ({
 
 const API_BASE_URL = 'http://localhost:3000'; // Your backend URL
 
-const AddAdminForm = ({ onClose, onAdminAdded, onAdminOperationError }) => {
+const AddAdminForm = ({ onClose, onAdminAdded, onAdminOperationError, branches, loadingBranches }) => {
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
     password: '',
     confirmPassword: '',
+    branchId: '',
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [emailError, setEmailError] = useState(false);
-
-  // Define password constraints
-  const MIN_PASSWORD_LENGTH = 8;
-  const MAX_PASSWORD_LENGTH = 9; // Strict max password length
-
-  const validateEmail = (email) => {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-  };
+  const [errors, setErrors] = useState({});
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    // Apply max length directly to input value before setting state
-    if (name === 'password' || name === 'confirmPassword') {
-      if (value.length > MAX_PASSWORD_LENGTH) {
-        // Do not update state if value exceeds max length
-        return;
-      }
-    }
     setFormData(prev => ({ ...prev, [name]: value }));
+    setErrors(prev => ({ ...prev, [name]: '' }));
+  };
 
-    if (name === 'email') {
-      if (value && !validateEmail(value)) {
-        setEmailError(true);
-      } else {
-        setEmailError(false);
-      }
+  const togglePasswordVisibility = () => setShowPassword(!showPassword);
+  const toggleConfirmPasswordVisibility = () => setShowConfirmPassword(!showConfirmPassword);
+
+  const validateForm = () => {
+    let newErrors = {};
+    let isValid = true;
+
+    if (!formData.fullName) { newErrors.fullName = "Full Name is required."; isValid = false; }
+    if (!formData.email) {
+      newErrors.email = "Email is required."; isValid = false;
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = "Email is invalid."; isValid = false;
     }
-  };
-
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
-  };
-
-  const toggleConfirmPasswordVisibility = () => {
-    setShowConfirmPassword(!showConfirmPassword);
-  };
-
-  // Client-side username generation (Admin_X)
-  const generateAdminUsername = async () => {
-    try {
-      // Fetch all users to determine the next available Admin_X number
-      const response = await axios.get(`${API_BASE_URL}/users`);
-      const users = response.data;
-
-      let maxAdminNumber = 0;
-      users.forEach(user => {
-        const match = user.username.match(/^Admin_(\d+)$/);
-        if (match) {
-          const num = parseInt(match[1], 10);
-          if (!isNaN(num) && num > maxAdminNumber) {
-            maxAdminNumber = num;
-          }
-        }
-      });
-      return `Admin_${maxAdminNumber + 1}`;
-    } catch (error) {
-      console.error("Error generating Admin username:", error);
-      onAdminOperationError("Failed to generate username. Please try again.");
-      return null; // Indicate failure
+    if (!formData.password) {
+      newErrors.password = "Password is required."; isValid = false;
+    } else if (formData.password.length < 6) {
+      newErrors.password = "Password must be at least 6 characters."; isValid = false;
+    } else if (formData.password.length > 9) {
+      newErrors.password = "Password cannot exceed 9 characters."; isValid = false;
     }
+    if (!formData.confirmPassword) {
+      newErrors.confirmPassword = "Confirm Password is required."; isValid = false;
+    } else if (formData.confirmPassword.length > 9) {
+      newErrors.confirmPassword = "Confirm password cannot exceed 9 characters."; isValid = false;
+    }
+    if (formData.password !== formData.confirmPassword) {
+      newErrors.confirmPassword = "Passwords do not match."; isValid = false;
+    }
+    if (!formData.branchId) {
+      newErrors.branchId = "Branch is required."; isValid = false;
+    }
+
+    setErrors(newErrors);
+    return isValid;
   };
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.fullName || !formData.email || !formData.password || !formData.confirmPassword) {
-      onAdminOperationError("All fields are required.");
-      return;
-    }
-
-    if (!validateEmail(formData.email)) {
-      onAdminOperationError("Please enter a valid email address.");
-      setEmailError(true);
-      return;
-    }
-
-    if (formData.password !== formData.confirmPassword) {
-      onAdminOperationError("Passwords do not match!");
-      return;
-    }
-
-    // Updated: Password length validation for submission
-    if (formData.password.length < MIN_PASSWORD_LENGTH || formData.password.length > MAX_PASSWORD_LENGTH) {
-      onAdminOperationError(`Password must be ${MIN_PASSWORD_LENGTH}-${MAX_PASSWORD_LENGTH} characters long.`);
+    if (!validateForm()) {
+      onAdminOperationError("Please correct the errors in the form.");
       return;
     }
 
     try {
-      const generatedUsername = await generateAdminUsername();
-      if (!generatedUsername) {
-        return; // Stop if username generation failed
-      }
-
       const payload = {
         fullName: formData.fullName,
-        username: generatedUsername,
         email: formData.email,
-        password: formData.password, // Send plain password
-        roleId: 2, // Explicitly set roleId to 2 for Admin
-        isActive: true, // New admins are active by default
-        visibilityStatus: "ON_LIVE" // Default visibility status
+        password: formData.password,
+        roleId: 2, // Hardcode roleId for Admin
+        branchId: Number(formData.branchId),
+        isActive: true,
+        visibilityStatus: "ON_LIVE",
       };
 
       const response = await axios.post(`${API_BASE_URL}/users`, payload);
 
       if (response.status === 201 || response.status === 200) {
-        onAdminAdded("Admin added successfully!"); // Call success handler with message
+        onAdminAdded("Admin user added successfully!");
       } else {
-        onAdminOperationError(response.data?.message || "Failed to add admin.");
+        onAdminOperationError(response.data?.message || "Failed to add admin user.");
       }
 
     } catch (error) {
       console.error("Add Admin Error:", error);
-      const errorMessage = error.response?.data?.message || "An error occurred while adding admin.";
+      const errorMessage = error.response?.data?.message || "An error occurred while adding admin user.";
       onAdminOperationError(errorMessage);
     }
   };
@@ -202,19 +168,21 @@ const AddAdminForm = ({ onClose, onAdminAdded, onAdminOperationError }) => {
     <Box className="modal-overlay">
       <Box className="add-admin-modal">
         <Box className="modal-header">
-          <Typography variant="h6">Add Admin</Typography>
+          <Typography variant="h6">Add New Admin</Typography>
           <IconButton onClick={onClose} sx={{ color: '#e0e0e0' }}>
             <CloseIcon />
           </IconButton>
         </Box>
         <Box component="form" onSubmit={handleSubmit} sx={{ p: 3, display: 'flex', flexDirection: 'column', gap: 2 }}>
           <CustomTextField
-            placeholder='Enter full name'
+            placeholder='Enter Full Name'
             name="fullName"
             value={formData.fullName}
             onChange={handleInputChange}
             fullWidth
             required
+            error={!!errors.fullName}
+            helperText={errors.fullName}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
@@ -224,15 +192,15 @@ const AddAdminForm = ({ onClose, onAdminAdded, onAdminOperationError }) => {
             }}
           />
           <CustomTextField
-            placeholder='Enter email address'
+            placeholder='Enter Email'
             name="email"
             type="email"
             value={formData.email}
             onChange={handleInputChange}
             fullWidth
             required
-            error={emailError}
-            helperText={emailError ? "Please enter a valid email address." : ""}
+            error={!!errors.email}
+            helperText={errors.email}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
@@ -242,21 +210,17 @@ const AddAdminForm = ({ onClose, onAdminAdded, onAdminOperationError }) => {
             }}
           />
           <CustomTextField
-            placeholder='Enter password'
+            placeholder='Enter Password'
             name="password"
-            type={showPassword ? 'text' : 'password'}
+            type={showPassword ? "text" : "password"}
             value={formData.password}
             onChange={handleInputChange}
             fullWidth
             required
-            // Updated helperText for password length
-            helperText={
-              formData.password && (formData.password.length < MIN_PASSWORD_LENGTH || formData.password.length > MAX_PASSWORD_LENGTH)
-                ? `Password must be ${MIN_PASSWORD_LENGTH}-${MAX_PASSWORD_LENGTH} characters.`
-                : ""
-            }
+            error={!!errors.password}
+            helperText={errors.password}
+            inputProps={{ maxLength: 9 }}
             InputProps={{
-              maxLength: MAX_PASSWORD_LENGTH, // <--- Strict max length applied here
               startAdornment: (
                 <InputAdornment position="start">
                   <LockOutlined />
@@ -264,25 +228,25 @@ const AddAdminForm = ({ onClose, onAdminAdded, onAdminOperationError }) => {
               ),
               endAdornment: (
                 <InputAdornment position="end">
-                  <IconButton onClick={togglePasswordVisibility} edge="end">
-                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  <IconButton onClick={togglePasswordVisibility} edge="end" sx={{ color: 'white' }}> {/* Added color: 'white' */}
+                    {showPassword ? <Visibility /> : < VisibilityOff/>}
                   </IconButton>
                 </InputAdornment>
               ),
             }}
           />
           <CustomTextField
-            placeholder='Confirm password'
+            placeholder='Confirm Password'
             name="confirmPassword"
-            type={showConfirmPassword ? 'text' : 'password'}
+            type={showConfirmPassword ? "text" : "password"}
             value={formData.confirmPassword}
             onChange={handleInputChange}
             fullWidth
             required
-            error={formData.confirmPassword && formData.password !== formData.confirmPassword}
-            helperText={formData.confirmPassword && formData.password !== formData.confirmPassword ? "Passwords do not match." : ""}
+            error={!!errors.confirmPassword}
+            helperText={errors.confirmPassword}
+            inputProps={{ maxLength: 9 }}
             InputProps={{
-              maxLength: MAX_PASSWORD_LENGTH, // <--- Strict max length applied here
               startAdornment: (
                 <InputAdornment position="start">
                   <LockOutlined />
@@ -290,13 +254,81 @@ const AddAdminForm = ({ onClose, onAdminAdded, onAdminOperationError }) => {
               ),
               endAdornment: (
                 <InputAdornment position="end">
-                  <IconButton onClick={toggleConfirmPasswordVisibility} edge="end">
-                    {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                  <IconButton onClick={toggleConfirmPasswordVisibility} edge="end" sx={{ color: 'white' }}> {/* Added color: 'white' */}
+                    {showConfirmPassword ? <Visibility /> : < VisibilityOff/>}
                   </IconButton>
                 </InputAdornment>
               ),
             }}
           />
+
+          {/* Branch Selection Dropdown */}
+          <FormControl fullWidth required error={!!errors.branchId} sx={{
+            '& .MuiOutlinedInput-root': {
+              backgroundColor: '#1f1f1f',
+              borderRadius: '10px',
+              border: '1px solid rgba(0, 123, 255, 0.1)',
+              color: '#e0e0e0',
+              '&.Mui-focused': {
+                borderColor: '#007bff',
+                boxShadow: '0 0 0 2px rgba(0, 123, 255, 0.2)',
+              },
+              '& .MuiSelect-icon': {
+                color: '#8ab4f8',
+              },
+            },
+            '& .MuiInputLabel-root': {
+              color: '#8ab4f8',
+              fontSize: '18px',
+              transform: 'translate(14px, 18px) scale(1)',
+              '&.MuiInputLabel-shrink': {
+                transform: 'translate(14px, -9px) scale(0.75)',
+              },
+            },
+            '& .MuiInputLabel-root.Mui-focused': {
+              color: '#007bff',
+            },
+            '& .MuiFormHelperText-root': {
+              color: '#ffc107',
+              fontSize: '14px',
+              marginLeft: '14px',
+            },
+          }}>
+            <Select
+              id="branch-select"
+              name="branchId"
+              value={formData.branchId}
+              onChange={handleInputChange}
+              displayEmpty
+               sx={{ fontSize: '19px', height: '56px' }} 
+              startAdornment={
+                <InputAdornment position="start" sx={{ ml: 1 }}>
+                  <BusinessIcon sx={{ color: '#8ab4f8' }} />
+                </InputAdornment>
+              }
+            >
+              <MenuItem value="" disabled>
+                Select a branch
+              </MenuItem>
+
+              {loadingBranches ? (
+                <MenuItem disabled>
+                  <CircularProgress size={20} sx={{ mr: 1 }} /> Loading Branches...
+                </MenuItem>
+              ) : branches.length === 0 ? (
+                <MenuItem disabled>No Branches Available</MenuItem>
+              ) : (
+                branches.map((branch) => (
+                  <MenuItem key={branch.branchId} value={branch.branchId}>
+                    {branch.branchName}
+                  </MenuItem>
+                ))
+              )}
+            </Select>
+            {errors.branchId && <Typography sx={{ color: '#ffc107', fontSize: '14px', ml: '14px', mt: '3px' }}>{errors.branchId}</Typography>}
+          </FormControl>
+
+
           <Button
             type="submit"
             variant="contained"
@@ -321,7 +353,7 @@ const AddAdminForm = ({ onClose, onAdminAdded, onAdminOperationError }) => {
               mt: 2,
             }}
           >
-            Add
+            Add Admin
           </Button>
         </Box>
       </Box>

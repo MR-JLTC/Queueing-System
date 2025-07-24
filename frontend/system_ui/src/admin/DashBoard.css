@@ -7,14 +7,16 @@ html, body, #root {
   padding: 0;
   overflow: hidden; /* Prevent overall scrollbar unless content overflows specific areas */
   font-family: 'Inter', sans-serif; /* Consistent font */
+  -webkit-font-smoothing: antialiased; /* Smoother font rendering */
+  -moz-osx-font-smoothing: grayscale; /* Smoother font rendering */
 }
 
 /* Base styles for the dashboard page */
 .admin-dashboard-page {
   display: flex;
   min-height: 100vh; /* Ensure it takes full viewport height */
-  background-color: #1E1E2F; /* NEW: Darker background color */
-  color: #e0e0e0; /* Default text color */
+  background-color: #121212; /* Deep dark background from SuperAdminDashboard */
+  color: #e0e0e0; /* Default text color for content */
 }
 
 /* Custom scrollbar for content areas if needed */
@@ -40,14 +42,89 @@ html, body, #root {
 }
 
 /* General Material UI overrides for consistent theme */
+
+/* AppBar (Header) Styling */
 .MuiAppBar-root {
-  background-color: #1a2430 !important; /* Darker header */
-  color: #e0e0e0 !important;
+  background-color: #1a1a1a !important; /* Matches SuperAdminDashboard header */
+  color: #e0e0e0 !important; /* Light text color */
+  box-shadow: none !important; /* No shadow */
+  border-bottom: 1px solid rgba(100, 110, 130, 0.1) !important; /* Subtle bottom border */
+  height: 64px; /* Fixed height for AppBar */
 }
 
+/* Sidebar (Drawer) Styling */
 .MuiDrawer-paper {
-  background-color: #1a2430 !important; /* Darker sidebar background */
+  background-color: #1a1a1a !important; /* Matches SuperAdminDashboard sidebar */
+  color: #e0e0e0 !important; /* Light text color */
+  border-right: 1px solid rgba(100, 110, 130, 0.1) !important; /* Subtle sidebar border */
+  box-shadow: none !important; /* No shadow */
+}
+
+/* Sidebar Profile Section */
+.MuiDrawer-paper .MuiBox-root:first-of-type { /* Targets the profile box */
+  background-color: #1a1a1a; /* Matches sidebar background */
+  padding: 20px 16px !important; /* Adjusted padding */
+  border-bottom: 1px solid rgba(100, 110, 130, 0.1); /* Subtle separator */
+}
+.MuiDrawer-paper .MuiBox-root:first-of-type .MuiAvatar-root {
+  background-color: #007bff !important; /* Blue avatar background */
+}
+/* Adjusted font sizes for profile name and administrator text */
+.MuiDrawer-paper .MuiBox-root:first-of-type .MuiTypography-body1 {
+  font-weight: 600 !important;
+  font-size: 1rem !important; /* Adjusted */
   color: #e0e0e0 !important;
+}
+.MuiDrawer-paper .MuiBox-root:first-of-type .MuiTypography-caption {
+  color: rgba(255, 255, 255, 0.5) !important;
+  font-size: 0.75rem !important; /* Adjusted */
+}
+
+/* List Item Text within Drawer */
+.MuiListItemText-primary {
+  color: #e0e0e0 !important; /* Ensure list item text is light */
+  font-weight: 500; /* Medium weight */
+}
+
+/* List Item Buttons (Navigation) */
+.MuiListItemButton-root {
+  transition: background-color 0.2s ease, border-left 0.2s ease, padding-left 0.2s ease;
+  border-left: 4px solid transparent; /* Default transparent border */
+  padding-left: 24px !important; /* Default padding for alignment */
+}
+
+.MuiListItemButton-root:hover {
+  background-color: rgba(0, 123, 255, 0.1) !important; /* Very subtle blue hover */
+  border-left-color: #007bff !important; /* Highlight border on hover */
+  padding-left: calc(24px - 4px) !important; /* Adjust padding for border */
+}
+
+.MuiListItemButton-root.Mui-selected {
+  background-color: rgba(0, 123, 255, 0.15) !important; /* Subtle selected state */
+  border-left-color: #007bff !important; /* Solid blue border for selected */
+  padding-left: calc(24px - 4px) !important; /* Adjust padding for border */
+}
+
+.MuiListItemButton-root.Mui-selected:hover {
+  background-color: rgba(0, 123, 255, 0.2) !important; /* Slightly darker hover for selected */
+}
+
+/* Logout Button specific styling */
+.MuiListItemButton-root .MuiListItemIcon-root .MuiSvgIcon-root[data-testid="ExitToAppIcon"] {
+  color: #dc3545 !important; /* Red icon for logout */
+}
+.MuiListItemButton-root[onClick*="handleLogout"]:hover { /* Target logout button specifically */
+  background-color: rgba(255, 0, 0, 0.08) !important; /* Very subtle red hover for logout */
+  border-left-color: #dc3545 !important;
+}
+
+
+/* Main Content Area Styling */
+.MuiBox-root[component="main"] {
+  background-color: #121212; /* Deep dark background, matches SuperAdminDashboard */
+  min-height: calc(100vh - 64px); /* Ensure it fills remaining height */
+  color: #e0e0e0; /* Default text color for content */
+  padding: 24px !important; /* Consistent padding */
 }
 
 /* Table styling */
@@ -59,7 +136,7 @@ html, body, #root {
 }
 
 .data-table thead tr {
-  background-color: #1f2a3a; /* Darker header background */
+  background-color: #1a1a1a; /* Darker header background, matches SuperAdminDashboard */
   color: #8ab4f8; /* Header text color */
   font-weight: 600;
   border-radius: 8px; /* Rounded corners for header row */
@@ -69,12 +146,13 @@ html, body, #root {
 .data-table th {
   padding: 15px;
   text-align: left;
-  border-bottom: 2px solid rgba(0, 123, 255, 0.1); /* Subtle separator */
+  border-bottom: 1px solid rgba(100, 110, 130, 0.1); /* Subtle separator, matches SuperAdminDashboard */
   white-space: nowrap; /* Prevent text wrapping in headers */
+  font-size: 0.9rem; /* Consistent with SuperAdminDashboard table headers */
 }
 
 .data-table tbody tr {
-  background-color: #283747; /* Row background */
+  background-color: #1f1f1f; /* Row background, matches SuperAdminDashboard */
   color: #e0e0e0; /* Row text color */
   border-radius: 8px; /* Rounded corners for rows */
   overflow: hidden;
@@ -82,19 +160,15 @@ html, body, #root {
 }
 
 .data-table tbody tr:hover {
-  background-color: #334455; /* Darker on hover */
+  background-color: rgba(0, 123, 255, 0.05); /* Darker on hover, matches SuperAdminDashboard */
   box-shadow: 0 4px 15px rgba(0,0,0,0.3);
 }
 
 .data-table td {
   padding: 15px;
-  border-bottom: 1px solid rgba(255,255,255,0.05); /* Lighter separator between cells */
+  border-bottom: none; /* No bottom border for body cells, matches SuperAdminDashboard */
   white-space: nowrap; /* Prevent text wrapping in cells */
-}
-
-/* Remove bottom border for the last row's cells */
-.data-table tbody tr:last-child td {
-  border-bottom: none;
+  font-size: 0.9rem; /* Consistent with SuperAdminDashboard table body */
 }
 
 /* Specific style for priority rows */
@@ -108,6 +182,19 @@ html, body, #root {
   background-color: #5c3a3a; /* Darker red on hover */
 }
 
+/* Status Badges (for tables) */
+.status-active {
+  color: #28a745 !important; /* Green for Active */
+  font-weight: 600 !important;
+  font-size: 0.9rem !important;
+}
+.status-inactive {
+  color: #dc3545 !important; /* Red for Inactive */
+  font-weight: 600 !important;
+  font-size: 0.9rem !important;
+}
+
+
 /* Modal Overlay */
 .modal-overlay {
   position: fixed;
@@ -120,17 +207,18 @@ html, body, #root {
   justify-content: center;
   align-items: center;
   z-index: 1300; /* Above Material-UI drawers/appbars */
+  backdrop-filter: blur(5px); /* Subtle blur effect */
 }
 
 .logout-modal {
-  background-color: #1f2a3a; /* Dark modal background */
+  background-color: #1a1a1a; /* Dark modal background, matches SuperAdminDashboard */
   padding: 30px;
   border-radius: 12px;
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
   text-align: center;
   max-width: 400px;
   width: 90%;
-  border: 1px solid rgba(0, 123, 255, 0.2);
+  border: 1px solid rgba(100, 110, 130, 0.2); /* Subtle border, matches SuperAdminDashboard */
 }
 
 /* Responsive adjustments for tables */
@@ -146,6 +234,7 @@ html, body, #root {
   .data-table tr {
     margin-bottom: 15px;
     box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    background-color: #1a1a1a; /* Ensure mobile rows also have dark background */
   }
 
   .data-table td {
@@ -177,4 +266,3 @@ html, body, #root {
 .MuiInputBase-input:-webkit-autofill:active {
   font-size: 16px !important; /* Crucial for preventing mobile zoom */
 }
-

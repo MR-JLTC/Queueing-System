@@ -15,7 +15,6 @@ import IconButton from '@mui/material/IconButton';
 import { styled } from '@mui/material/styles';
 
 // Import Material UI Icons
-import AccountCircle from '@mui/icons-material/AccountCircle';
 import MailOutline from '@mui/icons-material/MailOutline';
 import LockOutlined from '@mui/icons-material/LockOutlined';
 import Visibility from '@mui/icons-material/Visibility';
@@ -75,8 +74,7 @@ const CustomTextField = styled(TextField)(() => ({
 const LoginForm = () => { // Component name is LoginForm as per your file
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    username: '',
-    email: '',
+    email: '', // Removed username from state
     password: ''
   });
   const [popup, setPopup] = useState(null);
@@ -102,6 +100,12 @@ const LoginForm = () => { // Component name is LoginForm as per your file
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+    // Apply max length directly to password input value
+    if (name === 'password') {
+      if (value.length > 9) { // Strict max length for password
+        return;
+      }
+    }
     setFormData(prev => ({ ...prev, [name]: value }));
 
     if (name === 'email') {
@@ -116,29 +120,28 @@ const LoginForm = () => { // Component name is LoginForm as per your file
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validate that at least one of username or email is provided
-    if (!formData.username && !formData.email) {
-      showPopupMessage(setPopup, "error", "Please enter either a username or an email.");
-      return;
-    }
-    // Validate password is provided
-    if (!formData.password) {
-      showPopupMessage(setPopup, "error", "Please enter your password.");
+    // Validate email and password presence
+    if (!formData.email || !formData.password) {
+      showPopupMessage(setPopup, "error", "Please enter both email and password.");
       return;
     }
 
     // Final email validation before submission
-    if (formData.email && !validateEmail(formData.email)) {
+    if (!validateEmail(formData.email)) {
       showPopupMessage(setPopup, "error", "Please enter a valid email address.");
       setEmailError(true); // Ensure error state is set for visual feedback
       return;
     }
 
+    // Password length validation for submission
+    if (formData.password.length < 6 || formData.password.length > 9) { // Min 6, Max 9
+      showPopupMessage(setPopup, "error", "Password must be between 6 and 9 characters long.");
+      return;
+    }
+
     try {
       // Fetch users from the backend
-      // It's more efficient to have a specific login endpoint on the backend
-      // that handles authentication and returns user data including role.
-      // For now, we'll fetch all users and filter, but consider a dedicated /auth/login endpoint.
+      // We fetch all users to find by email, as username is no longer an input.
       const response = await axios.get(`${API_BASE_URL}/users`);
       const users = response.data;
 
@@ -146,11 +149,10 @@ const LoginForm = () => { // Component name is LoginForm as per your file
         showPopupMessage(setPopup, "error", "No users found in the system. Please sign up first.");
         return;
       }
-      
-      // Find user by email or username (case-insensitive)
+
+      // Find user by email (case-insensitive)
       const user = users.find(u =>
-        (formData.email && u.email.toLowerCase() === formData.email.toLowerCase()) ||
-        (formData.username && u.username.toLowerCase() === formData.username.toLowerCase())
+        u.email.toLowerCase() === formData.email.toLowerCase()
       );
 
       if (user) {
@@ -158,22 +160,20 @@ const LoginForm = () => { // Component name is LoginForm as per your file
         const isPasswordValid = await bcrypt.compare(formData.password, user.passwordHash);
 
         if (isPasswordValid) {
-          // --- START: MODIFIED LOGIC FOR ROLE CHECK ---
           if (user.roleId === 1) { // Check if the user is a Super Admin (roleId 1)
             localStorage.setItem("isLoggedIn", "true");
             localStorage.setItem("userEmail", user.email);
             localStorage.setItem("userId", user.userId);
             localStorage.setItem("roleId", user.roleId);
-            localStorage.setItem("username", user.username);
+            // localStorage.setItem("username", user.username); // REMOVED: Store generated username
             localStorage.setItem("fullName", user.fullName);
+            localStorage.setItem("branchId", user.branchId !== null && user.branchId !== undefined ? user.branchId.toString() : '');
             showPopupMessage(setPopup, "success", "Login successful!");
             setTimeout(() => navigate('/SuperAdminDashboard', { replace: true }), 700);
           } else {
-            // If not a Super Admin, show error and do NOT log them in or redirect
-            localStorage.clear(); // Clear any potentially set items (defensive)
+            localStorage.clear();
             showPopupMessage(setPopup, "error", "Account is Not a SuperAdmin.");
           }
-          // --- END: MODIFIED LOGIC FOR ROLE CHECK ---
         } else {
           showPopupMessage(setPopup, "error", "Invalid credentials. Please try again.");
         }
@@ -184,26 +184,21 @@ const LoginForm = () => { // Component name is LoginForm as per your file
       console.error('Login error:', error);
       let errorMessage = "An unexpected error occurred. Please try again later.";
 
-      // Detailed error handling for Axios errors
       if (axios.isAxiosError(error)) {
         if (error.response) {
-          // Server responded with a status code outside of 2xx range
           if (error.response.status === 404) {
-            errorMessage = "Login failed: User not found. Please check your email/username.";
+            errorMessage = "Login failed: User not found. Please check your email.";
           } else if (error.response.data && error.response.data.message) {
             errorMessage = `Login failed: ${error.response.data.message}`;
           } else {
             errorMessage = `Login failed: Server responded with status ${error.response.status}.`;
           }
         } else if (error.request) {
-          // Request was made but no response was received
           errorMessage = "Login failed: No response from server. Please ensure the backend is running.";
         } else {
-          // Something happened in setting up the request that triggered an Error
           errorMessage = `Login failed: ${error.message}`;
         }
       } else {
-        // Generic error
         errorMessage = `Login failed: ${error.message}`;
       }
       showPopupMessage(setPopup, "error", errorMessage);
@@ -235,34 +230,13 @@ const LoginForm = () => { // Component name is LoginForm as per your file
         </div>
       </div>
       <form className="sa_login-container" onSubmit={handleSubmit}>
-        {/* Username Input Field (commented out in your provided code)
-        <div className="sa_form-group horizontal">
-          <CustomTextField
-            fullWidth
-            label="Username"
-            name="username"
-            value={formData.username}
-            onChange={handleInputChange}
-            inputProps={{ autocomplete: 'off' }}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start" sx={{ ml: '2px' }}>
-                  <AccountCircle sx={{ color: '#a0a0a0', fontSize: '24px' }} />
-                </InputAdornment>
-              ),
-            }}
-            variant="outlined"
-            sx={{ mb: 2 }}
-          />
-        </div> */}
-
         {/* Email Input Field */}
         <div className="sa_form-group horizontal">
           <CustomTextField
             fullWidth
             name="email"
             type="email"
-            placeholder='Enter your email'
+            placeholder='Enter Email'
             value={formData.email}
             onChange={handleInputChange}
             error={emailError}
@@ -284,7 +258,7 @@ const LoginForm = () => { // Component name is LoginForm as per your file
         <div className="sa_form-group horizontal">
           <CustomTextField
             fullWidth
-            placeholder='Enter your password'
+            placeholder='Enter Password'
             name="password"
             type={showPassword ? "text" : "password"}
             value={formData.password}
@@ -303,7 +277,7 @@ const LoginForm = () => { // Component name is LoginForm as per your file
                     aria-label="toggle password visibility"
                     onClick={togglePasswordVisibility}
                     edge="end"
-                    sx={{ color: '#a0a0a0', '&:hover': { color: '#e0e0e0' } }}
+                    sx={{ color: 'white', '&:hover': { color: 'white' } }}
                   >
                     {showPassword ? <VisibilityOff sx={{ fontSize: '24px' }} /> : <Visibility sx={{ fontSize: '24px' }} />}
                   </IconButton>

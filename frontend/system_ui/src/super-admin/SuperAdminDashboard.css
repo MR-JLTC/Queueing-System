@@ -285,7 +285,7 @@ html, body, #root {
 .add-admin-modal .MuiInputBase-root.Mui-focused,
 .edit-admin-modal .MuiInputBase-root.Mui-focused {
   border-color: #007bff;
-  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.2);
+  box-shadow: 0 0 0 2px rgba(234, 236, 237, 0.2);
 }
 
 /* Specific styling for Edit Admin Status Checkboxes */

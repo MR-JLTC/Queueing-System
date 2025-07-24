@@ -11,7 +11,7 @@ import { StaffWindowAssignmentsModule } from './staff-window-assignments/staff-w
 import { QueueTicketsModule } from './queue-tickets/queue-tickets.module';
 import { TicketStatusHistoryModule } from './ticket-status-history/ticket-status-history.module';
 import { DailyQueueSummaryModule } from './daily-queue-summary/daily-queue-summary.module';
-
+import { BranchesModule } from './branches/branches.module'; 
 
 @Module({
   imports: [
@@ -26,6 +26,7 @@ import { DailyQueueSummaryModule } from './daily-queue-summary/daily-queue-summa
     QueueTicketsModule,
     TicketStatusHistoryModule,
     DailyQueueSummaryModule,
+    BranchesModule
   ],
   controllers: [],
   providers: [],
