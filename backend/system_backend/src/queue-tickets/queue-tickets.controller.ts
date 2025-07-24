@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, HttpStatus
 import { QueueTicketsService } from './queue-tickets.service';
 import { CreateQueueTicketDto } from './dto/create-queue-ticket.dto';
 import { UpdateQueueTicketDto } from './dto/update-queue-ticket.dto';
+// REMOVED: import { TicketStatus } from './entities/queue-ticket.entity';
 
 @Controller('queue-tickets')
 export class QueueTicketsController {
@@ -32,5 +33,15 @@ export class QueueTicketsController {
   @HttpCode(HttpStatus.NO_CONTENT)
   remove(@Param('id') id: string) {
     return this.queueTicketsService.remove(+id);
+  }
+
+  // Example of a new endpoint to change ticket status
+  @Patch(':id/status/:statusId')
+  @HttpCode(HttpStatus.OK)
+  async updateTicketStatus(
+    @Param('id') ticketId: string,
+    @Param('statusId') newStatusId: string,
+  ) {
+    return this.queueTicketsService.updateTicketStatus(+ticketId, +newStatusId);
   }
 }

@@ -301,7 +301,7 @@ const SignupForm = () => {
                     edge="end"
                     sx={{ color: 'white', '&:hover': { color: 'white' } }}
                   >
-                    {showPassword ? <VisibilityOff sx={{ fontSize: '24px' }} /> : <Visibility sx={{ fontSize: '24px' }} />}
+                    {showPassword ? <Visibility sx={{ fontSize: '24px' }} /> : <VisibilityOff sx={{ fontSize: '24px' }} />}
                   </IconButton>
                 </InputAdornment>
               ),
@@ -336,7 +336,7 @@ const SignupForm = () => {
                     edge="end"
                     sx={{ color: 'white', '&:hover': { color: 'white' } }}
                   >
-                    {showConfirmPassword ? <VisibilityOff sx={{ fontSize: '24px' }} /> : <Visibility sx={{ fontSize: '24px' }} />}
+                    {showConfirmPassword ? <Visibility sx={{ fontSize: '24px' }} /> : <VisibilityOff sx={{ fontSize: '24px' }} />}
                   </IconButton>
                 </InputAdornment>
               ),

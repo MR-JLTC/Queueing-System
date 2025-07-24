@@ -1,17 +1,18 @@
-import { IsString, MaxLength, IsBoolean, IsEnum } from 'class-validator';
+import { IsString, IsInt, IsBoolean, MinLength, MaxLength, IsEnum, IsOptional } from 'class-validator';
 import { VisibilityStatus } from '../../common/enums/visibility-status.enum';
 
 export class CreateServiceWindowDto {
   @IsString()
+  @MinLength(1)
   @MaxLength(255)
-  counterLabel: string;
+  windowNumber: string;
 
-  @IsString()
-  @MaxLength(255)
-  serviceArea: string;
+  @IsInt()
+  branchId: number;
 
+  @IsOptional()
   @IsBoolean()
-  isOpen: boolean;
+  isActive?: boolean;
 
   @IsEnum(VisibilityStatus)
   visibilityStatus: VisibilityStatus;

@@ -12,33 +12,36 @@ export class TicketStatusHistoryService {
     private ticketStatusHistoryRepository: Repository<TicketStatusHistory>,
   ) {}
 
-  create(createTicketStatusHistoryDto: CreateTicketStatusHistoryDto): Promise<TicketStatusHistory> {
-    const history = this.ticketStatusHistoryRepository.create(createTicketStatusHistoryDto);
-    return this.ticketStatusHistoryRepository.save(history);
+  async create(createTicketStatusHistoryDto: CreateTicketStatusHistoryDto): Promise<TicketStatusHistory> {
+    const historyEntry = this.ticketStatusHistoryRepository.create(createTicketStatusHistoryDto);
+    return this.ticketStatusHistoryRepository.save(historyEntry);
   }
 
   findAll(): Promise<TicketStatusHistory[]> {
-    return this.ticketStatusHistoryRepository.find();
+    return this.ticketStatusHistoryRepository.find({ relations: ['queueTicket', 'changedBy'] });
   }
 
   async findOne(historyId: number): Promise<TicketStatusHistory> {
-    const history = await this.ticketStatusHistoryRepository.findOne({ where: { historyId } });
-    if (!history) {
-      throw new NotFoundException(`Ticket status history with ID "${historyId}" not found`);
+    const historyEntry = await this.ticketStatusHistoryRepository.findOne({
+      where: { historyId },
+      relations: ['queueTicket', 'changedBy'],
+    });
+    if (!historyEntry) {
+      throw new NotFoundException(`Ticket Status History entry with ID "${historyId}" not found`);
     }
-    return history;
+    return historyEntry;
   }
 
   async update(historyId: number, updateTicketStatusHistoryDto: UpdateTicketStatusHistoryDto): Promise<TicketStatusHistory> {
-    const history = await this.findOne(historyId);
-    Object.assign(history, updateTicketStatusHistoryDto);
-    return this.ticketStatusHistoryRepository.save(history);
+    const historyEntry = await this.findOne(historyId);
+    Object.assign(historyEntry, updateTicketStatusHistoryDto);
+    return this.ticketStatusHistoryRepository.save(historyEntry);
   }
 
   async remove(historyId: number): Promise<void> {
     const result = await this.ticketStatusHistoryRepository.delete(historyId);
     if (result.affected === 0) {
-      throw new NotFoundException(`Ticket status history with ID "${historyId}" not found`);
+      throw new NotFoundException(`Ticket Status History entry with ID "${historyId}" not found`);
     }
   }
 }

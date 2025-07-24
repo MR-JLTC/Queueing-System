@@ -2,7 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, OneToMan
 import { Role } from '../../roles/entities/role.entity';
 import { Branch } from '../../branches/entities/branch.entity';
 import { EmailOtp } from '../../email-otp/entities/email-otp.entity';
-import { StaffWindowAssignment } from '../../staff-window-assignments/entities/staff-window-assignment.entity';
+import { StaffWindowAssignment } from '../../staff-window-assignments/entities/staff-window-assignment.entity'; // <--- IMPORT StaffWindowAssignment
 import { QueueTicket } from '../../queue-tickets/entities/queue-ticket.entity';
 import { TicketStatusHistory } from '../../ticket-status-history/entities/ticket-status-history.entity';
 
@@ -21,7 +21,7 @@ export class User {
   @Column({ name: 'full_name', length: 255 })
   fullName: string;
 
-  // REMOVE THIS COLUMN FOR USERNAME
+  // Assuming 'username' was removed as per snippet context in previous turns, or keep if it still exists
   // @Column({ unique: true, length: 255 })
   // username: string;
 
@@ -40,7 +40,7 @@ export class User {
   @Column({ name: 'created_at', type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
 
-  @Column({ name: 'branch_id' })
+  @Column({ name: 'branch_id', nullable: true })
   branchId: number;
 
   @ManyToOne(() => Branch, (branch) => branch.users)
@@ -50,8 +50,11 @@ export class User {
   @OneToMany(() => EmailOtp, emailOtp => emailOtp.user)
   emailOtps: EmailOtp[];
 
-  @OneToMany(() => StaffWindowAssignment, assignment => assignment.staff)
-  staffAssignments: StaffWindowAssignment[];
+  @OneToMany(() => StaffWindowAssignment, assignment => assignment.staff) // <--- ADDED: Staff assignments for this user
+  staffAssignments: StaffWindowAssignment[]; // This resolves the error: Property 'staffAssignments' does not exist on type 'User'.
+
+  @OneToMany(() => QueueTicket, ticket => ticket.assignedToStaff)
+  staffAssignedTickets: QueueTicket[];
 
   @OneToMany(() => QueueTicket, ticket => ticket.cancelledBy)
   cancelledTickets: QueueTicket[];

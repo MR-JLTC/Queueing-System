@@ -1,46 +1,31 @@
-import { IsString, MaxLength, IsInt, IsDateString, IsEnum, IsOptional, Min } from 'class-validator';
-import { RecordStatus } from '../../common/enums/record-status.enum';
+import { IsString, IsInt, IsOptional, MinLength, MaxLength } from 'class-validator';
 
 export class CreateQueueTicketDto {
   @IsString()
-  @MaxLength(255)
-  queueNumber: string;
+  @MinLength(3)
+  @MaxLength(50)
+  ticketNumber: string;
 
+  @IsInt()
+  branchId: number;
+
+  @IsOptional()
+  @IsInt()
+  assignedToWindowId?: number;
+
+  @IsOptional()
+  @IsInt()
+  assignedToStaffId?: number;
+
+  @IsOptional()
+  @IsInt()
+  customerCategoryId?: number;
+
+  @IsOptional()
   @IsString()
   @MaxLength(255)
-  customerName: string;
+  serviceType?: string;
 
-  @IsInt()
-  categoryId: number;
-
-  @IsDateString()
-  issuedAt: Date;
-
-  @IsOptional()
-  @IsInt()
-  windowId?: number;
-
-  @IsString()
-  @MaxLength(1)
-  currentStatus: string;
-
-  @IsOptional()
-  @IsInt()
-  @Min(0)
-  requeueCount?: number;
-
-  @IsOptional()
-  @IsDateString()
-  servedAt?: Date;
-
-  @IsOptional()
-  @IsDateString()
-  completedAt?: Date;
-
-  @IsOptional()
-  @IsInt()
-  cancelledByUserId?: number;
-
-  @IsEnum(RecordStatus)
-  recordStatus: RecordStatus;
+  @IsInt() // Initial status is now an ID referencing TicketStatus entity
+  currentStatusId: number;
 }

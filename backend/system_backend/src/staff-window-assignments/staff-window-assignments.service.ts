@@ -12,19 +12,22 @@ export class StaffWindowAssignmentsService {
     private staffWindowAssignmentsRepository: Repository<StaffWindowAssignment>,
   ) {}
 
-  create(createStaffWindowAssignmentDto: CreateStaffWindowAssignmentDto): Promise<StaffWindowAssignment> {
+  async create(createStaffWindowAssignmentDto: CreateStaffWindowAssignmentDto): Promise<StaffWindowAssignment> {
     const assignment = this.staffWindowAssignmentsRepository.create(createStaffWindowAssignmentDto);
     return this.staffWindowAssignmentsRepository.save(assignment);
   }
 
   findAll(): Promise<StaffWindowAssignment[]> {
-    return this.staffWindowAssignmentsRepository.find();
+    return this.staffWindowAssignmentsRepository.find({ relations: ['staff', 'window'] });
   }
 
   async findOne(assignmentId: number): Promise<StaffWindowAssignment> {
-    const assignment = await this.staffWindowAssignmentsRepository.findOne({ where: { assignmentId } });
+    const assignment = await this.staffWindowAssignmentsRepository.findOne({
+      where: { assignmentId },
+      relations: ['staff', 'window'],
+    });
     if (!assignment) {
-      throw new NotFoundException(`Staff window assignment with ID "${assignmentId}" not found`);
+      throw new NotFoundException(`Staff Window Assignment with ID "${assignmentId}" not found`);
     }
     return assignment;
   }
@@ -38,7 +41,7 @@ export class StaffWindowAssignmentsService {
   async remove(assignmentId: number): Promise<void> {
     const result = await this.staffWindowAssignmentsRepository.delete(assignmentId);
     if (result.affected === 0) {
-      throw new NotFoundException(`Staff window assignment with ID "${assignmentId}" not found`);
+      throw new NotFoundException(`Staff Window Assignment with ID "${assignmentId}" not found`);
     }
   }
 }

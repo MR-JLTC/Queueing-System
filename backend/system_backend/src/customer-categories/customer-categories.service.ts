@@ -12,7 +12,7 @@ export class CustomerCategoriesService {
     private customerCategoriesRepository: Repository<CustomerCategory>,
   ) {}
 
-  create(createCustomerCategoryDto: CreateCustomerCategoryDto): Promise<CustomerCategory> {
+  async create(createCustomerCategoryDto: CreateCustomerCategoryDto): Promise<CustomerCategory> {
     const category = this.customerCategoriesRepository.create(createCustomerCategoryDto);
     return this.customerCategoriesRepository.save(category);
   }
@@ -24,7 +24,7 @@ export class CustomerCategoriesService {
   async findOne(categoryId: number): Promise<CustomerCategory> {
     const category = await this.customerCategoriesRepository.findOne({ where: { categoryId } });
     if (!category) {
-      throw new NotFoundException(`Customer category with ID "${categoryId}" not found`);
+      throw new NotFoundException(`Customer Category with ID "${categoryId}" not found`);
     }
     return category;
   }
@@ -38,7 +38,7 @@ export class CustomerCategoriesService {
   async remove(categoryId: number): Promise<void> {
     const result = await this.customerCategoriesRepository.delete(categoryId);
     if (result.affected === 0) {
-      throw new NotFoundException(`Customer category with ID "${categoryId}" not found`);
+      throw new NotFoundException(`Customer Category with ID "${categoryId}" not found`);
     }
   }
 }

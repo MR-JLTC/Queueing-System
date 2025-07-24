@@ -12,33 +12,33 @@ export class TicketStatusesService {
     private ticketStatusesRepository: Repository<TicketStatus>,
   ) {}
 
-  create(createTicketStatusDto: CreateTicketStatusDto): Promise<TicketStatus> {
-    const status = this.ticketStatusesRepository.create(createTicketStatusDto);
-    return this.ticketStatusesRepository.save(status);
+  async create(createTicketStatusDto: CreateTicketStatusDto): Promise<TicketStatus> {
+    const ticketStatus = this.ticketStatusesRepository.create(createTicketStatusDto);
+    return this.ticketStatusesRepository.save(ticketStatus);
   }
 
   findAll(): Promise<TicketStatus[]> {
     return this.ticketStatusesRepository.find();
   }
 
-  async findOne(statusCode: string): Promise<TicketStatus> {
-    const status = await this.ticketStatusesRepository.findOne({ where: { statusCode } });
-    if (!status) {
-      throw new NotFoundException(`Ticket status with code "${statusCode}" not found`);
+  async findOne(statusId: number): Promise<TicketStatus> {
+    const ticketStatus = await this.ticketStatusesRepository.findOne({ where: { statusId } });
+    if (!ticketStatus) {
+      throw new NotFoundException(`Ticket Status with ID "${statusId}" not found`);
     }
-    return status;
+    return ticketStatus;
   }
 
-  async update(statusCode: string, updateTicketStatusDto: UpdateTicketStatusDto): Promise<TicketStatus> {
-    const status = await this.findOne(statusCode);
-    Object.assign(status, updateTicketStatusDto);
-    return this.ticketStatusesRepository.save(status);
+  async update(statusId: number, updateTicketStatusDto: UpdateTicketStatusDto): Promise<TicketStatus> {
+    const ticketStatus = await this.findOne(statusId);
+    Object.assign(ticketStatus, updateTicketStatusDto);
+    return this.ticketStatusesRepository.save(ticketStatus);
   }
 
-  async remove(statusCode: string): Promise<void> {
-    const result = await this.ticketStatusesRepository.delete(statusCode);
+  async remove(statusId: number): Promise<void> {
+    const result = await this.ticketStatusesRepository.delete(statusId);
     if (result.affected === 0) {
-      throw new NotFoundException(`Ticket status with code "${statusCode}" not found`);
+      throw new NotFoundException(`Ticket Status with ID "${statusId}" not found`);
     }
   }
 }

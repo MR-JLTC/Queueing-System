@@ -18,19 +18,19 @@ export class TicketStatusesController {
     return this.ticketStatusesService.findAll();
   }
 
-  @Get(':code')
-  findOne(@Param('code') code: string) {
-    return this.ticketStatusesService.findOne(code);
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.ticketStatusesService.findOne(+id);
   }
 
-  @Patch(':code')
-  update(@Param('code') code: string, @Body() updateTicketStatusDto: UpdateTicketStatusDto) {
-    return this.ticketStatusesService.update(code, updateTicketStatusDto);
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() updateTicketStatusDto: UpdateTicketStatusDto) {
+    return this.ticketStatusesService.update(+id, updateTicketStatusDto);
   }
 
-  @Delete(':code')
+  @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@Param('code') code: string) {
-    return this.ticketStatusesService.remove(code);
+  remove(@Param('id') id: string) {
+    return this.ticketStatusesService.remove(+id);
   }
 }

@@ -12,33 +12,36 @@ export class ServiceWindowsService {
     private serviceWindowsRepository: Repository<ServiceWindow>,
   ) {}
 
-  create(createServiceWindowDto: CreateServiceWindowDto): Promise<ServiceWindow> {
-    const window = this.serviceWindowsRepository.create(createServiceWindowDto);
-    return this.serviceWindowsRepository.save(window);
+  async create(createServiceWindowDto: CreateServiceWindowDto): Promise<ServiceWindow> {
+    const serviceWindow = this.serviceWindowsRepository.create(createServiceWindowDto);
+    return this.serviceWindowsRepository.save(serviceWindow);
   }
 
   findAll(): Promise<ServiceWindow[]> {
-    return this.serviceWindowsRepository.find();
+    return this.serviceWindowsRepository.find({ relations: ['branch'] });
   }
 
   async findOne(windowId: number): Promise<ServiceWindow> {
-    const window = await this.serviceWindowsRepository.findOne({ where: { windowId } });
-    if (!window) {
-      throw new NotFoundException(`Service window with ID "${windowId}" not found`);
+    const serviceWindow = await this.serviceWindowsRepository.findOne({
+      where: { windowId },
+      relations: ['branch'],
+    });
+    if (!serviceWindow) {
+      throw new NotFoundException(`Service Window with ID "${windowId}" not found`);
     }
-    return window;
+    return serviceWindow;
   }
 
   async update(windowId: number, updateServiceWindowDto: UpdateServiceWindowDto): Promise<ServiceWindow> {
-    const window = await this.findOne(windowId);
-    Object.assign(window, updateServiceWindowDto);
-    return this.serviceWindowsRepository.save(window);
+    const serviceWindow = await this.findOne(windowId);
+    Object.assign(serviceWindow, updateServiceWindowDto);
+    return this.serviceWindowsRepository.save(serviceWindow);
   }
 
   async remove(windowId: number): Promise<void> {
     const result = await this.serviceWindowsRepository.delete(windowId);
     if (result.affected === 0) {
-      throw new NotFoundException(`Service window with ID "${windowId}" not found`);
+      throw new NotFoundException(`Service Window with ID "${windowId}" not found`);
     }
   }
 }

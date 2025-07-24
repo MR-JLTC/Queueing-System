@@ -1,7 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
-import { QueueTicket } from '../../queue-tickets/entities/queue-ticket.entity';
-import { TicketStatus } from '../../ticket-statuses/entities/ticket-status.entity';
-import { User } from '../../users/entities/user.entity';
+import { QueueTicket } from '../../queue-tickets/entities/queue-ticket.entity'; // Import QueueTicket
+import { User } from '../../users/entities/user.entity'; // Import User
+import { TicketStatus } from '../../ticket-statuses/entities/ticket-status.entity'; // <--- IMPORT New TicketStatus Entity
 
 @Entity('ticket_status_history')
 export class TicketStatusHistory {
@@ -11,30 +11,43 @@ export class TicketStatusHistory {
   @Column({ name: 'ticket_id' })
   ticketId: number;
 
-  @ManyToOne(() => QueueTicket, ticket => ticket.ticketStatusHistories)
+  @ManyToOne(() => QueueTicket, queueTicket => queueTicket.statusHistory)
   @JoinColumn({ name: 'ticket_id' })
-  ticket: QueueTicket;
+  queueTicket: QueueTicket;
 
-  @Column({ name: 'status_code', type: 'char', length: 1 })
-  statusCode: string;
+  // Old Status - now links to TicketStatus entity
+  @Column({ name: 'old_status_id', nullable: true })
+  oldStatusId: number | null;
 
-  @ManyToOne(() => TicketStatus, status => status.ticketStatusHistories)
-  @JoinColumn({ name: 'status_code' })
-  status: TicketStatus;
+  @ManyToOne(() => TicketStatus, ticketStatus => ticketStatus.ticketStatusHistories)
+  @JoinColumn({ name: 'old_status_id' })
+  oldStatus: TicketStatus | null;
 
-  @Column({ name: 'changed_by' })
-  changedByUserId: number; // Renamed to avoid conflict with relation
+  // New Status - now links to TicketStatus entity
+  @Column({ name: 'new_status_id' })
+  newStatusId: number;
 
-  @ManyToOne(() => User, user => user.ticketStatusHistories)
-  @JoinColumn({ name: 'changed_by' })
-  changedBy: User;
+  @ManyToOne(() => TicketStatus, ticketStatus => ticketStatus.ticketStatusHistories)
+  @JoinColumn({ name: 'new_status_id' })
+  newStatus: TicketStatus;
 
-  @Column({ name: 'changed_at', type: 'datetime' })
+  // Added to resolve: Property 'status' does not exist on type 'TicketStatusHistory'.
+  // This means the TicketStatus entity's OneToMany expects a 'status' property on TicketStatusHistory.
+  // This 'status' here will represent the new status of this history entry, for the relationship.
+  @Column({ name: 'related_status_id' }) // Use a distinct column name for this specific relation
+  relatedStatusId: number;
+
+  @ManyToOne(() => TicketStatus, ticketStatus => ticketStatus.ticketStatusHistories)
+  @JoinColumn({ name: 'related_status_id' })
+  status: TicketStatus; // <--- RESOLVES THE ERROR
+
+  @Column({ name: 'changed_at', type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   changedAt: Date;
 
-  @Column({ nullable: true, length: 255 })
-  notes: string;
+  @Column({ name: 'changed_by_id', nullable: true })
+  changedById: number | null;
 
-  @Column({ name: 'record_status', length: 255, comment: 'ON_LIVE or ON_DELETE' })
-  recordStatus: string;
+  @ManyToOne(() => User, user => user.ticketStatusHistories)
+  @JoinColumn({ name: 'changed_by_id' })
+  changedBy: User;
 }

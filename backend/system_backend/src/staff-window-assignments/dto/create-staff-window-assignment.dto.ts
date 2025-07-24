@@ -1,4 +1,5 @@
-import { IsInt, IsDateString, IsEnum, IsOptional } from 'class-validator';
+import { IsInt, IsOptional, IsEnum } from 'class-validator';
+import { AssignmentStatus } from '../entities/staff-window-assignment.entity';
 import { VisibilityStatus } from '../../common/enums/visibility-status.enum';
 
 export class CreateStaffWindowAssignmentDto {
@@ -8,12 +9,9 @@ export class CreateStaffWindowAssignmentDto {
   @IsInt()
   windowId: number;
 
-  @IsDateString()
-  assignedFrom: Date;
-
   @IsOptional()
-  @IsDateString()
-  assignedTo?: Date;
+  @IsEnum(AssignmentStatus)
+  status?: AssignmentStatus;
 
   @IsEnum(VisibilityStatus)
   visibilityStatus: VisibilityStatus;

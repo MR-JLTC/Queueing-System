@@ -1,25 +1,20 @@
-import { IsInt, IsString, MaxLength, IsDateString, IsOptional, IsEnum } from 'class-validator';
-import { RecordStatus } from '../../common/enums/record-status.enum';
+import { IsInt, IsOptional, IsNumber } from 'class-validator';
 
 export class CreateTicketStatusHistoryDto {
   @IsInt()
   ticketId: number;
 
-  @IsString()
-  @MaxLength(1)
-  statusCode: string;
+  @IsOptional()
+  @IsNumber() // Ensures it's a number if provided, but allows undefined and null due to @IsOptional()
+  oldStatusId?: number | null; // Allows null for oldStatusId, and undefined if omitted
 
   @IsInt()
-  changedByUserId: number;
+  newStatusId: number;
 
-  @IsDateString()
-  changedAt: Date;
+  @IsInt()
+  relatedStatusId: number; // For the related TicketStatus entity ID
 
   @IsOptional()
-  @IsString()
-  @MaxLength(255)
-  notes?: string;
-
-  @IsEnum(RecordStatus)
-  recordStatus: RecordStatus;
+  @IsInt()
+  changedById?: number; // User who changed the status, if applicable
 }

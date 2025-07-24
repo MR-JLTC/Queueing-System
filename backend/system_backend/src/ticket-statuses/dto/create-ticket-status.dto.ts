@@ -1,16 +1,17 @@
-import { IsString, MaxLength, IsEnum, IsNotEmpty } from 'class-validator';
-import { VisibilityStatus } from '../../common/enums/visibility-status.enum';
+import { IsString, MinLength, MaxLength, IsOptional, IsBoolean } from 'class-validator';
 
 export class CreateTicketStatusDto {
   @IsString()
-  @IsNotEmpty()
-  @MaxLength(1)
-  statusCode: string;
+  @MinLength(3)
+  @MaxLength(50)
+  statusName: string;
 
+  @IsOptional()
   @IsString()
   @MaxLength(255)
-  statusLabel: string;
+  description?: string;
 
-  @IsEnum(VisibilityStatus)
-  visibilityStatus: VisibilityStatus;
+  @IsOptional()
+  @IsBoolean()
+  isActive?: boolean;
 }
