@@ -447,10 +447,11 @@ const Dashboard = () => {
 
             <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-around', gap: 3, mb: 5 }}>
               {[
-                { title: 'Total Queued', value: dashboardSummary.totalQueued, icon: <QueueIcon />, color: '#ffc107' },
-                { title: 'Served', value: dashboardSummary.served, icon: <CheckCircleOutlineIcon />, color: '#28a745' },
-                { title: 'Requeues', value: dashboardSummary.requeues, icon: <LoopIcon />, color: '#17a2b8' },
-                { title: 'Cancelled', value: dashboardSummary.cancelled, icon: <CancelIcon />, color: '#dc3545' },
+                // MODIFIED: Added fontSize prop directly to each icon
+                { title: 'Overall Total Queued', value: dashboardSummary.totalQueued, icon: <QueueIcon sx={{ fontSize: '4rem' }} />, color: '#ffc107' },
+                { title: 'Overall Served', value: dashboardSummary.served, icon: <CheckCircleOutlineIcon sx={{ fontSize: '4rem' }} />, color: '#28a745' },
+                { title: 'Overall Requeues', value: dashboardSummary.requeues, icon: <LoopIcon sx={{ fontSize: '4rem' }} />, color: '#17a2b8' },
+                { title: 'Overall Cancelled', value: dashboardSummary.cancelled, icon: <CancelIcon sx={{ fontSize: '4rem' }} />, color: '#dc3545' },
               ].map((card, index) => (
                 <Box
                   key={index}
@@ -470,8 +471,9 @@ const Dashboard = () => {
                     '&:hover': { transform: 'translateY(-5px)' },
                   }}
                 >
-                  <Box sx={{ color: card.color, fontSize: '3rem', mb: 1 }}>
-                    {card.icon}
+                  {/* The outer Box's fontSize is no longer directly controlling the icon size */}
+                  <Box sx={{ color: card.color, mb: 1 }}>
+                    {card.icon} {/* The icon itself now has the fontSize prop */}
                   </Box>
                   <Typography variant="h6" sx={{ color: '#e0e0e0', fontWeight: 500 }}>
                     {card.title}
@@ -601,11 +603,10 @@ const Dashboard = () => {
 
             <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-around', gap: 3, mb: 5 }}>
               {[
-                { title: 'Total Queued', value: queueHistorySummary.totalQueued, icon: <QueueIcon />, color: '#ffc107' },
-                { title: 'PWD', value: queueHistorySummary.pwd, icon: <WheelchairPickupIcon />, color: '#28a745' },
-                { title: 'Senior Citizens', value: queueHistorySummary.seniorCitizens, icon: <ElderlyIcon />, color: '#17a2b8' },
-                { title: 'Standard', value: queueHistorySummary.standard, icon: <PeopleIcon />, color: '#6f42c1' },
-                { title: 'Cancelled', value: queueHistorySummary.cancelled, icon: <CancelIcon />, color: '#dc3545' },
+                { title: 'Total Queued', value: dashboardSummary.totalQueued, icon: <QueueIcon sx={{ fontSize: '4rem' }} />, color: '#ffc107' },
+                { title: 'Served', value: dashboardSummary.served, icon: <CheckCircleOutlineIcon sx={{ fontSize: '4rem' }} />, color: '#28a745' },
+                { title: 'Requeues', value: dashboardSummary.requeues, icon: <LoopIcon sx={{ fontSize: '4rem' }} />, color: '#17a2b8' },
+                { title: 'Cancelled', value: dashboardSummary.cancelled, icon: <CancelIcon sx={{ fontSize: '4rem' }} />, color: '#dc3545' },
               ].map((card, index) => (
                 <Box
                   key={index}
@@ -858,18 +859,26 @@ const Dashboard = () => {
     }}>
       {/* Profile Section */}
       <Box sx={{
-        p: 2,
-        display: 'flex',
-        alignItems: 'center',
-        gap: 1.5,
-        backgroundColor: '#1a1a1a',
-        borderBottom: '1px solid rgba(100, 110, 130, 0.1)',
-      }}>
-        <Avatar sx={{ bgcolor: '#007bff', width: 40, height: 40 }}>
-          <AccountCircle sx={{ color: 'white', fontSize: '30px' }} />
+          p: 2,
+          display: 'flex',
+          flexDirection: 'column', // Changed to column to stack items
+          alignItems: 'center',
+          gap: 1.5,
+          backgroundColor: '#1a1a1a',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+        }}>
+        <Avatar sx={{ bgcolor: '#007bff', width: 90, height: 90 }}>
+          <AccountCircle sx={{ color: 'white', fontSize: '104px' }} />
         </Avatar>
-        <Box>
-          <Typography variant="body1" sx={{ color: '#e0e0e0', fontWeight: 600, fontSize: '1rem' }}>
+        <Box sx={{ textAlign: 'center' }}> {/* Added textAlign to center text */}
+          <Typography
+            variant="body1"
+            sx={{
+              color: '#e0e0e0',
+              fontWeight: 600,
+              fontSize: '1.2rem', // Set font size for the name
+            }}
+          >
             {fullName}
           </Typography>
           <Typography variant="caption" sx={{ color: 'rgba(255, 255, 255, 0.5)', fontSize: '0.75rem' }}>
@@ -889,13 +898,16 @@ const Dashboard = () => {
               sx={{
                 py: 1.5,
                 px: 3,
-                borderRadius: '0 8px 8px 0',
+                borderRadius: '3px 8px 8px 9px',
+                marginBottom:'7px',
                 backgroundColor: currentPage === item.path ? 'rgba(0, 123, 255, 0.15)' : 'transparent',
                 borderLeft: currentPage === item.path ? '4px solid #007bff' : '4px solid transparent',
                 '&:hover': {
                   backgroundColor: currentPage === item.path ? 'rgba(0, 123, 255, 0.2)' : 'rgba(255, 255, 255, 0.05)',
+                  borderBottom: '3px solid #007bff',
                 },
-                minHeight: '48px',
+                minHeight: '50px',
+                height: '48px',
               }}
             >
               <ListItemIcon sx={{ minWidth: '40px' }}>{item.icon}</ListItemIcon>
@@ -909,7 +921,13 @@ const Dashboard = () => {
 
       <List>
         <ListItem disablePadding>
-          <ListItemButton onClick={handleLogout} sx={{ py: 1.5, px: 3 }}>
+          <ListItemButton onClick={handleLogout} sx={{
+            py: 1.5,
+            px: 3,
+            borderRadius: '3px 8px 8px 10px',
+            borderLeft: '4px solid transparent',
+            borderColor: 'red',
+          }}>
             <ListItemIcon sx={{ minWidth: '40px' }}>
               <ExitToAppIcon sx={{ color: '#dc3545' }} />
             </ListItemIcon>
@@ -926,19 +944,19 @@ const Dashboard = () => {
       <AppBar
         position="fixed"
         sx={{
-          width: { sm: `calc(100% - ${drawerWidth}px)` },
-          ml: { sm: `${drawerWidth}px` },
-          backgroundColor: '#1a1a1a',
+          width: { sm: `calc(100% - ${drawerWidth}px - 710px)` }, // Reduced width by 20px overall
+          ml: { sm: `calc(${drawerWidth}px + 10px)` }, // Adjusted margin-left for centering with reduction
+          backgroundColor: 'transparent !important', // Made background transparent
           boxShadow: 'none',
-          borderBottom: '1px solid rgba(100, 110, 130, 0.1)',
-          height: '64px',
+          borderBottom: '1px solid rgba(100, 110, 130, 0)',
           zIndex: (theme) => theme.zIndex.drawer + 1,
+          borderRadius: '0 0 10px 10px', // Curved bottom-left and bottom-right corners
         }}
       >
         <Toolbar sx={{ minHeight: '64px !important', justifyContent: 'flex-end', pr: 3 }}>
           <IconButton
             color="inherit"
-            aria-label="open drawer"
+            aria-label="open drawer"  
             edge="start"
             onClick={handleDrawerToggle}
             sx={{ mr: 2, display: { sm: 'none' }, color: '#e0e0e0' }}
@@ -995,6 +1013,7 @@ const Dashboard = () => {
               color: '#e0e0e0',
               display: { xs: 'block', sm: 'none' },
               zIndex: (theme) => theme.zIndex.drawer + 2,
+              borderRadius: '0 15px 15px 0', // Applied border-radius
             }
           }}
         >
@@ -1012,6 +1031,7 @@ const Dashboard = () => {
               color: '#e0e0e0',
               display: { xs: 'none', sm: 'block' },
               zIndex: (theme) => theme.zIndex.drawer + 1,
+              borderRadius: '0 30px 30px 0', // Applied border-radius
             }
           }}
         >

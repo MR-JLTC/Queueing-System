@@ -5,8 +5,8 @@ html, body, #root {
   height: 100%;
   margin: 0;
   padding: 0;
-  overflow: hidden; /* Prevent overall scrollbar unless content overflows specific areas */
-  font-family: 'Inter', sans-serif; /* Consistent font */
+  overflow: hidden; 
+  font-family: 'Inter'; /* Consistent font */
   -webkit-font-smoothing: antialiased; /* Smoother font rendering */
   -moz-osx-font-smoothing: grayscale; /* Smoother font rendering */
 }

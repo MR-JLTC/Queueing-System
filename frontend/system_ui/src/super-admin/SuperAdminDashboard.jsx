@@ -72,7 +72,6 @@ const SuperAdminDashboard = () => {
       const response = await axios.get(`${API_BASE_URL}/users`);
       const allUsers = response.data;
       const adminUsers = allUsers.filter(user => user.roleId === 2);
-
       const formattedUsers = adminUsers.map(user => {
         const parsedId = Number(user.userId);
         if (isNaN(parsedId)) {
@@ -219,11 +218,11 @@ const SuperAdminDashboard = () => {
 
   const handleLogout = () => {
     localStorage.clear();
-    navigate('/login', { replace: true });
+    navigate('/SuperAdminLogin', { replace: true });
   };
 
   const navItems = [
-    { text: 'Manage Users', icon: <GroupIcon sx={{ color: '#8ab4f8' }} />, view: 'users' },
+    { text: 'Manage Admins', icon: <GroupIcon sx={{ color: '#8ab4f8' }} />, view: 'users' },
     { text: 'Manage Branches', icon: <BusinessIcon sx={{ color: '#8ab4f8' }} />, view: 'branches' },
   ];
 
@@ -236,23 +235,38 @@ const SuperAdminDashboard = () => {
       color: '#e0e0e0',
     }}>
       {/* Profile Section */}
-      <Box sx={{
-        p: 2,
-        display: 'flex',
-        alignItems: 'center',
-        gap: 1.5,
-        backgroundColor: '#1a1a1a',
-        borderBottom: '1px solid rgba(100, 110, 130, 0.1)',
-      }}>
-        <Avatar sx={{ bgcolor: '#007bff', width: 40, height: 40 }}>
-          <AccountCircle sx={{ color: 'white', fontSize: '30px' }} />
+      <Box
+        sx={{
+          p: 2,
+          display: 'flex',
+          flexDirection: 'column', // Changed to column to stack items
+          alignItems: 'center',
+          gap: 1.5,
+          backgroundColor: '#1a1a1a',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+        }}
+      >
+        <Avatar sx={{ bgcolor: '#007bff', width: 90, height: 90 }}>
+          <AccountCircle sx={{ color: 'white', fontSize: '104px' }} />
         </Avatar>
-        <Box>
-          <Typography variant="body1" sx={{ color: '#e0e0e0', fontWeight: 600, fontSize: '1rem' }}>
+        <Box sx={{ textAlign: 'center' }}> {/* Added textAlign to center text */}
+          <Typography
+            variant="body1"
+            sx={{ color: '#e0e0e0', fontWeight: 600,
+                  fontSize: {
+                    xs: '1rem',   // On extra small screens
+                    sm: '1.2rem', // On small screens and up
+                    md: '1.5rem', // On medium screens and up
+                  },
+                  lineHeight: 1.2 }} // Adjusted line height for better readability}
+          >
             {fullName}
           </Typography>
-          <Typography variant="caption" sx={{ color: 'rgba(255, 255, 255, 0.5)', fontSize: '0.75rem' }}>
-            Administrator
+          <Typography
+            variant="caption"
+            sx={{ color: 'rgba(255, 255, 255, 0.5)', fontSize: '0.75rem' }}
+          >
+            Super-Administrator
           </Typography>
         </Box>
       </Box>
@@ -273,14 +287,15 @@ const SuperAdminDashboard = () => {
                 marginBottom: '7px',
                 // Conditional styling for selected state
                 backgroundColor: currentView === item.view ? 'rgba(0, 123, 255, 0.15)' : 'transparent',
-                borderLeft: currentView === item.view ? '4px solid #007bff' : '4px solid transparent', // Use borderLeft for highlight
+                borderLeft: currentView === item.view ? '4px solid #007bff' : '4px solid transparent',
                 '&:hover': {
                   backgroundColor: currentView === item.view ? 'rgba(0, 123, 255, 0.2)' : 'rgba(255, 255, 255, 0.05)',
+                  borderBottom: '3px solid #007bff',
                 },
                 // Ensure consistent height by explicitly setting minHeight if needed,
                 // though padding and border should typically align them now.
-                minHeight: '50px', // Example: ensure a minimum height if content varies
-                height: '48px', // Ensure all items have the same height
+                minHeight: '50px',
+                height: '48px',
               }}
             >
               <ListItemIcon sx={{ minWidth: '40px' }}>
@@ -296,7 +311,13 @@ const SuperAdminDashboard = () => {
 
       <List>
         <ListItem disablePadding>
-          <ListItemButton onClick={handleLogout} sx={{ py: 1.5, px: 3 }}>
+          <ListItemButton onClick={handleLogout} sx={{
+              py: 1.5,
+              px: 3,
+              borderRadius: '3px 8px 8px 10px',
+              borderLeft: '4px solid transparent',
+              borderColor: 'red',
+            }}>
             <ListItemIcon sx={{ minWidth: '40px' }}>
               <ExitToAppIcon sx={{ color: '#dc3545' }} />
             </ListItemIcon>
@@ -314,12 +335,13 @@ const SuperAdminDashboard = () => {
       <AppBar
         position="fixed"
         sx={{
-          width: { sm: `calc(100% - ${drawerWidth}px)` },
-          ml: { sm: `${drawerWidth}px` },
-          backgroundColor: '#1a1a1a',
+          width: { sm: `calc(100% - ${drawerWidth}px - 710px)` }, // Reduced width by 20px overall
+          ml: { sm: `calc(${drawerWidth}px + 10px)` }, // Adjusted margin-left for centering with reduction
+          backgroundColor: 'transparent !important', // Made background transparent
           boxShadow: 'none',
-          borderBottom: '1px solid rgba(100, 110, 130, 0.1)',
-          height: '64px',
+          borderBottom: '1px solid rgba(100, 110, 130, 0)',
+          zIndex: (theme) => theme.zIndex.drawer + 1,
+          borderRadius: '0 0 10px 10px', // Curved bottom-left and bottom-right corners
         }}
       >
         <Toolbar sx={{ minHeight: '64px !important', justifyContent: 'flex-end', pr: 3 }}>
@@ -362,6 +384,8 @@ const SuperAdminDashboard = () => {
               width: drawerWidth,
               backgroundColor: '#1a1a1a',
               borderRight: '1px solid rgba(100, 110, 130, 0.1)',
+              borderTopRightRadius: '15px', // Curved top-right
+              borderBottomRightRadius: '15px', // Curved bottom-right
             },
           }}
         >
@@ -376,6 +400,8 @@ const SuperAdminDashboard = () => {
               width: drawerWidth,
               backgroundColor: '#1a1a1a',
               borderRight: '1px solid rgba(100, 110, 130, 0.1)',
+              borderTopRightRadius: '30px', // Curved top-right
+              borderBottomRightRadius: '30px', // Curved bottom-right
             },
           }}
           open
@@ -406,10 +432,10 @@ const SuperAdminDashboard = () => {
             <Box sx={{ mb: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <Box>
                 <Typography variant="h4" sx={{ color: '#f0f0f0', fontWeight: 600, fontSize: '2.2rem' }}>
-                  Users
+                  Admins
                 </Typography>
                 <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.6)', fontSize: '0.9rem' }}>
-                  Manage the users
+                  Manage the admin
                 </Typography>
               </Box>
               <MuiButton
@@ -643,64 +669,64 @@ const SuperAdminDashboard = () => {
             </TableContainer>
           </>
         )}
+
+        {/* Add Admin Modal */}
+        {showAddAdminModal && (
+          <AddAdminForm
+            onClose={handleCloseAddAdminModal}
+            onAdminAdded={handleAdminOperationSuccess}
+            onAdminOperationError={handleAdminOperationError}
+            setPopup={setPopup}
+            branches={branches}
+            loadingBranches={loadingBranches}
+          />
+        )}
+
+        {/* Edit Admin Modal */}
+        {showEditAdminModal && selectedUser && (
+          <EditAdminForm
+            onClose={handleCloseEditAdminModal}
+            userData={selectedUser}
+            onAdminUpdated={handleAdminOperationSuccess}
+            onAdminDeleted={handleAdminOperationSuccess}
+            onAdminOperationError={handleAdminOperationError}
+            setPopup={setPopup}
+            branches={branches}
+            loadingBranches={loadingBranches}
+          />
+        )}
+
+        {/* Add Branch Modal */}
+        {showAddBranchModal && (
+          <AddBranchForm
+            onClose={handleCloseAddBranchModal}
+            onBranchAdded={handleBranchOperationSuccess}
+            onBranchOperationError={handleBranchOperationError}
+            setPopup={setPopup}
+          />
+        )}
+
+        {/* Edit Branch Modal */}
+        {showEditBranchModal && selectedBranch && (
+          <EditBranchForm
+            onClose={handleCloseEditBranchModal}
+            branchData={selectedBranch}
+            onBranchUpdated={handleBranchOperationSuccess}
+            onBranchDeleted={handleBranchOperationSuccess}
+            onBranchOperationError={handleBranchOperationError}
+            setPopup={setPopup}
+          />
+        )}
+
+        {/* Popup Message Component */}
+        {popup && (
+          <PopupMessage
+            type={popup.type}
+            message={popup.message}
+            onClose={() => setPopup(null)}
+          />
+        )}
       </Box>
-
-      {/* Add Admin Modal */}
-      {showAddAdminModal && (
-        <AddAdminForm
-          onClose={handleCloseAddAdminModal}
-          onAdminAdded={handleAdminOperationSuccess}
-          onAdminOperationError={handleAdminOperationError}
-          setPopup={setPopup}
-          branches={branches}
-          loadingBranches={loadingBranches}
-        />
-      )}
-
-      {/* Edit Admin Modal */}
-      {showEditAdminModal && selectedUser && (
-        <EditAdminForm
-          onClose={handleCloseEditAdminModal}
-          userData={selectedUser}
-          onAdminUpdated={handleAdminOperationSuccess}
-          onAdminDeleted={handleAdminOperationSuccess}
-          onAdminOperationError={handleAdminOperationError}
-          setPopup={setPopup}
-          branches={branches}
-          loadingBranches={loadingBranches}
-        />
-      )}
-
-      {/* Add Branch Modal */}
-      {showAddBranchModal && (
-        <AddBranchForm
-          onClose={handleCloseAddBranchModal}
-          onBranchAdded={handleBranchOperationSuccess}
-          onBranchOperationError={handleBranchOperationError}
-          setPopup={setPopup}
-        />
-      )}
-
-      {/* Edit Branch Modal */}
-      {showEditBranchModal && selectedBranch && (
-        <EditBranchForm
-          onClose={handleCloseEditBranchModal}
-          branchData={selectedBranch}
-          onBranchUpdated={handleBranchOperationSuccess}
-          onBranchDeleted={handleBranchOperationSuccess}
-          onBranchOperationError={handleBranchOperationError}
-          setPopup={setPopup}
-        />
-      )}
-
-      {/* Popup Message Component */}
-      {popup && (
-        <PopupMessage
-          type={popup.type}
-          message={popup.message}
-          onClose={() => setPopup(null)}
-        />
-      )}
     </Box>
   );
 };

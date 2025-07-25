@@ -63,7 +63,7 @@ body .floating-element-2 {
   backdrop-filter: blur(15px);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
   /* --------------------------------------------------- */
-  
+
   padding: clamp(1.5rem, 3vw, 2rem); /* Kept padding for content spacing */
   display: flex;
   flex-direction: column;
@@ -166,8 +166,8 @@ body .floating-element-2 {
 
 /* Styling for SVG icons */
 .category-icon {
-  width: 1.5em; 
-  height: 1.5em; 
+  width: 1.5em;
+  height: 1.5em;
   margin-right: 8px;
 }
 
@@ -338,12 +338,6 @@ body .floating-element-2 {
   gap: 8px;
 }
 
-/* .language-icon {
-  width: 24px;
-  height: 24px;
-  filter: brightness(1.2);
-} */
-
 .language-dropdown {
   padding: 0.6rem 1rem;
   border: 1px solid rgba(255, 255, 255, 0.2);
@@ -356,14 +350,13 @@ body .floating-element-2 {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
-  
+
   /* --- NEW STYLES FOR GLOBE ICON AND CHECKBOX ARROW --- */
   /* Two background images: globe on left, checkbox on right */
-  background-image: 
+  background-image:
     url('data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23e2e8f0%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%2212%22%20r%3D%2210%22%2F%3E%3Cpath%20d%3D%22M12%202a14.5%2014.5%200%200%201%200%2020%2014.5%2014.5%200%200%201%200-20%22%2F%3E%3Cpath%20d%3D%22M2%2012h20%22%2F%3E%3C%2Fsvg%3E'), /* Globe icon SVG */
-    /* url('data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2220%22%20height%3D%2220%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23A0AEC0%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%2220%206%209%2017%204%2012%22%2F%3E%3C%2Fsvg%3E'); Checkbox/Tick icon SVG */
     url('data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2220%22%20height%3D%2220%22%20viewBox%3D%220%200%2020%2020%22%20fill%3D%22none%22%3E%3Cpath%20d%3D%22M6%208L10%2012L14%208%22%20stroke%3D%22%23A0AEC0%22%20stroke-width%3D%221.5%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fsvg%3E');
-  
+
   background-repeat: no-repeat, no-repeat;
   background-position: 0.75rem center, right 0.75rem center; /* Globe on left, Checkbox on right */
   background-size: 1.2em, 1em; /* Adjust size of globe and checkbox icons */
@@ -546,7 +539,7 @@ body .floating-element-2 {
   text-align: right;
 }
 
-/* Notification Popup */
+/* Notification Popup (now used for Queue Ticket) */
 .notification-overlay {
   position: fixed;
   top: 0;
@@ -562,45 +555,169 @@ body .floating-element-2 {
   animation: fadeIn 0.3s ease-out;
 }
 
-.notification-popup {
-  background: #1A202C;
+/* --- NEW STYLES FOR QUEUE TICKET POPUP --- */
+.queue-ticket-popup {
+  background: #fff; /* White background as per screenshot */
   border-radius: 12px;
   padding: 2.5rem 2rem;
   box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5);
   animation: bounceIn 0.6s ease-out;
   position: relative;
   text-align: center;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  max-width: 350px;
+  border: 1px solid rgba(0, 0, 0, 0.1); /* Subtle border */
+  max-width: 380px; /* Adjusted max-width to match screenshot */
   width: 90%;
+  color: #333; /* Default text color for the ticket */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-.notification-content {
-  color: white;
+.ticket-content-printable {
+  /* Ensure this div doesn't have any overflow or fixed dimensions that would clip content */
+  width: 100%; /* Important for html2canvas to capture full width */
+  padding: 0; /* Remove padding here if it causes issues with PDF capture */
+  margin: 0;
 }
 
-.notification-number {
-  font-size: 4rem;
+
+.ticket-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  width: 100%;
+  position: relative; /* For the lines */
+}
+
+.ticket-header::before,
+.ticket-header::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: #ccc;
+}
+
+.ticket-header::before {
+  top: 70px; /* Position above title */
+}
+
+.ticket-header::after {
+  bottom: -15px; /* Position below number */
+}
+
+
+.ticket-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: #f0f0f0; /* Light background for icon */
+  border: 1px solid #ddd;
+  margin-bottom: 1rem;
+}
+
+.ticket-icon svg {
+  width: 30px;
+  height: 30px;
+  color: #4299e1; /* Blue color for the icon */
+}
+
+.ticket-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #333;
+  margin: 0;
+  letter-spacing: 1px;
+}
+
+.ticket-number {
+  font-size: 3rem;
   font-weight: 900;
-  margin-bottom: 0.75rem;
-  color: #f6e05e;
-  text-shadow: 0 0 25px rgba(246, 224, 94, 0.7);
+  color: #4299e1; /* Blue color for queue number */
+  margin: 0.5rem 0 0 0;
 }
 
-.notification-text {
-  font-size: 1.1rem;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-  color: #e2e8f0;
-}
-
-.notification-counter {
-  font-size: 1rem;
-  opacity: 0.9;
-  color: #a0aec0;
+.ticket-details {
+  width: 100%;
+  margin-top: 2rem;
   margin-bottom: 2rem;
+  text-align: left;
+  line-height: 1.6;
 }
 
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+  border-bottom: 1px dashed #eee; /* Dashed line separator */
+}
+
+.detail-row:last-child {
+  border-bottom: none;
+}
+
+.detail-label {
+  font-weight: 600;
+  color: #555;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.detail-icon {
+  width: 18px;
+  height: 18px;
+  color: #777;
+}
+
+.detail-value {
+  color: #333;
+  font-weight: 500;
+}
+
+.qr-code-section {
+  text-align: center; /* Keep this for fallback */
+  margin-bottom: 1.5rem;
+  display: flex; /* Use flexbox for centering */
+  justify-content: center; /* Center content horizontally */
+  align-items: center; /* Center content vertically (if needed) */
+  flex-direction: column; /* Stack items vertically within the flex container */
+  width: 100%; /* Ensure it takes full width to allow centering */
+}
+
+.qr-code-canvas {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #fff;
+  /* display: block; and margin: 0 auto; are redundant when parent is flex and centers */
+}
+
+.qr-message {
+  font-size: 0.8rem;
+  color: #777;
+  margin-top: 0.5rem;
+  max-width: 250px;
+}
+
+.ticket-footer {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #555;
+  margin-top: 1rem;
+}
+
+.footer-icon {
+  font-size: 1.2rem;
+}
+
+/* Re-purposed notification-close button for ticket */
 .notification-close {
   padding: 0.6rem 1.8rem;
   background: #4299e1;
@@ -611,11 +728,31 @@ body .floating-element-2 {
   cursor: pointer;
   transition: all 0.3s ease;
   box-shadow: 0 4px 10px rgba(66, 153, 225, 0.4);
+  margin-top: 1.5rem; /* Space from footer */
 }
 
 .notification-close:hover {
   background: #3182ce;
   box-shadow: 0 6px 14px rgba(66, 153, 225, 0.5);
+}
+
+/* New style for the PDF download button */
+.download-pdf-btn {
+  padding: 0.6rem 1.8rem;
+  background: #28a745; /* Green color for download */
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(40, 167, 69, 0.4);
+  margin-top: 1rem; /* Space from footer or close button */
+}
+
+.download-pdf-btn:hover {
+  background: #218838;
+  box-shadow: 0 6px 14px rgba(40, 167, 69, 0.5);
 }
 
 /* Responsive Design */
@@ -625,7 +762,7 @@ body .floating-element-2 {
     gap: 1.5rem;
     padding: 1.5rem;
   }
-  
+
   .queue-form,
   .queue-display {
     max-width: 100%;
@@ -638,12 +775,12 @@ body .floating-element-2 {
   .queue-container {
     padding: 1rem;
   }
-  
+
   .queue-form,
   .queue-display {
     padding: 1.5rem;
   }
-  
+
   .current-number {
     font-size: clamp(2.5rem, 6vw, 3rem);
   }
@@ -668,16 +805,16 @@ body .floating-element-2 {
   .queue-container {
     padding: 0.75rem;
   }
-  
+
   .queue-form,
   .queue-display {
     padding: 1.25rem;
   }
-  
+
   .category-buttons {
     flex-direction: column;
   }
-  
+
   .queue-item {
     flex-direction: column;
     align-items: flex-start;
@@ -691,6 +828,68 @@ body .floating-element-2 {
   .queue-list-header {
     flex-wrap: wrap;
     justify-content: space-around;
+  }
+
+  .queue-ticket-popup {
+    padding: 2rem 1.5rem;
+  }
+}
+
+/* Styles for print (PDF generation) */
+@media print {
+  body {
+    overflow: visible !important; /* Allow content to flow for printing */
+    background-color: #fff !important; /* Ensure white background for print */
+    color: #000 !important; /* Ensure black text for print */
+  }
+
+  .queue-page,
+  .queue-container,
+  .queue-form,
+  .queue-display {
+    display: none !important; /* Hide everything else when printing */
+  }
+
+  .notification-overlay {
+    position: static !important; /* Remove fixed positioning */
+    background: none !important; /* Remove overlay background */
+    backdrop-filter: none !important; /* Remove blur */
+    display: block !important; /* Make it visible for print */
+    width: auto !important;
+    height: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .queue-ticket-popup {
+    box-shadow: none !important; /* Remove shadow for print */
+    animation: none !important; /* Remove animations */
+    border: none !important; /* Remove border for cleaner print */
+    width: 210mm !important; /* A4 width for better PDF layout */
+    max-width: none !important; /* Remove max-width constraint */
+    padding: 10mm !important; /* Add some padding for print margins */
+    margin: 0 auto !important; /* Center on page */
+  }
+
+  .notification-close,
+  .download-pdf-btn {
+    display: none !important; /* Hide buttons when printing */
+  }
+
+  .ticket-content-printable {
+    width: 100% !important; /* Ensure it takes full print width */
+    box-sizing: border-box !important;
+  }
+
+  /* Adjust font sizes for print if needed */
+  .ticket-title {
+    font-size: 1.8rem !important;
+  }
+  .ticket-number {
+    font-size: 3.5rem !important;
+  }
+  .detail-label, .detail-value, .qr-message, .ticket-footer {
+    font-size: 1rem !important;
   }
 }
 

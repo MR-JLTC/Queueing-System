@@ -1,3 +1,4 @@
+// src/users/users.service.ts
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -16,19 +17,26 @@ export class UsersService {
   async create(createUserDto: CreateUserDto): Promise<User> {
     const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
     const user = this.usersRepository.create({
-      ...createUserDto, // This will now include branchId
+      ...createUserDto,
       passwordHash: hashedPassword,
       createdAt: new Date(),
     });
     return this.usersRepository.save(user);
   }
 
+  // MODIFIED: Added relations to include 'branch' and 'role'
   findAll(): Promise<User[]> {
-    return this.usersRepository.find();
+    return this.usersRepository.find({
+      relations: ['branch', 'role'], // Include the 'branch' and 'role' relations
+      // You might also want to order them, e.g., order: { userId: 'ASC' }
+    });
   }
 
   async findOne(userId: number): Promise<User> {
-    const user = await this.usersRepository.findOne({ where: { userId } });
+    const user = await this.usersRepository.findOne({
+      where: { userId },
+      relations: ['branch', 'role'], // Include relations for findOne as well
+    });
     if (!user) {
       throw new NotFoundException(`User with ID "${userId}" not found`);
     }
@@ -36,7 +44,7 @@ export class UsersService {
   }
 
   async update(userId: number, updateUserDto: UpdateUserDto): Promise<User> {
-    const user = await this.findOne(userId);
+    const user = await this.findOne(userId); // findOne already loads relations
 
     if (updateUserDto.password) {
       user.passwordHash = await bcrypt.hash(updateUserDto.password, 10);
