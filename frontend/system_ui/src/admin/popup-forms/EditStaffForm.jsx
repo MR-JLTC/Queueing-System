@@ -11,14 +11,11 @@ import {
   Checkbox,
   styled,
   CircularProgress,
+  // Removed FormControl, InputLabel, Select, MenuItem
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import AccountCircle from '@mui/icons-material/AccountCircle';
-import MailOutline from '@mui/icons-material/MailOutline';
-import LockOutlined from '@mui/icons-material/LockOutlined';
-import Visibility from '@mui/icons-material/Visibility';
-import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import PersonIcon from '@mui/icons-material/Person'; // For Role/Staff icon
+// Removed MailOutline, LockOutlined, Visibility, VisibilityOff, PersonIcon as they are no longer relevant
 import BusinessIcon from '@mui/icons-material/Business'; // For Branch icon
 import axios from 'axios';
 
@@ -69,35 +66,48 @@ const CustomTextField = styled(TextField)(() => ({
   },
 }));
 
+// CustomFormControl is no longer needed
+// const CustomFormControl = styled(FormControl)(() => ({ ... }));
+
 const API_BASE_URL = 'http://localhost:3000';
 
-const EditStaffForm = ({ onClose, userData, onStaffUpdated, onStaffDeleted, onStaffOperationError, setPopup }) => {
+// Added branches and loadingBranches props
+const EditStaffForm = ({ onClose, userData, onStaffUpdated, onStaffDeleted, onStaffOperationError, setPopup, branches, loadingBranches }) => {
   const [formData, setFormData] = useState({
     fullName: userData.fullName || '',
-    email: userData.email || '',
+    branchId: userData.branchId || '', // Initialize with staff's current branchId
     isActive: userData.isActive,
-    newPassword: '',
-    confirmNewPassword: '',
   });
-  const [showNewPassword, setShowNewPassword] = useState(false);
-  const [showConfirmNewPassword, setShowConfirmNewPassword] = useState(false);
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+  const [currentBranchName, setCurrentBranchName] = useState('Loading Branch...');
 
-  const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
   useEffect(() => {
-    // Update form data if userData prop changes (e.g., when editing a different user)
+    // Update form data if userData prop changes (e.g., when editing a different staff)
     setFormData({
       fullName: userData.fullName || '',
-      email: userData.email || '',
+      branchId: userData.branchId || '',
       isActive: userData.isActive,
-      newPassword: '',
-      confirmNewPassword: '',
     });
     setErrors({});
   }, [userData]);
+
+  // Find and set the branch name for display
+  useEffect(() => {
+    if (formData.branchId && branches.length > 0) {
+      const foundBranch = branches.find(b => b.branchId === formData.branchId);
+      if (foundBranch) {
+        setCurrentBranchName(foundBranch.branchName);
+      } else {
+        setCurrentBranchName('Branch Not Found');
+      }
+    } else if (!formData.branchId) {
+      setCurrentBranchName('No Branch Assigned');
+    }
+  }, [formData.branchId, branches]);
+
 
   const handleInputChange = (e) => {
     const { name, value, checked, type } = e.target;
@@ -118,25 +128,9 @@ const EditStaffForm = ({ onClose, userData, onStaffUpdated, onStaffDeleted, onSt
       tempErrors.fullName = 'Full Name is required.';
       isValid = false;
     }
-    if (!formData.email.trim()) {
-      tempErrors.email = 'Email is required.';
-      isValid = false;
-    } else if (!validateEmail(formData.email)) {
-      tempErrors.email = 'Invalid email format.';
-      isValid = false;
-    }
-
-    if (formData.newPassword) {
-      if (formData.newPassword.length < 8 || formData.newPassword.length > 9) {
-        tempErrors.newPassword = 'Password must be 8-9 characters long.';
-        isValid = false;
-      }
-      if (formData.newPassword !== formData.confirmNewPassword) {
-        tempErrors.confirmNewPassword = 'Passwords do not match.';
-        isValid = false;
-      }
-    } else if (formData.confirmNewPassword) { // If confirm password is typed but new password isn't
-      tempErrors.newPassword = 'Please enter a new password.';
+    // Branch ID is now automatically set, but still ensure it's valid if staff has no branch
+    if (!formData.branchId) {
+      tempErrors.branchId = 'Staff must be assigned to a branch.';
       isValid = false;
     }
 
@@ -155,13 +149,12 @@ const EditStaffForm = ({ onClose, userData, onStaffUpdated, onStaffDeleted, onSt
     try {
       const updatePayload = {
         fullName: formData.fullName,
-        email: formData.email,
+        branchId: formData.branchId, // Keep branchId in payload even if display-only
         isActive: formData.isActive,
-        // Only include password if it's being changed
-        ...(formData.newPassword && { password: formData.newPassword }),
       };
 
-      await axios.patch(`${API_BASE_URL}/users/${userData.userId}`, updatePayload);
+      // API call to the /staff endpoint
+      await axios.patch(`${API_BASE_URL}/staff/${userData.staffId}`, updatePayload);
       onStaffUpdated('Staff updated successfully!');
       onClose();
     } catch (error) {
@@ -183,7 +176,8 @@ const EditStaffForm = ({ onClose, userData, onStaffUpdated, onStaffDeleted, onSt
   const confirmDelete = async () => {
     setIsSubmitting(true);
     try {
-      await axios.delete(`${API_BASE_URL}/users/${userData.userId}`);
+      // API call to the /staff endpoint
+      await axios.delete(`${API_BASE_URL}/staff/${userData.staffId}`);
       onStaffDeleted('Staff deleted successfully!');
       onClose();
     } catch (error) {
@@ -202,9 +196,6 @@ const EditStaffForm = ({ onClose, userData, onStaffUpdated, onStaffDeleted, onSt
   const cancelDelete = () => {
     setShowDeleteConfirmation(false);
   };
-
-  const toggleNewPasswordVisibility = () => setShowNewPassword(!showNewPassword);
-  const toggleConfirmNewPasswordVisibility = () => setShowConfirmNewPassword(!showConfirmNewPassword);
 
   return (
     <Box className="modal-overlay">
@@ -236,58 +227,7 @@ const EditStaffForm = ({ onClose, userData, onStaffUpdated, onStaffDeleted, onSt
             InputLabelProps={{ shrink: true }}
           />
 
-          {/* Email */}
-          <CustomTextField
-            fullWidth
-            label={
-              <Box component="span" sx={{ display: 'flex', alignItems: 'center' }}>
-                <MailOutline sx={{ mr: 1 }} /> Email
-              </Box>
-            }
-            name="email"
-            type="email"
-            value={formData.email}
-            onChange={handleInputChange}
-            variant="outlined"
-            sx={{ mb: 2 }}
-            error={!!errors.email}
-            helperText={errors.email}
-            InputLabelProps={{ shrink: true }}
-          />
-
-          {/* Username (Display Only) */}
-          <CustomTextField
-            fullWidth
-            label={
-              <Box component="span" sx={{ display: 'flex', alignItems: 'center' }}>
-                <AccountCircle sx={{ mr: 1 }} /> Username
-              </Box>
-            }
-            name="username"
-            value={userData.username || ''}
-            variant="outlined"
-            sx={{ mb: 2 }}
-            InputProps={{ readOnly: true }}
-            InputLabelProps={{ shrink: true }}
-          />
-
-          {/* Role (Display Only) */}
-          <CustomTextField
-            fullWidth
-            label={
-              <Box component="span" sx={{ display: 'flex', alignItems: 'center' }}>
-                <PersonIcon sx={{ mr: 1 }} /> Role
-              </Box>
-            }
-            name="role"
-            value={userData.role?.roleName || 'N/A'}
-            variant="outlined"
-            sx={{ mb: 2 }}
-            InputProps={{ readOnly: true }}
-            InputLabelProps={{ shrink: true }}
-          />
-
-          {/* Branch (Display Only) */}
+          {/* Branch Display Field (Non-editable) */}
           <CustomTextField
             fullWidth
             label={
@@ -295,70 +235,16 @@ const EditStaffForm = ({ onClose, userData, onStaffUpdated, onStaffDeleted, onSt
                 <BusinessIcon sx={{ mr: 1 }} /> Branch
               </Box>
             }
-            name="branch"
-            value={userData.branch?.branchName || 'N/A'}
+            name="branchNameDisplay" // A dummy name as it's not part of formData directly
+            value={loadingBranches ? "Loading Branch..." : currentBranchName}
             variant="outlined"
-            sx={{ mb: 2 }}
-            InputProps={{ readOnly: true }}
-            InputLabelProps={{ shrink: true }}
-          />
-
-          {/* New Password */}
-          <CustomTextField
-            fullWidth
-            label={
-              <Box component="span" sx={{ display: 'flex', alignItems: 'center' }}>
-                <LockOutlined sx={{ mr: 1 }} /> New Password (Optional)
-              </Box>
-            }
-            name="newPassword"
-            type={showNewPassword ? "text" : "password"}
-            value={formData.newPassword}
-            onChange={handleInputChange}
-            variant="outlined"
-            sx={{ mb: 2 }}
-            error={!!errors.newPassword}
-            helperText={errors.newPassword}
-            inputProps={{ maxLength: 9 }}
-            InputLabelProps={{ shrink: true }}
+            sx={{ mb: 3 }}
             InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton onClick={toggleNewPasswordVisibility} edge="end" sx={{ color: '#a0a0a0' }}>
-                    {showNewPassword ? <VisibilityOff /> : <Visibility />}
-                  </IconButton>
-                </InputAdornment>
-              ),
+              readOnly: true, // Make it non-editable
             }}
-          />
-
-          {/* Confirm New Password */}
-          <CustomTextField
-            fullWidth
-            label={
-              <Box component="span" sx={{ display: 'flex', alignItems: 'center' }}>
-                <LockOutlined sx={{ mr: 1 }} /> Confirm New Password
-              </Box>
-            }
-            name="confirmNewPassword"
-            type={showConfirmNewPassword ? "text" : "password"}
-            value={formData.confirmNewPassword}
-            onChange={handleInputChange}
-            variant="outlined"
-            sx={{ mb: 2 }}
-            error={!!errors.confirmNewPassword}
-            helperText={errors.confirmNewPassword}
-            inputProps={{ maxLength: 9 }}
             InputLabelProps={{ shrink: true }}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton onClick={toggleConfirmNewPasswordVisibility} edge="end" sx={{ color: '#a0a0a0' }}>
-                    {showConfirmNewPassword ? <VisibilityOff /> : <Visibility />}
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
+            error={!!errors.branchId} // Still show error if branchId is missing
+            helperText={errors.branchId}
           />
 
           {/* Is Active Checkbox */}
@@ -399,7 +285,7 @@ const EditStaffForm = ({ onClose, userData, onStaffUpdated, onStaffDeleted, onSt
                 },
                 flex: 1,
               }}
-              disabled={isSubmitting}
+              disabled={isSubmitting || !formData.branchId} // Disable if no branchId is set
             >
               {isSubmitting ? <CircularProgress size={24} color="inherit" /> : 'Save'}
             </Button>

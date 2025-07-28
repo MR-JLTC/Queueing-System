@@ -1,5 +1,5 @@
 // src/admin/popup-forms/AddStaffForm.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Typography,
@@ -9,13 +9,11 @@ import {
   InputAdornment,
   styled,
   CircularProgress,
+  // Removed FormControl, InputLabel, Select, MenuItem as they are no longer needed for branch display
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import AccountCircle from '@mui/icons-material/AccountCircle';
-import MailOutline from '@mui/icons-material/MailOutline';
-import LockOutlined from '@mui/icons-material/LockOutlined';
-import Visibility from '@mui/icons-material/Visibility';
-import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import BusinessIcon from '@mui/icons-material/Business'; // For Branch icon
 import axios from 'axios';
 
 // Styled TextField for consistent professional look
@@ -65,21 +63,36 @@ const CustomTextField = styled(TextField)(() => ({
   },
 }));
 
+// CustomFormControl is no longer needed if Select is removed
+// const CustomFormControl = styled(FormControl)(() => ({ ... }));
+
 const API_BASE_URL = 'http://localhost:3000';
 
-const AddStaffForm = ({ onClose, onStaffAdded, onStaffOperationError, setPopup }) => {
+// Added branches, loadingBranches, and currentAdminBranchId props
+const AddStaffForm = ({ onClose, onStaffAdded, onStaffOperationError, setPopup, branches, loadingBranches, currentAdminBranchId }) => {
   const [formData, setFormData] = useState({
     fullName: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
+    branchId: currentAdminBranchId ? parseInt(currentAdminBranchId) : '', // Pre-select admin's branch
   });
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [currentBranchName, setCurrentBranchName] = useState('Loading Branch...');
 
-  const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  // Set initial branchId and find branch name when currentAdminBranchId or branches change
+  useEffect(() => {
+    if (currentAdminBranchId && branches.length > 0) {
+      const adminBranchId = parseInt(currentAdminBranchId);
+      setFormData(prev => ({ ...prev, branchId: adminBranchId }));
+      const foundBranch = branches.find(b => b.branchId === adminBranchId);
+      if (foundBranch) {
+        setCurrentBranchName(foundBranch.branchName);
+      } else {
+        setCurrentBranchName('Branch Not Found');
+      }
+    } else if (!currentAdminBranchId) {
+      setCurrentBranchName('No Branch Assigned');
+    }
+  }, [currentAdminBranchId, branches]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -98,25 +111,9 @@ const AddStaffForm = ({ onClose, onStaffAdded, onStaffOperationError, setPopup }
       tempErrors.fullName = 'Full Name is required.';
       isValid = false;
     }
-    if (!formData.email.trim()) {
-      tempErrors.email = 'Email is required.';
-      isValid = false;
-    } else if (!validateEmail(formData.email)) {
-      tempErrors.email = 'Invalid email format.';
-      isValid = false;
-    }
-    if (!formData.password) {
-      tempErrors.password = 'Password is required.';
-      isValid = false;
-    } else if (formData.password.length < 8 || formData.password.length > 9) {
-      tempErrors.password = 'Password must be 8-9 characters long.';
-      isValid = false;
-    }
-    if (!formData.confirmPassword) {
-      tempErrors.confirmPassword = 'Confirm Password is required.';
-      isValid = false;
-    } else if (formData.password !== formData.confirmPassword) {
-      tempErrors.confirmPassword = 'Passwords do not match.';
+    // Branch ID is now automatically set, but still ensure it's valid if admin has no branch
+    if (!formData.branchId) {
+      tempErrors.branchId = 'Admin must be assigned to a branch to add staff.';
       isValid = false;
     }
 
@@ -133,24 +130,15 @@ const AddStaffForm = ({ onClose, onStaffAdded, onStaffOperationError, setPopup }
 
     setIsSubmitting(true);
     try {
-      const adminBranchId = localStorage.getItem("branchId");
-      if (!adminBranchId || adminBranchId === 'null' || adminBranchId === 'undefined') {
-        onStaffOperationError("Admin's branch ID not found. Cannot add staff.");
-        setIsSubmitting(false);
-        return;
-      }
-
       const payload = {
         fullName: formData.fullName,
-        email: formData.email,
-        password: formData.password,
-        roleId: 3, // Assuming roleId 3 is for Staff
-        branchId: parseInt(adminBranchId), // Assign to the admin's branch
+        branchId: formData.branchId,
         isActive: true, // Default new staff to active
         visibilityStatus: 'ON_LIVE', // Default new staff to ON_LIVE
       };
 
-      await axios.post(`${API_BASE_URL}/users`, payload);
+      // API call to the /staff endpoint
+      await axios.post(`${API_BASE_URL}/staff`, payload);
       onStaffAdded('Staff added successfully!');
       onClose();
     } catch (error) {
@@ -164,9 +152,6 @@ const AddStaffForm = ({ onClose, onStaffAdded, onStaffOperationError, setPopup }
       setIsSubmitting(false);
     }
   };
-
-  const togglePasswordVisibility = () => setShowPassword(!showPassword);
-  const toggleConfirmPasswordVisibility = () => setShowConfirmPassword(!showConfirmPassword);
 
   return (
     <Box className="modal-overlay">
@@ -198,81 +183,24 @@ const AddStaffForm = ({ onClose, onStaffAdded, onStaffOperationError, setPopup }
             InputLabelProps={{ shrink: true }}
           />
 
-          {/* Email */}
+          {/* Branch Display Field (Non-editable) */}
           <CustomTextField
             fullWidth
             label={
               <Box component="span" sx={{ display: 'flex', alignItems: 'center' }}>
-                <MailOutline sx={{ mr: 1 }} /> Email
+                <BusinessIcon sx={{ mr: 1 }} /> Branch
               </Box>
             }
-            name="email"
-            type="email"
-            value={formData.email}
-            onChange={handleInputChange}
-            variant="outlined"
-            sx={{ mb: 2 }}
-            error={!!errors.email}
-            helperText={errors.email}
-            InputLabelProps={{ shrink: true }}
-          />
-
-          {/* Password */}
-          <CustomTextField
-            fullWidth
-            label={
-              <Box component="span" sx={{ display: 'flex', alignItems: 'center' }}>
-                <LockOutlined sx={{ mr: 1 }} /> Password
-              </Box>
-            }
-            name="password"
-            type={showPassword ? "text" : "password"}
-            value={formData.password}
-            onChange={handleInputChange}
-            variant="outlined"
-            sx={{ mb: 2 }}
-            error={!!errors.password}
-            helperText={errors.password}
-            inputProps={{ maxLength: 9 }}
-            InputLabelProps={{ shrink: true }}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton onClick={togglePasswordVisibility} edge="end" sx={{ color: '#a0a0a0' }}>
-                    {showPassword ? <VisibilityOff /> : <Visibility />}
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
-          />
-
-          {/* Confirm Password */}
-          <CustomTextField
-            fullWidth
-            label={
-              <Box component="span" sx={{ display: 'flex', alignItems: 'center' }}>
-                <LockOutlined sx={{ mr: 1 }} /> Confirm Password
-              </Box>
-            }
-            name="confirmPassword"
-            type={showConfirmPassword ? "text" : "password"}
-            value={formData.confirmPassword}
-            onChange={handleInputChange}
+            name="branchNameDisplay" // A dummy name as it's not part of formData directly
+            value={loadingBranches ? "Loading Branch..." : currentBranchName}
             variant="outlined"
             sx={{ mb: 3 }}
-            error={!!errors.confirmPassword}
-            helperText={errors.confirmPassword}
-            inputProps={{ maxLength: 9 }}
-            InputLabelProps={{ shrink: true }}
             InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton onClick={toggleConfirmPasswordVisibility} edge="end" sx={{ color: '#a0a0a0' }}>
-                    {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
-                  </IconButton>
-                </InputAdornment>
-              ),
+              readOnly: true, // Make it non-editable
             }}
+            InputLabelProps={{ shrink: true }}
+            error={!!errors.branchId} // Still show error if branchId is missing
+            helperText={errors.branchId}
           />
 
           <Button
@@ -298,7 +226,7 @@ const AddStaffForm = ({ onClose, onStaffAdded, onStaffOperationError, setPopup }
                 boxShadow: '0 2px 10px rgba(52, 152, 219, 0.3)',
               },
             }}
-            disabled={isSubmitting}
+            disabled={isSubmitting || !formData.branchId} // Disable if no branchId is set
           >
             {isSubmitting ? <CircularProgress size={24} color="inherit" /> : 'Add Staff'}
           </Button>

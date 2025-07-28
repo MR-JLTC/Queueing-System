@@ -43,10 +43,8 @@ import QueueIcon from '@mui/icons-material/Queue';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import LoopIcon from '@mui/icons-material/Loop';
 import CancelIcon from '@mui/icons-material/Cancel';
-import PeopleIcon from '@mui/icons-material/People';
-import WheelchairPickupIcon from '@mui/icons-material/WheelchairPickup';
-import ElderlyIcon from '@mui/icons-material/Elderly';
-import BusinessIcon from '@mui/icons-material/Business';
+import PeopleIcon from '@mui/icons-material/People'; // For Manage Staff
+import BusinessIcon from '@mui/icons-material/Business'; // For Branches icon
 
 import { styled } from '@mui/material/styles';
 import TextField from '@mui/material/TextField';
@@ -132,7 +130,7 @@ const Dashboard = () => {
   const [queueHistorySummary, setQueueHistorySummary] = useState({
     totalQueued: 0, pwd: 0, seniorCitizens: 0, standard: 0, cancelled: 0
   });
-  const [staffUsers, setStaffUsers] = useState([]);
+  const [staffUsers, setStaffUsers] = useState([]); // Renamed from staffUsers to staffList for clarity
   const [selectedStaffUser, setSelectedStaffUser] = useState(null);
 
   const [loading, setLoading] = useState(true);
@@ -141,6 +139,10 @@ const Dashboard = () => {
   // States for Modals
   const [showAddStaffModal, setShowAddStaffModal] = useState(false);
   const [showEditStaffModal, setShowEditStaffModal] = useState(false);
+
+  // NEW: State for all branches (for dropdowns in forms)
+  const [branches, setBranches] = useState([]);
+  const [loadingBranches, setLoadingBranches] = useState(true);
 
 
   // Pie chart colors (consistent with previous design)
@@ -236,7 +238,8 @@ const Dashboard = () => {
   }, []);
 
   // Function to fetch staff users for the current branch
-  const fetchStaffUsers = useCallback(async (branchId) => {
+  // MODIFIED: Now fetches from the /staff endpoint
+  const fetchStaffList = useCallback(async (branchId) => {
     if (!branchId) {
       setStaffUsers([]);
       return;
@@ -244,15 +247,30 @@ const Dashboard = () => {
     setLoading(true);
     setError(null);
     try {
-      // Fetch users for the specific branch and roleId 3 (Staff)
-      const response = await axios.get(`${API_BASE_URL}/users?branchId=${branchId}&roleId=3`); // Assuming roleId 3 for Staff
+      // Fetch staff from the /staff endpoint, optionally filtered by branchId
+      const response = await axios.get(`${API_BASE_URL}/staff${branchId ? `?branchId=${branchId}` : ''}`);
       setStaffUsers(response.data);
     } catch (err) {
-      console.error("Error fetching staff users:", err);
-      setError("Failed to load staff users.");
+      console.error("Error fetching staff list:", err);
+      setError("Failed to load staff list.");
       setStaffUsers([]);
     } finally {
       setLoading(false);
+    }
+  }, []);
+
+  // NEW: Function to fetch all branches for dropdowns
+  const fetchAllBranches = useCallback(async () => {
+    setLoadingBranches(true);
+    try {
+      const response = await axios.get(`${API_BASE_URL}/branches`);
+      setBranches(response.data);
+    } catch (err) {
+      console.error("Error fetching all branches:", err);
+      setPopup({ type: 'error', message: 'Failed to load branch list for forms.' });
+      setBranches([]);
+    } finally {
+      setLoadingBranches(false);
     }
   }, []);
 
@@ -294,6 +312,9 @@ const Dashboard = () => {
 
     const isValidBranchId = storedBranchId && storedBranchId !== 'undefined' && storedBranchId !== 'null';
 
+    // Fetch all branches always, as they are needed for staff/admin forms
+    fetchAllBranches();
+
     if (!isValidBranchId) {
         setBranchName('No Branch Assigned');
         setLoading(false);
@@ -308,7 +329,7 @@ const Dashboard = () => {
         } else if (currentPage === 'Window Assigned') {
             fetchWindowsAssignedData(storedBranchId);
         } else if (currentPage === 'Manage Staff') {
-            fetchStaffUsers(storedBranchId);
+            fetchStaffList(storedBranchId); // MODIFIED: Call fetchStaffList
         }
     }
 
@@ -319,7 +340,7 @@ const Dashboard = () => {
     }, 1000);
 
     return () => clearInterval(intervalId);
-  }, [navigate, currentPage, fetchDashboardSummary, fetchQueuesData, fetchWindowsAssignedData, fetchQueueHistoryData, fetchBranchName, fetchStaffUsers]);
+  }, [navigate, currentPage, fetchDashboardSummary, fetchQueuesData, fetchWindowsAssignedData, fetchQueueHistoryData, fetchBranchName, fetchStaffList, fetchAllBranches]);
 
 
   const handleDrawerToggle = () => {
@@ -362,8 +383,9 @@ const Dashboard = () => {
   };
 
   // Handlers for Edit Staff Modal
-  const handleShowEditStaffModal = (user) => {
-    setSelectedStaffUser(user);
+  // MODIFIED: Pass the full staff object
+  const handleShowEditStaffModal = (staff) => {
+    setSelectedStaffUser(staff);
     setShowEditStaffModal(true);
   };
 
@@ -377,7 +399,7 @@ const Dashboard = () => {
     showPopupMessage(setPopup, "success", message);
     const currentBranchId = localStorage.getItem("branchId");
     if (currentBranchId) {
-      fetchStaffUsers(currentBranchId); // Refresh staff list
+      fetchStaffList(currentBranchId); // Refresh staff list
       fetchWindowsAssignedData(currentBranchId); // Also refresh window assignments in case staff names are displayed there
     }
   };
@@ -420,7 +442,7 @@ const Dashboard = () => {
               } else if (currentPage === 'Window Assigned') {
                 fetchWindowsAssignedData(currentBranchId);
               } else if (currentPage === 'Manage Staff') {
-                fetchStaffUsers(currentBranchId);
+                fetchStaffList(currentBranchId); // MODIFIED: Call fetchStaffList
               }
             }} sx={{ mt: 2, color: '#007bff' }}>Retry</MuiButton>
           )}
@@ -447,7 +469,6 @@ const Dashboard = () => {
 
             <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-around', gap: 3, mb: 5 }}>
               {[
-                // MODIFIED: Added fontSize prop directly to each icon
                 { title: 'Overall Total Queued', value: dashboardSummary.totalQueued, icon: <QueueIcon sx={{ fontSize: '4rem' }} />, color: '#ffc107' },
                 { title: 'Overall Served', value: dashboardSummary.served, icon: <CheckCircleOutlineIcon sx={{ fontSize: '4rem' }} />, color: '#28a745' },
                 { title: 'Overall Requeues', value: dashboardSummary.requeues, icon: <LoopIcon sx={{ fontSize: '4rem' }} />, color: '#17a2b8' },
@@ -471,9 +492,8 @@ const Dashboard = () => {
                     '&:hover': { transform: 'translateY(-5px)' },
                   }}
                 >
-                  {/* The outer Box's fontSize is no longer directly controlling the icon size */}
                   <Box sx={{ color: card.color, mb: 1 }}>
-                    {card.icon} {/* The icon itself now has the fontSize prop */}
+                    {card.icon}
                   </Box>
                   <Typography variant="h6" sx={{ color: '#e0e0e0', fontWeight: 500 }}>
                     {card.title}
@@ -794,7 +814,9 @@ const Dashboard = () => {
                   <TableHead>
                     <TableRow>
                       {/* Only display Full Name, Status, and Actions */}
+                      {/* <TableCell>Staff ID</TableCell> Added Staff ID */}
                       <TableCell>Full Name</TableCell>
+                      <TableCell>Branch</TableCell> {/* Added Branch */}
                       <TableCell>Status</TableCell>
                       <TableCell>Actions</TableCell>
                     </TableRow>
@@ -802,8 +824,10 @@ const Dashboard = () => {
                   <TableBody>
                     {staffUsers.length > 0 ? (
                       staffUsers.map((staff) => (
-                        <TableRow key={staff.userId}>
+                        <TableRow key={staff.staffId}> {/* Changed key to staff.staffId */}
+                          {/* <TableCell data-label="Staff ID">{staff.staffId}</TableCell> Display Staff ID */}
                           <TableCell data-label="Full Name">{staff.fullName}</TableCell>
+                          <TableCell data-label="Branch">{staff.branch?.branchName || 'N/A'}</TableCell> {/* Display Branch Name */}
                           <TableCell data-label="Status">
                             <span className={staff.isActive ? 'status-active' : 'status-inactive'}>
                               {staff.isActive ? 'Active' : 'Inactive'}
@@ -833,7 +857,7 @@ const Dashboard = () => {
                       ))
                     ) : (
                       <TableRow>
-                        <TableCell colSpan={3} sx={{ textAlign: 'center', color: '#a0a0a0' }}> {/* Changed colSpan to 3 */}
+                        <TableCell colSpan={5} sx={{ textAlign: 'center', color: '#a0a0a0' }}> {/* Changed colSpan to 5 */}
                           No staff users found for this branch.
                         </TableCell>
                       </TableRow>
@@ -956,7 +980,7 @@ const Dashboard = () => {
         <Toolbar sx={{ minHeight: '64px !important', justifyContent: 'flex-end', pr: 3 }}>
           <IconButton
             color="inherit"
-            aria-label="open drawer"  
+            aria-label="open drawer"
             edge="start"
             onClick={handleDrawerToggle}
             sx={{ mr: 2, display: { sm: 'none' }, color: '#e0e0e0' }}
@@ -1062,6 +1086,9 @@ const Dashboard = () => {
           onStaffAdded={handleStaffOperationSuccess}
           onStaffOperationError={handleStaffOperationError}
           setPopup={setPopup}
+          branches={branches} // Pass branches to the form
+          loadingBranches={loadingBranches} // Pass loading state for branches
+          currentAdminBranchId={localStorage.getItem("branchId")} // Pass admin's branch ID
         />
       )}
 
@@ -1069,11 +1096,13 @@ const Dashboard = () => {
       {showEditStaffModal && selectedStaffUser && (
         <EditStaffForm
           onClose={handleCloseEditStaffModal}
-          userData={selectedStaffUser}
+          userData={selectedStaffUser} // This is now a Staff entity object
           onStaffUpdated={handleStaffOperationSuccess}
           onStaffDeleted={handleStaffOperationSuccess}
           onStaffOperationError={handleStaffOperationError}
           setPopup={setPopup}
+          branches={branches} // Pass branches to the form
+          loadingBranches={loadingBranches} // Pass loading state for branches
         />
       )}
 
