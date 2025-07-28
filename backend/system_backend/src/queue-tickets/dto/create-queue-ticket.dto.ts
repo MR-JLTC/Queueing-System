@@ -1,31 +1,68 @@
-import { IsString, IsInt, IsOptional, MinLength, MaxLength } from 'class-validator';
+// src/queue-tickets/dto/create-queue-ticket.dto.ts
+import { IsString, IsInt, IsOptional, IsNotEmpty, IsDateString, IsEmail, IsPhoneNumber } from 'class-validator';
 
 export class CreateQueueTicketDto {
   @IsString()
-  @MinLength(3)
-  @MaxLength(50)
+  @IsNotEmpty()
   ticketNumber: string;
 
+  @IsString()
+  @IsNotEmpty()
+  customerName: string;
+
+  @IsOptional()
+  @IsPhoneNumber('PH', { message: 'Customer phone must be a valid Philippine phone number.' })
+  customerPhone?: string | null; // Type is string | null
+
+  @IsOptional()
+  @IsEmail({}, { message: 'Customer email must be a valid email address.' })
+  customerEmail?: string | null; // Type is string | null
+
   @IsInt()
+  @IsNotEmpty()
+  categoryId: number;
+
+  @IsInt()
+  @IsNotEmpty()
   branchId: number;
 
-  @IsOptional()
   @IsInt()
-  assignedToWindowId?: number;
+  @IsNotEmpty()
+  currentStatusId: number;
 
   @IsOptional()
   @IsInt()
-  assignedToStaffId?: number;
+  assignedToWindowId?: number | null;
 
   @IsOptional()
   @IsInt()
-  customerCategoryId?: number;
+  assignedToStaffId?: number | null;
 
   @IsOptional()
   @IsString()
-  @MaxLength(255)
-  serviceType?: string;
+  serviceType?: string | null;
 
-  @IsInt() // Initial status is now an ID referencing TicketStatus entity
-  currentStatusId: number;
+  @IsOptional()
+  @IsDateString()
+  queuedAt?: Date;
+
+  @IsOptional()
+  @IsInt()
+  issuedByUserId?: number | null;
+
+  @IsOptional()
+  @IsDateString()
+  calledAt?: Date;
+
+  @IsOptional()
+  @IsDateString()
+  servedAt?: Date;
+
+  @IsOptional()
+  @IsInt()
+  cancelledById?: number | null;
+
+  @IsOptional()
+  @IsString()
+  visibilityStatus?: string;
 }

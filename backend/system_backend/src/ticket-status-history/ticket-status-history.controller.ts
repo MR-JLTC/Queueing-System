@@ -1,7 +1,7 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, HttpCode, HttpStatus, ParseIntPipe } from '@nestjs/common'; // Removed Patch
 import { TicketStatusHistoryService } from './ticket-status-history.service';
 import { CreateTicketStatusHistoryDto } from './dto/create-ticket-status-history.dto';
-import { UpdateTicketStatusHistoryDto } from './dto/update-ticket-status-history.dto';
+// import { UpdateTicketStatusHistoryDto } from './dto/update-ticket-status-history.dto'; // Removed Update DTO import
 
 @Controller('ticket-status-history')
 export class TicketStatusHistoryController {
@@ -19,18 +19,19 @@ export class TicketStatusHistoryController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.ticketStatusHistoryService.findOne(+id);
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.ticketStatusHistoryService.findOne(id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateTicketStatusHistoryDto: UpdateTicketStatusHistoryDto) {
-    return this.ticketStatusHistoryService.update(+id, updateTicketStatusHistoryDto);
-  }
+  // Removed the @Patch endpoint as history records are typically immutable
+  // @Patch(':id')
+  // update(@Param('id') id: string, @Body() updateTicketStatusHistoryDto: UpdateTicketStatusHistoryDto) {
+  //   return this.ticketStatusHistoryService.update(+id, updateTicketStatusHistoryDto);
+  // }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@Param('id') id: string) {
-    return this.ticketStatusHistoryService.remove(+id);
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.ticketStatusHistoryService.remove(id);
   }
 }

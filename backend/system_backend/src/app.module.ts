@@ -13,6 +13,7 @@ import { TicketStatusHistoryModule } from './ticket-status-history/ticket-status
 import { DailyQueueSummaryModule } from './daily-queue-summary/daily-queue-summary.module';
 import { BranchesModule } from './branches/branches.module'; 
 import { DashboardModule } from './dashboard/dashboard.module';
+import { StaffModule } from './staff/staff.module';
 
 @Module({
   imports: [
@@ -28,7 +29,8 @@ import { DashboardModule } from './dashboard/dashboard.module';
     TicketStatusHistoryModule,
     DailyQueueSummaryModule,
     BranchesModule,
-    DashboardModule
+    DashboardModule,
+    StaffModule 
   ],
   controllers: [],
   providers: [],

@@ -1,19 +1,20 @@
-import { IsString, IsInt, IsBoolean, MinLength, MaxLength, IsEnum, IsOptional } from 'class-validator';
-import { VisibilityStatus } from '../../common/enums/visibility-status.enum';
+// src/service-windows/dto/create-service-window.dto.ts
+import { IsInt, IsBoolean, IsOptional, IsString, IsNotEmpty } from 'class-validator';
 
 export class CreateServiceWindowDto {
-  @IsString()
-  @MinLength(1)
-  @MaxLength(255)
-  windowNumber: string;
+  @IsInt() // windowNumber should be an integer
+  @IsNotEmpty()
+  windowNumber: number;
 
   @IsInt()
+  @IsNotEmpty()
   branchId: number;
 
   @IsOptional()
   @IsBoolean()
   isActive?: boolean;
 
-  @IsEnum(VisibilityStatus)
-  visibilityStatus: VisibilityStatus;
+  @IsOptional()
+  @IsString()
+  visibilityStatus?: string;
 }

@@ -6,16 +6,16 @@ import { DashboardController } from './dashboard.controller';
 // Import all entities that the dashboard service will interact with
 import { QueueTicket } from '../queue-tickets/entities/queue-ticket.entity';
 import { ServiceWindow } from '../service-windows/entities/service-window.entity';
-import { User } from '../users/entities/user.entity'; // For staff details
-import { Branch } from '../branches/entities/branch.entity'; // For branch details
+import { User } from '../users/entities/user.entity'; // Keep User for cancelledBy in history
+import { Branch } from '../branches/entities/branch.entity';
 import { TicketStatus } from '../ticket-statuses/entities/ticket-status.entity';
 import { CustomerCategory } from '../customer-categories/entities/customer-category.entity';
 import { TicketStatusHistory } from '../ticket-status-history/entities/ticket-status-history.entity';
 import { StaffWindowAssignment } from '../staff-window-assignments/entities/staff-window-assignment.entity';
+import { Staff } from '../staff/entities/staff.entity'; // NEW: Import Staff entity
 
 @Module({
   imports: [
-    // Register all repositories that DashboardService will need to query
     TypeOrmModule.forFeature([
       QueueTicket,
       ServiceWindow,
@@ -25,10 +25,11 @@ import { StaffWindowAssignment } from '../staff-window-assignments/entities/staf
       CustomerCategory,
       TicketStatusHistory,
       StaffWindowAssignment,
+      Staff, // NEW: Add Staff entity
     ]),
   ],
   controllers: [DashboardController],
   providers: [DashboardService],
-  exports: [DashboardService], // Export if other modules might need to inject DashboardService
+  exports: [DashboardService],
 })
 export class DashboardModule {}

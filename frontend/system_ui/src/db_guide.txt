@@ -2,8 +2,7 @@
 INSERT INTO `roles` (`role_id`, `role_name`, `visibility_status`) VALUES
 (1, 'SuperAdmin', 'ON_LIVE'),
 (2, 'Admin', 'ON_LIVE'),
-(3, 'Staff', 'ON_LIVE'),
-(4, 'Client', 'ON_LIVE')
+(3, 'Client', 'ON_LIVE')
 ON DUPLICATE KEY UPDATE role_name=role_name;
 
 -- Insert Sample Branches

@@ -1,20 +1,26 @@
-import { IsInt, IsOptional, IsNumber } from 'class-validator';
+// src/ticket-status-history/dto/create-ticket-status-history.dto.ts
+import { IsInt, IsOptional, IsDateString } from 'class-validator';
 
 export class CreateTicketStatusHistoryDto {
   @IsInt()
   ticketId: number;
 
+  @IsInt()
   @IsOptional()
-  @IsNumber() // Ensures it's a number if provided, but allows undefined and null due to @IsOptional()
-  oldStatusId?: number | null; // Allows null for oldStatusId, and undefined if omitted
+  oldStatusId?: number | null; // Corrected type for nullable
 
   @IsInt()
   newStatusId: number;
 
-  @IsInt()
-  relatedStatusId: number; // For the related TicketStatus entity ID
-
+  @IsDateString()
   @IsOptional()
+  changeTimestamp?: Date;
+
   @IsInt()
-  changedById?: number; // User who changed the status, if applicable
+  @IsOptional()
+  changedByUserId?: number | null; // Corrected type for nullable
+
+  @IsInt()
+  @IsOptional()
+  relatedStatusId?: number | null; // Corrected type for nullable
 }
