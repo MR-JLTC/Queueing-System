@@ -539,6 +539,27 @@ body .floating-element-2 {
   text-align: right;
 }
 
+/* New button for printing the full form */
+.print-full-form-btn {
+  padding: 0.6rem 1.2rem; /* Adjusted padding to be slightly smaller */
+  background: linear-gradient(135deg, #6a0dad 0%, #8a2be2 100%); /* Purple gradient */
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-size: 0.9rem; /* Slightly smaller font size */
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(106, 13, 173, 0.3); /* Matching shadow */
+}
+
+.print-full-form-btn:hover {
+  background: linear-gradient(135deg, #8a2be2 0%, #9932cc 100%); /* Darker purple on hover */
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(106, 13, 173, 0.4);
+}
+
+
 /* Notification Popup (now used for Queue Ticket) */
 .notification-overlay {
   position: fixed;
@@ -604,6 +625,12 @@ body .floating-element-2 {
 
 .ticket-header::after {
   bottom: -15px; /* Position below number */
+}
+
+.ticket-header-logo {
+  width: 60px; /* Adjust size as needed */
+  height: 60px; /* Adjust size as needed */
+  margin-bottom: 10px;
 }
 
 
@@ -680,20 +707,26 @@ body .floating-element-2 {
 }
 
 .qr-code-section {
-  text-align: center; /* Keep this for fallback */
+  text-align: center; /* Fallback for older browsers */
   margin-bottom: 1.5rem;
-  display: flex; /* Use flexbox for centering */
-  justify-content: center; /* Center content horizontally */
-  align-items: center; /* Center content vertically (if needed) */
+  display: flex; /* Use flexbox for robust centering */
+  justify-content: center; /* Center content horizontally in flex container */
+  align-items: center; /* Center content vertically in flex container */
   flex-direction: column; /* Stack items vertically within the flex container */
   width: 100%; /* Ensure it takes full width to allow centering */
+  /* Added border here for print */
+  border: 1px solid #ddd; /* Default border for screen */
+  border-radius: 8px;
+  padding: 10px; /* Padding inside the border */
 }
 
 .qr-code-canvas {
-  border: 1px solid #ddd;
-  border-radius: 8px;
+  /* Removed border here, now handled by parent .qr-code-section */
   background-color: #fff;
-  /* display: block; and margin: 0 auto; are redundant when parent is flex and centers */
+  display: block; /* Ensure canvas is a block element */
+  margin: 0 auto; /* Center the canvas itself */
+  width: 220px; /* Increased QR code size */
+  height: 220px; /* Increased QR code size */
 }
 
 .qr-message {
@@ -717,6 +750,21 @@ body .floating-element-2 {
   font-size: 1.2rem;
 }
 
+/* Container for the action buttons */
+.ticket-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+  width: 100%; /* Ensure the container takes full width for flex distribution */
+}
+
+/* Make both buttons take equal width */
+.ticket-actions .download-pdf-btn,
+.ticket-actions .notification-close {
+  flex: 1; /* Make both buttons take equal width */
+  min-width: 0; /* Allow shrinking */
+}
+
 /* Re-purposed notification-close button for ticket */
 .notification-close {
   padding: 0.6rem 1.8rem;
@@ -728,7 +776,6 @@ body .floating-element-2 {
   cursor: pointer;
   transition: all 0.3s ease;
   box-shadow: 0 4px 10px rgba(66, 153, 225, 0.4);
-  margin-top: 1.5rem; /* Space from footer */
 }
 
 .notification-close:hover {
@@ -747,7 +794,6 @@ body .floating-element-2 {
   cursor: pointer;
   transition: all 0.3s ease;
   box-shadow: 0 4px 10px rgba(40, 167, 69, 0.4);
-  margin-top: 1rem; /* Space from footer or close button */
 }
 
 .download-pdf-btn:hover {
@@ -843,55 +889,155 @@ body .floating-element-2 {
     color: #000 !important; /* Ensure black text for print */
   }
 
-  .queue-page,
-  .queue-container,
+  /* Hide the ticket popup when printing the full form */
+  .notification-overlay {
+    display: none !important;
+  }
+
+  /* Ensure the main queue page and its containers are visible for printing */
+  .queue-page {
+    display: block !important; /* Override display: flex from screen styles */
+    position: relative !important;
+    width: 100% !important;
+    min-height: auto !important; /* Allow content to dictate height */
+    height: auto !important;
+    overflow: visible !important;
+    padding: 20mm !important; /* Add generous padding for print margins */
+    box-sizing: border-box !important; /* Ensure padding is included in width/height */
+    background-color: #fff !important; /* White background for the page itself */
+  }
+
+  .queue-container {
+    display: flex !important; /* Re-enable flex for internal layout */
+    flex-direction: row !important; /* Keep side-by-side if space allows */
+    flex-wrap: wrap !important; /* Allow wrapping on smaller print pages */
+    gap: 10mm !important; /* Adjust gap for print */
+    padding: 0 !important; /* Remove internal padding, handled by queue-page */
+    max-width: 100% !important; /* Ensure it takes full print width */
+    margin: 0 auto !important; /* Center the container on the page */
+    background-color: transparent !important; /* No background for this wrapper */
+    border: none !important; /* Remove borders for cleaner print */
+    box-shadow: none !important; /* Remove shadows */
+    backdrop-filter: none !important; /* Remove blur */
+    animation: none !important; /* Remove animations */
+    transform: none !important; /* Remove transforms */
+  }
+
   .queue-form,
   .queue-display {
-    display: none !important; /* Hide everything else when printing */
-  }
-
-  .notification-overlay {
-    position: static !important; /* Remove fixed positioning */
-    background: none !important; /* Remove overlay background */
+    flex: 1 1 45% !important; /* Allow shrinking/growing, aim for two columns */
+    min-width: 0 !important; /* Allow shrinking */
+    width: auto !important; /* Let flex control width */
+    height: auto !important; /* Let content dictate height */
+    padding: 10mm !important; /* Internal padding for form/display boxes */
+    background-color: #f8f8f8 !important; /* Light background for sections */
+    border: 1px solid #eee !important; /* Light border for sections */
+    border-radius: 8px !important;
+    box-shadow: none !important; /* Remove shadows */
     backdrop-filter: none !important; /* Remove blur */
-    display: block !important; /* Make it visible for print */
-    width: auto !important;
-    height: auto !important;
-    margin: 0 !important;
-    padding: 0 !important;
-  }
-
-  .queue-ticket-popup {
-    box-shadow: none !important; /* Remove shadow for print */
     animation: none !important; /* Remove animations */
-    border: none !important; /* Remove border for cleaner print */
-    width: 210mm !important; /* A4 width for better PDF layout */
-    max-width: none !important; /* Remove max-width constraint */
-    padding: 10mm !important; /* Add some padding for print margins */
-    margin: 0 auto !important; /* Center on page */
+    transform: none !important; /* Remove transforms */
   }
 
-  .notification-close,
-  .download-pdf-btn {
-    display: none !important; /* Hide buttons when printing */
+  /* Specific adjustments for elements within the form/display */
+  .form-header,
+  .display-header,
+  .current-queue,
+  .recorded-queue {
+    margin-bottom: 10mm !important; /* Adjust margins for print */
   }
 
-  .ticket-content-printable {
-    width: 100% !important; /* Ensure it takes full print width */
-    box-sizing: border-box !important;
+  .form-title,
+  .form-subtitle,
+  .category-title,
+  .category-subtitle,
+  .transaction-title,
+  .transaction-subtitle,
+  .queue-header,
+  .current-number,
+  .counter-info,
+  .recorded-header,
+  .queue-list-header,
+  .queue-item-transaction,
+  .queue-item-counter,
+  .name-label,
+  .qr-message,
+  .ticket-footer {
+    color: #000 !important; /* Ensure black text for print */
   }
 
-  /* Adjust font sizes for print if needed */
-  .ticket-title {
-    font-size: 1.8rem !important;
+  .name-input,
+  .transaction-dropdown,
+  .language-dropdown {
+    background: #fff !important; /* White background for inputs */
+    border-color: #ccc !important; /* Lighter border for inputs */
+    color: #000 !important; /* Black text for inputs */
+    box-shadow: none !important; /* Remove shadows */
   }
-  .ticket-number {
-    font-size: 3.5rem !important;
+
+  .category-btn {
+    background: #e0e0e0 !important; /* Light background for category buttons */
+    border-color: #ccc !important;
+    color: #000 !important;
+    box-shadow: none !important;
   }
-  .detail-label, .detail-value, .qr-message, .ticket-footer {
-    font-size: 1rem !important;
+
+  .category-btn.selected {
+    background: #d0e0f0 !important; /* Slightly darker for selected */
+    border-color: #a0c0e0 !important;
+  }
+
+  .proceed-btn,
+  .print-full-form-btn {
+    background: #4CAF50 !important; /* Simple green for print button */
+    color: white !important;
+    box-shadow: none !important;
+    print-color-adjust: exact; /* Ensure background color is printed */
+    -webkit-print-color-adjust: exact;
+  }
+
+  .queue-item {
+    background: #f0f0f0 !important; /* Light background for queue items */
+    border-color: #ddd !important;
+    box-shadow: none !important;
+  }
+
+  .queue-item-number {
+    background: #ADD8E6 !important; /* Light blue for queue number circle */
+    color: #000 !important;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  .queue-item-counter {
+    background: #FFFACD !important; /* Light yellow for counter */
+    color: #000 !important;
+    border-color: #E6DB55 !important;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  .qr-code-section {
+    border: 1px solid #000 !important; /* Ensure black border for QR code */
+    background-color: #fff !important; /* White background for QR section */
+    padding: 5mm !important; /* Adjust padding for print */
+  }
+
+  .qr-code-canvas {
+    width: 60mm !important; /* Fixed size for QR code in print */
+    height: 60mm !important;
+  }
+
+  .ticket-actions { /* Hide buttons on the ticket popup if it were to be printed */
+    display: none !important;
+  }
+
+  /* Hide the print button for the full form itself when printing */
+  .print-full-form-btn {
+    display: none !important;
   }
 }
+
 
 /* Animations */
 @keyframes slideIn {

@@ -1,6 +1,6 @@
-import React, { useState, useEffect,  useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './QueueManagement.css';
-import SysIcon from '/src/assets/sys_logo.png'; // Used for form header
+import SysIcon from '/src/assets/sys_logo.png'; // Used for form header and ticket logo
 import personicon from '/src/assets/person.svg';
 import careicon from '/src/assets/care.svg';
 
@@ -23,7 +23,6 @@ const loadQriousScript = () => {
 // Load jsPDF and html2canvas libraries for PDF generation
 const loadPdfLibraries = () => {
   return new Promise((resolve, reject) => {
-    // Check if jsPDF and html2canvas are already loaded
     if (window.jspdf && window.html2canvas) {
       resolve();
       return;
@@ -44,17 +43,13 @@ const loadPdfLibraries = () => {
       });
     };
 
-    // Use an IIFE to use async/await inside the executor
-    (async () => {
-      try {
-        await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js', 'jspdf-script');
-        await loadScript('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js', 'html2canvas-script');
-        resolve();
-      } catch (error) {
+    loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js', 'jspdf-script')
+      .then(() => loadScript('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js', 'html2canvas-script'))
+      .then(() => resolve())
+      .catch((error) => {
         console.error("Failed to load PDF libraries:", error);
         reject(error);
-      }
-    })();
+      });
   });
 };
 
@@ -66,57 +61,96 @@ const QueueTicketDisplay = ({ ticketData, onClose }) => {
 
   useEffect(() => {
     const generateQrCode = async () => {
-      await loadQriousScript(); // Ensure QRious is loaded
+      try {
+        await loadQriousScript(); // Ensure QRious is loaded
 
-      if (qrCanvasRef.current && window.QRious) {
-        // Data to encode in the QR code
-        const qrContent = JSON.stringify({
-          queueNumber: ticketData.queueNumber,
-          category: ticketData.category,
-          transaction: ticketData.transaction,
-          counter: ticketData.counter,
-          name: ticketData.name,
-          nickname: ticketData.nickname,
-          timestamp: ticketData.dateTimeIssued,
-        });
+        if (qrCanvasRef.current && window.QRious) {
+          // Data to encode in the QR code
+          const qrContent = JSON.stringify({
+            queueNumber: ticketData.queueNumber,
+            category: ticketData.category,
+            transaction: ticketData.transaction,
+            counter: ticketData.counter,
+            name: ticketData.name,
+            nickname: ticketData.nickname,
+            timestamp: ticketData.dateTimeIssued,
+          });
 
-        // Generate QR code
-        new window.QRious({
-          element: qrCanvasRef.current,
-          value: qrContent,
-          size: 180, // Size of the QR code in pixels
-          padding: 10,
-          foreground: '#000', // QR code color (black)
-          background: '#fff', // Background color (white)
-        });
+          // Generate QR code
+          new window.QRious({
+            element: qrCanvasRef.current,
+            value: qrContent,
+            size: 220, // Increased QR code size
+            padding: 10,
+            foreground: '#000', // QR code color (black)
+            background: '#fff', // Background color (white)
+          });
+        }
+      } catch (error) {
+        console.error("Error generating QR code:", error);
       }
     };
 
     generateQrCode();
   }, [ticketData]); // Regenerate QR code if ticketData changes
 
-  const handleDownloadPdf = async () => {
-    await loadPdfLibraries(); // Ensure PDF libraries are loaded
+  const handleGetPrint = async () => {
+    try {
+      await loadPdfLibraries(); // Ensure PDF libraries are loaded
 
-    if (ticketRef.current && window.html2canvas && window.jspdf) {
+      if (!ticketRef.current) {
+        console.error("Ticket content reference is null. Cannot generate PDF.");
+        return;
+      }
+      if (!window.html2canvas || !window.jspdf) {
+        console.error("PDF libraries (html2canvas or jspdf) are not loaded.");
+        return;
+      }
+
       // Capture the ticket content as an image
       const canvas = await window.html2canvas(ticketRef.current, {
-        scale: 2, // Increase scale for better quality in PDF
+        scale: 3, // Increased scale for better quality in PDF
         useCORS: true, // Enable CORS if you have external images (like SysIcon)
         backgroundColor: '#ffffff', // Ensure white background for PDF
+        logging: true, // Enable logging to debug rendering issues
+        width: ticketRef.current.offsetWidth,
+        height: ticketRef.current.offsetHeight,
       });
 
       const imgData = canvas.toDataURL('image/png');
-      const pdf = new window.jspdf.jsPDF({
-        orientation: 'portrait',
-        unit: 'px',
-        format: [canvas.width, canvas.height] // Set PDF size to canvas size
-      });
 
-      pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
-      pdf.save(`QueueTicket_${ticketData.queueNumber}.pdf`);
-    } else {
-      console.error("PDF libraries not loaded or ticket content not found.");
+      // Initialize jsPDF with portrait orientation and A4 size in millimeters
+      const pdf = new window.jspdf.jsPDF('p', 'mm', 'a4');
+
+      // Get PDF page dimensions
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = pdf.internal.pageSize.getHeight();
+
+      // Get image properties from the captured canvas
+      const imgProps = pdf.getImageProperties(imgData);
+
+      // Calculate the dimensions to fit the image within the PDF page, maintaining aspect ratio
+      const imgAspectRatio = imgProps.width / imgProps.height;
+      let finalImgWidth = pdfWidth;
+      let finalImgHeight = pdfWidth / imgAspectRatio;
+
+      // If the calculated height exceeds the PDF height, scale based on height instead
+      if (finalImgHeight > pdfHeight) {
+        finalImgHeight = pdfHeight;
+        finalImgWidth = pdfHeight * imgAspectRatio;
+      }
+
+      // Calculate x and y offsets to center the image on the PDF page
+      const xOffset = (pdfWidth - finalImgWidth) / 2;
+      const yOffset = (pdfHeight - finalImgHeight) / 2;
+
+      // Add the image to the PDF
+      pdf.addImage(imgData, 'PNG', xOffset, yOffset, finalImgWidth, finalImgHeight);
+      pdf.save(`QueueTicket_${ticketData.queueNumber}.pdf`); // Save the PDF
+
+    } catch (error) {
+      console.error("Error generating PDF:", error);
+      // You could add user-facing feedback here, e.g., a small popup message
     }
   };
 
@@ -134,14 +168,8 @@ const QueueTicketDisplay = ({ ticketData, onClose }) => {
         {/* The content to be captured as PDF */}
         <div ref={ticketRef} className="ticket-content-printable">
           <div className="ticket-header">
-            <div className="ticket-icon">
-              {/* Simple hourglass SVG icon */}
-              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#4299e1" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M12 2v6a4 4 0 0 1-4 4 4 4 0 0 1 4 4v6" />
-                <path d="M12 22a4 4 0 0 1-4-4 4 4 0 0 1 4-4 4 4 0 0 1 4 4 4 4 0 0 1-4 4z" />
-                <path d="M12 2a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4z" />
-              </svg>
-            </div>
+            {/* Logo added here */}
+            <img src={SysIcon} alt="System Logo" className="ticket-header-logo" />
             <h2 className="ticket-title">
               {category === 'Standard' ? 'STANDARD QUEUE' : 'PRIORITY QUEUE'}
             </h2>
@@ -185,9 +213,9 @@ const QueueTicketDisplay = ({ ticketData, onClose }) => {
         </div>
 
         {/* Buttons for closing and downloading */}
-        <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
-          <button className="download-pdf-btn" onClick={handleDownloadPdf}>
-            Download PDF
+        <div className="ticket-actions">
+          <button className="download-pdf-btn" onClick={handleGetPrint}>
+            Get Print
           </button>
           <button className="notification-close" onClick={onClose}>
             Got it! ✓
@@ -215,6 +243,9 @@ const QueueManagement = () => {
       counter: Math.floor(Math.random() * 6) + 1,
     }))
   );
+
+  // Ref for the entire queue page to capture for PDF
+  const queuePageRef = useRef(null);
 
   const transactionToCounter = {
     'New Application': 1,
@@ -278,6 +309,74 @@ const QueueManagement = () => {
     setQueueTicketData(null); // Clear ticket data
   };
 
+  // New function to handle printing the entire form
+  const handlePrintFullForm = async () => {
+    try {
+      await loadPdfLibraries(); // Ensure PDF libraries are loaded
+
+      if (!queuePageRef.current) {
+        console.error("Queue page content reference is null. Cannot generate PDF.");
+        return;
+      }
+      if (!window.html2canvas || !window.jspdf) {
+        console.error("PDF libraries (html2canvas or jspdf) are not loaded.");
+        return;
+      }
+
+      // Temporarily hide the ticket popup if it's open, to avoid capturing it with the form
+      const ticketPopup = document.querySelector('.notification-overlay');
+      let originalTicketPopupDisplay = '';
+      if (ticketPopup) {
+        originalTicketPopupDisplay = ticketPopup.style.display;
+        ticketPopup.style.display = 'none';
+      }
+
+      // Capture the entire queue page as an image
+      const canvas = await window.html2canvas(queuePageRef.current, {
+        scale: 2, // Adjust scale for quality vs file size
+        useCORS: true,
+        backgroundColor: '#0E1626', // Match body background for consistency
+        logging: true,
+        width: queuePageRef.current.offsetWidth,
+        height: queuePageRef.current.offsetHeight,
+      });
+
+      // Restore the ticket popup's display style
+      if (ticketPopup) {
+        ticketPopup.style.display = originalTicketPopupDisplay;
+      }
+
+      const imgData = canvas.toDataURL('image/png');
+
+      const pdf = new window.jspdf.jsPDF('p', 'mm', 'a4');
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = pdf.internal.pageSize.getHeight();
+
+      const imgProps = pdf.getImageProperties(imgData);
+      const imgAspectRatio = imgProps.width / imgProps.height;
+
+      let finalImgWidth = pdfWidth;
+      let finalImgHeight = pdfWidth / imgAspectRatio;
+
+      if (finalImgHeight > pdfHeight) {
+        finalImgHeight = pdfHeight;
+        finalImgWidth = pdfHeight * imgAspectRatio;
+      }
+
+      const xOffset = (pdfWidth - finalImgWidth) / 2;
+      const yOffset = (pdfHeight - finalImgHeight) / 2;
+
+      pdf.addImage(imgData, 'PNG', xOffset, yOffset, finalImgWidth, finalImgHeight);
+      pdf.save(`QueueForm_${new Date().toISOString().slice(0,10)}.pdf`);
+
+    } catch (error) {
+      console.error("Error generating full form PDF:", error);
+      // Implement a user-friendly message box here instead of alert
+      // For example, set a state variable to show an error message on the UI
+    }
+  };
+
+
   const transactionTypes = [
     'Front Desk',
     'New Application', 'Renewal', 'Correction', 'Duplicate Copy',
@@ -288,7 +387,7 @@ const QueueManagement = () => {
   const languages = ['English', 'Filipino', 'Cebuano'];
 
   return (
-    <div className="queue-page">
+    <div className="queue-page" ref={queuePageRef}> {/* Attach ref to the main page div */}
       <div className="queue-container">
         {/* LEFT - FORM */}
         <div className="queue-form">
@@ -397,6 +496,10 @@ const QueueManagement = () => {
                 ))}
               </select>
             </div>
+            {/* New "Print Full Form" button */}
+            <button className="print-full-form-btn" onClick={handlePrintFullForm}>
+              Print Full Form
+            </button>
           </div>
 
           {/* Current Queue Number */}
