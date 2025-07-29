@@ -17,8 +17,8 @@ export class ServiceWindowsService {
   ) {}
 
   async create(createServiceWindowDto: CreateServiceWindowDto): Promise<ServiceWindow> {
-    const { windowNumber, branchId, isActive, visibilityStatus } = createServiceWindowDto;
-
+    const { windowNumber, windowName, branchId, isActive, visibilityStatus } = createServiceWindowDto; // Added windowName
+    
     const branch = await this.branchRepository.findOne({ where: { branchId } });
     if (!branch) {
       throw new BadRequestException(`Branch with ID ${branchId} not found.`);
@@ -26,6 +26,7 @@ export class ServiceWindowsService {
 
     const serviceWindow = this.serviceWindowsRepository.create({
       windowNumber,
+      windowName, // Assign windowName
       branch, // Assign the branch entity
       isActive: isActive !== undefined ? isActive : true,
       visibilityStatus: visibilityStatus || 'ON_LIVE',
@@ -34,8 +35,17 @@ export class ServiceWindowsService {
     return this.serviceWindowsRepository.save(serviceWindow);
   }
 
-  findAll(): Promise<ServiceWindow[]> {
-    return this.serviceWindowsRepository.find({ relations: ['branch'] });
+  // Modified findAll to accept an optional branchId for filtering
+  async findAll(branchId?: number): Promise<ServiceWindow[]> {
+    const findOptions: any = { relations: ['branch'] }; // Start with relations
+
+    if (branchId) {
+      // If branchId is provided, add a where clause to filter by branch.branchId
+      findOptions.where = { branch: { branchId: branchId } };
+    }
+    
+    // Perform the find operation with the constructed options
+    return this.serviceWindowsRepository.find(findOptions);
   }
 
   async findOne(windowId: number): Promise<ServiceWindow> {
@@ -61,17 +71,16 @@ export class ServiceWindowsService {
       delete updateServiceWindowDto.branchId;
     }
 
+    // Assign other properties including windowName if present
     Object.assign(serviceWindow, updateServiceWindowDto);
     return this.serviceWindowsRepository.save(serviceWindow);
   }
 
   async remove(windowId: number): Promise<void> {
-    const serviceWindow = await this.findOne(windowId);
-    if (!serviceWindow) {
-      throw new NotFoundException(`Service window with ID "${windowId}" not found`);
+    // Attempt to delete the service window directly
+    const result = await this.serviceWindowsRepository.delete(windowId);
+    if (result.affected === 0) {
+      throw new NotFoundException(`Service window with ID "${windowId}" not found or already deleted.`);
     }
-    serviceWindow.visibilityStatus = 'ON_DELETE';
-    serviceWindow.isActive = false;
-    await this.serviceWindowsRepository.save(serviceWindow);
   }
 }

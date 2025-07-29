@@ -47,6 +47,8 @@ import EventIcon from '@mui/icons-material/Event'; // For date pickers
 import BarChartIcon from '@mui/icons-material/BarChart'; // For queue history chart
 import InputAdornment from '@mui/material/InputAdornment'; // For search/date inputs
 import SearchIcon from '@mui/icons-material/Search'; // For search input
+import PeopleIcon from '@mui/icons-material/People'; // For Manage Staff
+import WindowIcon from '@mui/icons-material/Window'; // For Manage Windows
 
 // Recharts imports for the Pie Chart
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
@@ -58,6 +60,8 @@ import AddAdminForm from './popup-forms/AddAdminForm';
 import EditAdminForm from './popup-forms/EditAdminForm';
 import AddBranchForm from './popup-forms/AddBranchForm';
 import EditBranchForm from './popup-forms/EditBranchForm';
+import EditStaffForm from './popup-forms/EditStaffForm'; // Assuming this exists
+import EditWindowForm from './popup-forms/EditWindowForm'; // Assuming this exists
 import PopupMessage from "../shared_comp/popup_menu/PopupMessage";
 import { showPopupMessage } from "../shared_comp/utils/popupUtils";
 import axios from 'axios';
@@ -143,6 +147,21 @@ const SuperAdminDashboard = () => {
   const [loadingOverallDashboard, setLoadingOverallDashboard] = useState(true);
   const [overallDashboardError, setOverallDashboardError] = useState(null);
 
+  // NEW: States for Manage Staff
+  const [staffUsers, setStaffUsers] = useState([]);
+  const [loadingStaffUsers, setLoadingStaffUsers] = useState(true);
+  const [selectedStaffFilterBranchId, setSelectedStaffFilterBranchId] = useState('');
+  const [showEditStaffModal, setShowEditStaffModal] = useState(false);
+  const [selectedStaff, setSelectedStaff] = useState(null);
+
+  // NEW: States for Manage Windows
+  const [serviceWindows, setServiceWindows] = useState([]);
+  const [loadingServiceWindows, setLoadingServiceWindows] = useState(true);
+  const [selectedWindowFilterBranchId, setSelectedWindowFilterBranchId] = useState('');
+  const [showEditWindowModal, setShowEditWindowModal] = useState(false);
+  const [selectedWindow, setSelectedWindow] = useState(null);
+
+
   // Pie chart colors (consistent with previous design)
   const PIE_COLORS = ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'];
 
@@ -194,7 +213,7 @@ const SuperAdminDashboard = () => {
         } else if (error.request) {
           errorMessage += "No response from server. Is the backend running?";
         } else {
-          errorMessage += `Request setup error: ${error.message}`;
+          errorMessage += `Unknown error: ${error.message}`;
         }
       } else {
         errorMessage += `Unknown error: ${error.message}`;
@@ -204,6 +223,43 @@ const SuperAdminDashboard = () => {
       setLoadingBranches(false);
     }
   }, [setPopup]);
+
+  // NEW: Function to fetch all staff users, optionally filtered by branch
+  const fetchStaffUsers = useCallback(async (branchId = '') => {
+    setLoadingStaffUsers(true);
+    try {
+      const url = branchId ? `${API_BASE_URL}/staff?branchId=${branchId}` : `${API_BASE_URL}/staff`;
+      console.log(`[Manage Staff] Fetching staff from: ${url}`); // Debug log
+      const response = await axios.get(url);
+      console.log("[Manage Staff] Received staff data:", response.data); // Debug log
+      setStaffUsers(response.data);
+    } catch (error) {
+      console.error("Error fetching staff users:", error.response?.data || error.message);
+      showPopupMessage(setPopup, "error", "Failed to load staff users.");
+      setStaffUsers([]);
+    } finally {
+      setLoadingStaffUsers(false);
+    }
+  }, [setPopup]);
+
+  // NEW: Function to fetch all service windows, optionally filtered by branch
+  const fetchServiceWindows = useCallback(async (branchId = '') => {
+    setLoadingServiceWindows(true);
+    try {
+      const url = branchId ? `${API_BASE_URL}/service-windows?branchId=${branchId}` : `${API_BASE_URL}/service-windows`;
+      console.log(`[Manage Windows] Fetching windows from: ${url}`); // Debug log
+      const response = await axios.get(url);
+      console.log("[Manage Windows] Received windows data:", response.data); // Debug log
+      setServiceWindows(response.data);
+    } catch (error) {
+      console.error("Error fetching service windows:", error.response?.data || error.message);
+      showPopupMessage(setPopup, "error", "Failed to load service windows.");
+      setServiceWindows([]);
+    } finally {
+      setLoadingServiceWindows(false);
+    }
+  }, [setPopup]);
+
 
   // NEW: Function to fetch overall dashboard summary data (can be filtered by branch)
   const fetchOverallDashboardSummary = useCallback(async (branchId) => {
@@ -258,6 +314,9 @@ const SuperAdminDashboard = () => {
         setFullName(storedFullName || 'Super Admin');
         fetchAdminUsers();
         fetchBranches();
+        // Initial fetches for new sections
+        fetchStaffUsers(selectedStaffFilterBranchId); // Ensure initial fetch respects default filter
+        fetchServiceWindows(selectedWindowFilterBranchId); // Ensure initial fetch respects default filter
       }
     };
 
@@ -273,16 +332,19 @@ const SuperAdminDashboard = () => {
     const intervalId = setInterval(updateDateTime, 1000);
 
     return () => clearInterval(intervalId);
-  }, [navigate, fetchAdminUsers, fetchBranches]);
+  }, [navigate, fetchAdminUsers, fetchBranches, fetchStaffUsers, fetchServiceWindows, selectedStaffFilterBranchId, selectedWindowFilterBranchId]); // Added filter dependencies here for initial load
 
-  // Effect to fetch overall dashboard data when branch filter or period changes
+  // Effect to fetch data when currentView or filters change
   useEffect(() => {
-    // Only fetch if currentView is 'overall-dashboard'
     if (currentView === 'overall-dashboard') {
       fetchOverallDashboardSummary(selectedBranchFilter);
       fetchOverallQueueHistoryData(selectedBranchFilter, selectedPeriod, customStartDate, customEndDate);
+    } else if (currentView === 'staff') {
+      fetchStaffUsers(selectedStaffFilterBranchId);
+    } else if (currentView === 'windows') {
+      fetchServiceWindows(selectedWindowFilterBranchId);
     }
-  }, [currentView, selectedBranchFilter, selectedPeriod, customStartDate, customEndDate, fetchOverallDashboardSummary, fetchOverallQueueHistoryData]);
+  }, [currentView, selectedBranchFilter, selectedPeriod, customStartDate, customEndDate, selectedStaffFilterBranchId, selectedWindowFilterBranchId, fetchOverallDashboardSummary, fetchOverallQueueHistoryData, fetchStaffUsers, fetchServiceWindows]);
 
 
   const handleOpenAddAdminModal = () => setShowAddAdminModal(true);
@@ -309,6 +371,27 @@ const SuperAdminDashboard = () => {
     setShowEditBranchModal(false);
   };
 
+  // NEW: Handlers for Staff Modals
+  const handleOpenEditStaffModal = (staff) => {
+    setSelectedStaff(staff);
+    setShowEditStaffModal(true);
+  };
+  const handleCloseEditStaffModal = () => {
+    setSelectedStaff(null);
+    setShowEditStaffModal(false);
+  };
+
+  // NEW: Handlers for Window Modals
+  const handleOpenEditWindowModal = (window) => {
+    setSelectedWindow(window);
+    setShowEditWindowModal(true);
+  };
+  const handleCloseEditWindowModal = () => {
+    setSelectedWindow(null);
+    setShowEditWindowModal(false);
+  };
+
+
   const handleAdminOperationSuccess = (message) => {
     showPopupMessage(setPopup, "success", message);
     fetchAdminUsers();
@@ -323,6 +406,21 @@ const SuperAdminDashboard = () => {
     handleCloseEditBranchModal();
   };
 
+  // NEW: Generic success handler for staff operations
+  const handleStaffOperationSuccess = (message) => {
+    showPopupMessage(setPopup, "success", message);
+    fetchStaffUsers(selectedStaffFilterBranchId); // Refresh staff list with current filter
+    handleCloseEditStaffModal();
+  };
+
+  // NEW: Generic success handler for window operations
+  const handleWindowOperationSuccess = (message) => {
+    showPopupMessage(setPopup, "success", message);
+    fetchServiceWindows(selectedWindowFilterBranchId); // Refresh windows list with current filter
+    handleCloseEditWindowModal();
+  };
+
+
   const handleAdminOperationError = (errorMessage) => {
     showPopupMessage(setPopup, "error", errorMessage);
   };
@@ -330,6 +428,17 @@ const SuperAdminDashboard = () => {
   const handleBranchOperationError = (errorMessage) => {
     showPopupMessage(setPopup, "error", errorMessage);
   };
+
+  // NEW: Error handler for staff operations
+  const handleStaffOperationError = (errorMessage) => {
+    showPopupMessage(setPopup, "error", errorMessage);
+  };
+
+  // NEW: Error handler for window operations
+  const handleWindowOperationError = (errorMessage) => {
+    showPopupMessage(setPopup, "error", errorMessage);
+  };
+
 
   const handleDrawerClose = () => {
     setIsClosing(true);
@@ -351,10 +460,12 @@ const SuperAdminDashboard = () => {
     navigate('/SuperAdminLogin', { replace: true });
   };
 
-  // NEW: Navigation items updated to include 'overall-dashboard'
+  // NEW: Navigation items updated to include 'staff' and 'windows'
   const navItems = [
     { text: 'Overall Dashboard', icon: <DashboardIcon sx={{ color: '#8ab4f8' }} />, view: 'overall-dashboard' },
     { text: 'Manage Admins', icon: <GroupIcon sx={{ color: '#8ab4f8' }} />, view: 'users' },
+    { text: 'Manage Staff', icon: <PeopleIcon sx={{ color: '#8ab4f8' }} />, view: 'staff' }, // New
+    { text: 'Manage Windows', icon: <WindowIcon sx={{ color: '#8ab4f8' }} />, view: 'windows' }, // New
     { text: 'Manage Branches', icon: <BusinessIcon sx={{ color: '#8ab4f8' }} />, view: 'branches' },
   ];
 
@@ -369,22 +480,41 @@ const SuperAdminDashboard = () => {
 
 
   const renderContent = () => {
-    if (loadingOverallDashboard && currentView === 'overall-dashboard') {
+    // Centralized loading/error handling for the main content area
+    const isLoading = (currentView === 'overall-dashboard' && loadingOverallDashboard) ||
+                      (currentView === 'users' && loadingUsers) ||
+                      (currentView === 'branches' && loadingBranches) ||
+                      (currentView === 'staff' && loadingStaffUsers) || // NEW
+                      (currentView === 'windows' && loadingServiceWindows); // NEW
+
+    const currentError = (currentView === 'overall-dashboard' && overallDashboardError) || null; // Only overall dashboard has its own error state for now
+
+    if (isLoading) {
       return (
         <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '300px', flexDirection: 'column' }}>
           <CircularProgress sx={{ color: '#007bff' }} />
-          <Typography sx={{ mt: 2, color: '#e0e0e0' }}>Loading overall dashboard data...</Typography>
+          <Typography sx={{ mt: 2, color: '#e0e0e0' }}>Loading data...</Typography>
         </Box>
       );
     }
 
-    if (overallDashboardError && currentView === 'overall-dashboard') {
+    if (currentError) {
       return (
         <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '300px', flexDirection: 'column' }}>
-          <Typography color="error" variant="h6">Error: {overallDashboardError}</Typography>
+          <Typography color="error" variant="h6">Error: {currentError}</Typography>
           <MuiButton onClick={() => {
-            fetchOverallDashboardSummary(selectedBranchFilter);
-            fetchOverallQueueHistoryData(selectedBranchFilter, selectedPeriod, customStartDate, customEndDate);
+            if (currentView === 'overall-dashboard') {
+              fetchOverallDashboardSummary(selectedBranchFilter);
+              fetchOverallQueueHistoryData(selectedBranchFilter, selectedPeriod, customStartDate, customEndDate);
+            } else if (currentView === 'users') {
+              fetchAdminUsers();
+            } else if (currentView === 'branches') {
+              fetchBranches();
+            } else if (currentView === 'staff') { // NEW
+              fetchStaffUsers(selectedStaffFilterBranchId);
+            } else if (currentView === 'windows') { // NEW
+              fetchServiceWindows(selectedWindowFilterBranchId);
+            }
           }} sx={{ mt: 2, color: '#007bff' }}>Retry</MuiButton>
         </Box>
       );
@@ -626,14 +756,7 @@ const SuperAdminDashboard = () => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {loadingUsers ? (
-                    <TableRow>
-                      <TableCell colSpan={6} align="center" sx={{ py: 4 }}>
-                        <CircularProgress size={30} sx={{ color: '#007bff' }} />
-                        <Typography sx={{ mt: 2, color: '#e0e0e0' }}>Loading users...</Typography>
-                      </TableCell>
-                    </TableRow>
-                  ) : users.length === 0 ? (
+                  {users.length === 0 ? (
                     <TableRow>
                       <TableCell colSpan={6} align="center" sx={{ py: 4, color: '#e0e0e0' }}>No admin users found.</TableCell>
                     </TableRow>
@@ -667,6 +790,279 @@ const SuperAdminDashboard = () => {
                             size="small"
                             startIcon={<EditIcon sx={{ fontSize: '1rem !important' }} />}
                             onClick={() => handleOpenEditAdminModal(user)}
+                            sx={{
+                              color: '#007bff',
+                              borderColor: '#007bff',
+                              borderRadius: '15px',
+                              textTransform: 'none',
+                              fontSize: '0.8rem',
+                              py: '4px',
+                              px: '12px',
+                              '&:hover': {
+                                backgroundColor: 'rgba(0, 123, 255, 0.1)',
+                                borderColor: '#0056b3',
+                              },
+                            }}
+                          >
+                            Edit
+                          </MuiButton>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </>
+        );
+      case 'staff': // NEW: Manage Staff Section
+        return (
+          <>
+            <Box sx={{ mb: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
+              <Box>
+                <Typography variant="h4" sx={{ color: '#f0f0f0', fontWeight: 600, fontSize: '2.2rem' }}>
+                  Staff Members
+                </Typography>
+                <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.6)', fontSize: '0.9rem' }}>
+                  View and manage all staff across branches.
+                </Typography>
+              </Box>
+              <FormControl sx={{ minWidth: 200, bgcolor: '#1f1f1f', borderRadius: '10px' }} size="small">
+                <InputLabel sx={{ color: '#8ab4f8' }}>Filter by Branch</InputLabel>
+                <Select
+                  value={selectedStaffFilterBranchId}
+                  label="Filter by Branch"
+                  onChange={(e) => setSelectedStaffFilterBranchId(e.target.value)}
+                  sx={{
+                    color: '#e0e0e0',
+                    '& .MuiOutlinedInput-notchedOutline': { borderColor: 'rgba(100, 110, 130, 0.2)' },
+                    '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#007bff' },
+                    '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: 'rgba(100, 110, 130, 0.4)' },
+                    '& .MuiSvgIcon-root': { color: '#8ab4f8' },
+                  }}
+                  MenuProps={{
+                    PaperProps: {
+                      sx: {
+                        backgroundColor: '#1a1a1a',
+                        color: '#e0e0e0',
+                        border: '1px solid rgba(100, 110, 130, 0.2)',
+                        '& .MuiMenuItem-root': {
+                          color: '#e0e0e0',
+                          '&:hover': {
+                            backgroundColor: 'rgba(0, 123, 255, 0.1)',
+                          },
+                          '&.Mui-selected': {
+                            backgroundColor: 'rgba(0, 123, 255, 0.2)',
+                          },
+                        },
+                      },
+                    },
+                  }}
+                >
+                  <MenuItem value="">All Branches</MenuItem>
+                  {branches.map((branch) => (
+                    <MenuItem key={branch.branchId} value={branch.branchId}>
+                      {branch.branchName}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Box>
+
+            <TableContainer component={Paper} sx={{
+              backgroundColor: '#1a1a1a',
+              borderRadius: '12px',
+              boxShadow: 'none',
+              border: '1px solid rgba(100, 110, 130, 0.1)',
+              overflow: 'hidden',
+            }}>
+              <Table sx={{ minWidth: 650 }} aria-label="staff table">
+                <TableHead>
+                  <TableRow sx={{ backgroundColor: '#1a1a1a' }}>
+                    <TableCell sx={{ color: '#8ab4f8', fontWeight: 600, fontSize: '0.9rem', borderBottom: '1px solid rgba(100, 110, 130, 0.1)', padding: '12px 16px' }}>Full Name</TableCell>
+                    <TableCell sx={{ color: '#8ab4f8', fontWeight: 600, fontSize: '0.9rem', borderBottom: '1px solid rgba(100, 110, 130, 0.1)', padding: '12px 16px' }}>Branch</TableCell>
+                    <TableCell sx={{ color: '#8ab4f8', fontWeight: 600, fontSize: '0.9rem', borderBottom: '1px solid rgba(100, 110, 130, 0.1)', padding: '12px 16px' }}>Status</TableCell>
+                    <TableCell sx={{ color: '#8ab4f8', fontWeight: 600, fontSize: '0.9rem', borderBottom: '1px solid rgba(100, 110, 130, 0.1)', padding: '12px 16px' }}>Action</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {staffUsers.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={5} align="center" sx={{ py: 4, color: '#e0e0e0' }}>No staff users found.</TableCell>
+                    </TableRow>
+                  ) : (
+                    staffUsers.map((staff) => (
+                      <TableRow
+                        key={staff.staffId}
+                        sx={{
+                          '&:nth-of-type(odd)': { backgroundColor: '#1f1f1f' },
+                          '&:nth-of-type(even)': { backgroundColor: '#1a1a1a' },
+                          '&:hover': { backgroundColor: 'rgba(0, 123, 255, 0.05)' },
+                          borderBottom: '1px solid rgba(100, 110, 130, 0.05)',
+                        }}
+                      >
+                        <TableCell sx={{ color: '#e0e0e0', fontSize: '0.9rem', borderBottom: 'none', padding: '10px 16px' }}>{staff.fullName}</TableCell>
+                        <TableCell sx={{ color: '#e0e0e0', fontSize: '0.9rem', borderBottom: 'none', padding: '10px 16px' }}>{staff.branch?.branchName || 'N/A'}</TableCell>
+                        <TableCell sx={{ borderBottom: 'none', padding: '10px 16px' }}>
+                          <Typography
+                            variant="body2"
+                            className={staff.isActive ? 'status-active' : 'status-inactive'}
+                            sx={{ fontWeight: 600, fontSize: '0.9rem' }}
+                          >
+                            {staff.isActive ? 'Active' : 'Inactive'}
+                          </Typography>
+                        </TableCell>
+                        <TableCell sx={{ borderBottom: 'none', padding: '10px 16px' }}>
+                          <MuiButton
+                            variant="outlined"
+                            size="small"
+                            startIcon={<EditIcon sx={{ fontSize: '1rem !important' }} />}
+                            onClick={() => handleOpenEditStaffModal(staff)}
+                            sx={{
+                              color: '#007bff',
+                              borderColor: '#007bff',
+                              borderRadius: '15px',
+                              textTransform: 'none',
+                              fontSize: '0.8rem',
+                              py: '4px',
+                              px: '12px',
+                              '&:hover': {
+                                backgroundColor: 'rgba(0, 123, 255, 0.1)',
+                                borderColor: '#0056b3',
+                              },
+                            }}
+                          >
+                            Edit
+                          </MuiButton>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </>
+        );
+      case 'windows': // NEW: Manage Windows Section
+        return (
+          <>
+            <Box sx={{ mb: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
+              <Box>
+                <Typography variant="h4" sx={{ color: '#f0f0f0', fontWeight: 600, fontSize: '2.2rem' }}>
+                  Service Windows
+                </Typography>
+                <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.6)', fontSize: '0.9rem' }}>
+                  View and manage all service windows across branches.
+                </Typography>
+              </Box>
+              <FormControl sx={{ minWidth: 200, bgcolor: '#1f1f1f', borderRadius: '10px' }} size="small">
+                <InputLabel sx={{ color: '#8ab4f8' }}>Filter by Branch</InputLabel>
+                <Select
+                  value={selectedWindowFilterBranchId}
+                  label="Filter by Branch"
+                  onChange={(e) => {
+                    console.log(`[Manage Windows Filter] Selected branch ID: ${e.target.value}`); // Debug log
+                    setSelectedWindowFilterBranchId(e.target.value);
+                  }}
+                  sx={{
+                    color: '#e0e0e0',
+                    '& .MuiOutlinedInput-notchedOutline': { borderColor: 'rgba(100, 110, 130, 0.2)' },
+                    '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#007bff' },
+                    '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: 'rgba(100, 110, 130, 0.4)' },
+                    '& .MuiSvgIcon-root': { color: '#8ab4f8' },
+                  }}
+                  MenuProps={{
+                    PaperProps: {
+                      sx: {
+                        backgroundColor: '#1a1a1a',
+                        color: '#e0e0e0',
+                        border: '1px solid rgba(100, 110, 130, 0.2)',
+                        '& .MuiMenuItem-root': {
+                          color: '#e0e0e0',
+                          '&:hover': {
+                            backgroundColor: 'rgba(0, 123, 255, 0.1)',
+                          },
+                          '&.Mui-selected': {
+                            backgroundColor: 'rgba(0, 123, 255, 0.2)',
+                          },
+                        },
+                      },
+                    },
+                  }}
+                >
+                  <MenuItem value="">All Branches</MenuItem>
+                  {branches.map((branch) => (
+                    <MenuItem key={branch.branchId} value={branch.branchId}>
+                      {branch.branchName}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Box>
+
+            <TableContainer component={Paper} sx={{
+              backgroundColor: '#1a1a1a',
+              borderRadius: '12px',
+              boxShadow: 'none',
+              border: '1px solid rgba(100, 110, 130, 0.1)',
+              overflow: 'hidden',
+            }}>
+              <Table sx={{ minWidth: 650 }} aria-label="service windows table">
+                <TableHead>
+                  <TableRow sx={{ backgroundColor: '#1a1a1a' }}>
+                    <TableCell sx={{ color: '#8ab4f8', fontWeight: 600, fontSize: '0.9rem', borderBottom: '1px solid rgba(100, 110, 130, 0.1)', padding: '12px 16px' }}>Window Number</TableCell>
+                    {/* NEW: Added TableCell for Window Name */}
+                    <TableCell sx={{ color: '#8ab4f8', fontWeight: 600, fontSize: '0.9rem', borderBottom: '1px solid rgba(100, 110, 130, 0.1)', padding: '12px 16px' }}>Window Name</TableCell>
+                    <TableCell sx={{ color: '#8ab4f8', fontWeight: 600, fontSize: '0.9rem', borderBottom: '1px solid rgba(100, 110, 130, 0.1)', padding: '12px 16px' }}>Branch</TableCell>
+                    <TableCell sx={{ color: '#8ab4f8', fontWeight: 600, fontSize: '0.9rem', borderBottom: '1px solid rgba(100, 110, 130, 0.1)', padding: '12px 16px' }}>Active Status</TableCell>
+                    <TableCell sx={{ color: '#8ab4f8', fontWeight: 600, fontSize: '0.9rem', borderBottom: '1px solid rgba(100, 110, 130, 0.1)', padding: '12px 16px' }}>Visibility Status</TableCell>
+                    <TableCell sx={{ color: '#8ab4f8', fontWeight: 600, fontSize: '0.9rem', borderBottom: '1px solid rgba(100, 110, 130, 0.1)', padding: '12px 16px' }}>Action</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {serviceWindows.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={6} align="center" sx={{ py: 4, color: '#e0e0e0' }}>No service windows found.</TableCell>
+                    </TableRow>
+                  ) : (
+                    serviceWindows.map((window) => (
+                      <TableRow
+                        key={window.windowId}
+                        sx={{
+                          '&:nth-of-type(odd)': { backgroundColor: '#1f1f1f' },
+                          '&:nth-of-type(even)': { backgroundColor: '#1a1a1a' },
+                          '&:hover': { backgroundColor: 'rgba(0, 123, 255, 0.05)' },
+                          borderBottom: '1px solid rgba(100, 110, 130, 0.05)',
+                        }}
+                      >
+                        <TableCell sx={{ color: '#e0e0e0', fontSize: '0.9rem', borderBottom: 'none', padding: '10px 16px' }}>{window.windowNumber}</TableCell>
+                        {/* NEW: Added TableCell for Window Name */}
+                        <TableCell sx={{ color: '#e0e0e0', fontSize: '0.9rem', borderBottom: 'none', padding: '10px 16px' }}>{window.windowName || 'N/A'}</TableCell>
+                        <TableCell sx={{ color: '#e0e0e0', fontSize: '0.9rem', borderBottom: 'none', padding: '10px 16px' }}>{window.branch?.branchName || 'N/A'}</TableCell>
+                        <TableCell sx={{ borderBottom: 'none', padding: '10px 16px' }}>
+                          <Typography
+                            variant="body2"
+                            className={window.isActive ? 'status-active' : 'status-inactive'}
+                            sx={{ fontWeight: 600, fontSize: '0.9rem' }}
+                          >
+                            {window.isActive ? 'Active' : 'Inactive'}
+                          </Typography>
+                        </TableCell>
+                        <TableCell sx={{ borderBottom: 'none', padding: '10px 16px' }}>
+                          <Typography
+                            variant="body2"
+                            className={window.visibilityStatus === 'ON_LIVE' ? 'status-active' : 'status-inactive'}
+                            sx={{ fontWeight: 600, fontSize: '0.9rem' }}
+                          >
+                            {window.visibilityStatus === 'ON_LIVE' ? 'On Live' : 'On Delete'}
+                          </Typography>
+                        </TableCell>
+                        <TableCell sx={{ borderBottom: 'none', padding: '10px 16px' }}>
+                          <MuiButton
+                            variant="outlined"
+                            size="small"
+                            startIcon={<EditIcon sx={{ fontSize: '1rem !important' }} />}
+                            onClick={() => handleOpenEditWindowModal(window)}
                             sx={{
                               color: '#007bff',
                               borderColor: '#007bff',
@@ -748,14 +1144,7 @@ const SuperAdminDashboard = () => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {loadingBranches ? (
-                    <TableRow>
-                      <TableCell colSpan={5} align="center" sx={{ py: 4 }}>
-                        <CircularProgress size={30} sx={{ color: '#007bff' }} />
-                        <Typography sx={{ mt: 2, color: '#e0e0e0' }}>Loading branches...</Typography>
-                      </TableCell>
-                    </TableRow>
-                  ) : branches.length === 0 ? (
+                  {branches.length === 0 ? (
                     <TableRow>
                       <TableCell colSpan={5} align="center" sx={{ py: 4, color: '#e0e0e0' }}>No branches found.</TableCell>
                     </TableRow>
@@ -872,8 +1261,8 @@ const SuperAdminDashboard = () => {
               onClick={() => setCurrentView(item.view)}
               selected={currentView === item.view}
               sx={{
-                py: 4,
-                px: 5,
+                py: 1.5, // Changed from 4 to 1.5 for more compact list items
+                px: 3, // Changed from 5 to 3 for more compact list items
                 // Apply border-radius to all items for consistent shape
                 borderRadius: '3px 8px 8px 9px',
                 marginBottom: '7px',
@@ -882,7 +1271,8 @@ const SuperAdminDashboard = () => {
                 borderLeft: currentView === item.view ? '4px solid #007bff' : '4px solid transparent',
                 '&:hover': {
                   backgroundColor: currentView === item.view ? 'rgba(0, 123, 255, 0.2)' : 'rgba(255, 255, 255, 0.05)',
-                  borderBottom: '3px solid #007bff',
+                  // Removed borderBottom on hover to maintain text style
+                  // borderBottom: '3px solid #007bff', // REMOVED THIS LINE
                 },
                 // Ensure consistent height by explicitly setting minHeight if needed,
                 // though padding and border should typically align them now.
@@ -932,6 +1322,7 @@ const SuperAdminDashboard = () => {
           backgroundColor: 'transparent !important', // Made background transparent
           boxShadow: 'none',
           borderBottom: '1px solid rgba(100, 110, 130, 0)',
+          borderColor:'transparent !important',
           zIndex: (theme) => theme.zIndex.drawer + 1,
           borderRadius: '0 0 10px 10px', // Curved bottom-left and bottom-right corners
         }}
@@ -1065,6 +1456,34 @@ const SuperAdminDashboard = () => {
           onBranchDeleted={handleBranchOperationSuccess}
           onBranchOperationError={handleBranchOperationError}
           setPopup={setPopup}
+        />
+      )}
+
+      {/* NEW: Edit Staff Modal */}
+      {showEditStaffModal && selectedStaff && (
+        <EditStaffForm
+          onClose={handleCloseEditStaffModal}
+          userData={selectedStaff} // Reusing userData prop, ensure it's compatible
+          onStaffUpdated={handleStaffOperationSuccess}
+          onStaffDeleted={handleStaffOperationSuccess} // Assuming delete is also handled here
+          onStaffOperationError={handleStaffOperationError}
+          setPopup={setPopup}
+          branches={branches}
+          loadingBranches={loadingBranches}
+        />
+      )}
+
+      {/* NEW: Edit Window Modal */}
+      {showEditWindowModal && selectedWindow && (
+        <EditWindowForm
+          onClose={handleCloseEditWindowModal}
+          windowData={selectedWindow} // Assuming windowData prop
+          onWindowUpdated={handleWindowOperationSuccess}
+          onWindowDeleted={handleWindowOperationSuccess} // Assuming delete is also handled here
+          onWindowOperationError={handleWindowOperationError}
+          setPopup={setPopup}
+          branches={branches} // Pass branches for dropdowns in form
+          loadingBranches={loadingBranches}
         />
       )}
 

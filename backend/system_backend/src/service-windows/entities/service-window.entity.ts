@@ -16,8 +16,12 @@ export class ServiceWindow {
   @JoinColumn({ name: 'branch_id' })
   branch: Branch;
 
-  @Column({ name: 'window_number', unique: true })
+  @Column({ name: 'window_number'})
   windowNumber: number;
+
+  // NEW: Add windowName column
+  @Column({ name: 'window_name', length: 255 })
+  windowName: string;
 
   @Column({ name: 'is_active', type: 'boolean', default: true })
   isActive: boolean;

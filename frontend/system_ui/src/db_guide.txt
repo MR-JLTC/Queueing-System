@@ -1,8 +1,7 @@
 -- Insert Sample Roles (if not already done)
 INSERT INTO `roles` (`role_id`, `role_name`, `visibility_status`) VALUES
 (1, 'SuperAdmin', 'ON_LIVE'),
-(2, 'Admin', 'ON_LIVE'),
-(3, 'Client', 'ON_LIVE')
+(2, 'Admin', 'ON_LIVE')
 ON DUPLICATE KEY UPDATE role_name=role_name;
 
 -- Insert Sample Branches
@@ -25,9 +24,7 @@ ON DUPLICATE KEY UPDATE full_name=full_name;
 -- Insert Sample Customer Categories
 INSERT INTO `customer_categories` (`category_id`, `category_name`, `visibility_status`) VALUES
 (1, 'Standard', 'ON_LIVE'),
-(2, 'PWD', 'ON_LIVE'),
-(3, 'Senior Citizen', 'ON_LIVE'),
-(4, 'Other', 'ON_LIVE')
+(2, 'PWD or Senior Citizen', 'ON_LIVE')
 ON DUPLICATE KEY UPDATE category_name=category_name;
 
 -- Insert Sample Ticket Statuses

@@ -18,13 +18,13 @@ import {
   CssBaseline,
   Button as MuiButton,
   CircularProgress,
-  TableContainer,
-  Table,
-  TableHead,
-  TableBody,
-  TableRow,
-  TableCell,
-  Paper,
+  TableContainer, // Used for tables
+  Table,           // Used for tables
+  TableHead,       // Used for tables
+  TableBody,       // Used for tables
+  TableRow,        // Used for tables
+  TableCell,       // Used for tables
+  Paper,           // Used for tables
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import DashboardIcon from '@mui/icons-material/Dashboard';
@@ -33,7 +33,7 @@ import WindowIcon from '@mui/icons-material/Window';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import EventIcon from '@mui/icons-material/Event';
-import AccessTimeIcon from '@mui/icons-material/AccessTime';
+// import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import SearchIcon from '@mui/icons-material/Search';
 import AddIcon from '@mui/icons-material/Add';
@@ -58,9 +58,13 @@ import PopupMessage from "../shared_comp/popup_menu/PopupMessage";
 import { showPopupMessage } from "../shared_comp/utils/popupUtils";
 import axios from 'axios';
 
-// Import the new staff management forms
+// Import forms
 import AddStaffForm from './popup-forms/AddStaffForm';
 import EditStaffForm from './popup-forms/EditStaffForm';
+import AddWindowAndAssignmentForm from './popup-forms/AddWindowAndAssignmentForm';
+import EditWindowAssignmentForm from './popup-forms/EditWindowAssignmentForm';
+import DeleteWindowAssignmentConfirmation from './popup-forms/DeleteWindowAssignmentConfirmation';
+
 
 // Styled TextField for search input
 const CustomSearchTextField = styled(TextField)(() => ({
@@ -130,7 +134,7 @@ const Dashboard = () => {
   const [queueHistorySummary, setQueueHistorySummary] = useState({
     totalQueued: 0, pwd: 0, seniorCitizens: 0, standard: 0, cancelled: 0
   });
-  const [staffUsers, setStaffUsers] = useState([]); // Renamed from staffUsers to staffList for clarity
+  const [staffUsers, setStaffUsers] = useState([]);
   const [selectedStaffUser, setSelectedStaffUser] = useState(null);
 
   const [loading, setLoading] = useState(true);
@@ -139,10 +143,21 @@ const Dashboard = () => {
   // States for Modals
   const [showAddStaffModal, setShowAddStaffModal] = useState(false);
   const [showEditStaffModal, setShowEditStaffModal] = useState(false);
+  const [showAddWindowAndAssignmentModal, setShowAddWindowAndAssignmentModal] = useState(false);
+  const [showEditWindowAssignmentModal, setShowEditWindowAssignmentModal] = useState(false);
+  const [showDeleteWindowAssignmentModal, setShowDeleteWindowAssignmentModal] = useState(false);
+  const [selectedWindowAssignment, setSelectedWindowAssignment] = useState(null);
 
-  // NEW: State for all branches (for dropdowns in forms)
+
+  // States for all branches and staff (for dropdowns in forms)
   const [branches, setBranches] = useState([]);
   const [loadingBranches, setLoadingBranches] = useState(true);
+  const [loadingStaff, setLoadingStaff] = useState(true);
+
+  // States for Queue Monitoring filters
+  const [historyStartDate, setHistoryStartDate] = useState('');
+  const [historyEndDate, setHistoryEndDate] = useState('');
+  const [selectedPeriod, setSelectedPeriod] = useState('day'); // Default to 'day'
 
 
   // Pie chart colors (consistent with previous design)
@@ -203,10 +218,30 @@ const Dashboard = () => {
     setError(null);
     try {
       const response = await axios.get(`${API_BASE_URL}/api/dashboard/windows-assigned?branchId=${branchId}`);
-      setWindowsAssignedData(response.data);
+      const mappedData = response.data.map(item => ({
+        // Essential identifiers for actions
+        windowId: item.windowId,
+        assignmentId: item.assignmentId || null, // Optional: assignment ID
+        staffId: item.staffId || null, // Staff ID from assignment or direct
+        branchId: item.branchId, // Window's branch ID
+
+        // Data to display
+        windowNumber: item.windowNumber || 'N/A',
+        windowName: item.windowName || 'N/A',
+        staffName: item.staffName || 'Unassigned', // Safely access staff name
+        totalQueued: item.totalQueued || 0, // Ensure this matches your backend's property name
+        isActive: item.isActive, // Window's active status
+      }));
+
+      // --- FRONTEND DEBUGGING LOG START ---
+      console.log('Frontend: Raw API Response for Windows Assigned:', JSON.stringify(response.data, null, 2));
+      console.log('Frontend: Mapped Windows Assigned Data (before setState):', JSON.stringify(mappedData, null, 2));
+      // --- FRONTEND DEBUGGING LOG END ---
+
+      setWindowsAssignedData(mappedData);
     } catch (err) {
       console.error("Error fetching windows assigned data:", err);
-      setError("Failed to load window assignments.");
+      setError("Failed to load window assignments. Please check your backend's `/api/dashboard/windows-assigned` endpoint response structure.");
       setWindowsAssignedData([]);
     } finally {
       setLoading(false);
@@ -238,28 +273,27 @@ const Dashboard = () => {
   }, []);
 
   // Function to fetch staff users for the current branch
-  // MODIFIED: Now fetches from the /staff endpoint
   const fetchStaffList = useCallback(async (branchId) => {
-    if (!branchId) {
-      setStaffUsers([]);
-      return;
-    }
-    setLoading(true);
+    setLoadingStaff(true);
     setError(null);
     try {
-      // Fetch staff from the /staff endpoint, optionally filtered by branchId
-      const response = await axios.get(`${API_BASE_URL}/staff${branchId ? `?branchId=${branchId}` : ''}`);
-      setStaffUsers(response.data);
+      if (!branchId || branchId === 'null' || branchId === 'undefined') {
+        setStaffUsers([]);
+        setLoadingStaff(false);
+        return;
+      }
+      const response = await axios.get(`${API_BASE_URL}/staff?branchId=${branchId}`);
+      setStaffUsers(response.data.filter(staff => staff.isActive && staff.visibilityStatus === 'ON_LIVE'));
     } catch (err) {
-      console.error("Error fetching staff list:", err);
+      console.error("[fetchStaffList] Error fetching staff list:", err);
       setError("Failed to load staff list.");
       setStaffUsers([]);
     } finally {
-      setLoading(false);
+      setLoadingStaff(false);
     }
   }, []);
 
-  // NEW: Function to fetch all branches for dropdowns
+  // Function to fetch all branches for dropdowns
   const fetchAllBranches = useCallback(async () => {
     setLoadingBranches(true);
     try {
@@ -298,8 +332,6 @@ const Dashboard = () => {
     const storedFullName = localStorage.getItem("fullName");
     const storedBranchId = localStorage.getItem("branchId");
 
-    console.log("[Dashboard] Stored Branch ID from localStorage:", storedBranchId);
-
     if (!isLoggedIn || roleId !== "2") {
       showPopupMessage(setPopup, "error", "Access Denied. Please login as an Admin.");
       localStorage.clear();
@@ -312,7 +344,6 @@ const Dashboard = () => {
 
     const isValidBranchId = storedBranchId && storedBranchId !== 'undefined' && storedBranchId !== 'null';
 
-    // Fetch all branches always, as they are needed for staff/admin forms
     fetchAllBranches();
 
     if (!isValidBranchId) {
@@ -321,15 +352,17 @@ const Dashboard = () => {
         setError("No branch assigned to this admin. Data cannot be loaded.");
     } else {
         fetchBranchName(storedBranchId);
+        fetchStaffList(storedBranchId);
+
         if (currentPage === 'Dashboard') {
             fetchDashboardSummary(storedBranchId);
             fetchQueuesData(storedBranchId);
         } else if (currentPage === 'Queue Monitoring') {
-            fetchQueueHistoryData(storedBranchId);
+            fetchQueueHistoryData(storedBranchId, selectedPeriod, historyStartDate, historyEndDate);
         } else if (currentPage === 'Window Assigned') {
             fetchWindowsAssignedData(storedBranchId);
         } else if (currentPage === 'Manage Staff') {
-            fetchStaffList(storedBranchId); // MODIFIED: Call fetchStaffList
+            // Already fetched above
         }
     }
 
@@ -340,7 +373,7 @@ const Dashboard = () => {
     }, 1000);
 
     return () => clearInterval(intervalId);
-  }, [navigate, currentPage, fetchDashboardSummary, fetchQueuesData, fetchWindowsAssignedData, fetchQueueHistoryData, fetchBranchName, fetchStaffList, fetchAllBranches]);
+  }, [navigate, currentPage, fetchDashboardSummary, fetchQueuesData, fetchWindowsAssignedData, fetchQueueHistoryData, fetchBranchName, fetchStaffList, fetchAllBranches, selectedPeriod, historyStartDate, historyEndDate]);
 
 
   const handleDrawerToggle = () => {
@@ -383,7 +416,6 @@ const Dashboard = () => {
   };
 
   // Handlers for Edit Staff Modal
-  // MODIFIED: Pass the full staff object
   const handleShowEditStaffModal = (staff) => {
     setSelectedStaffUser(staff);
     setShowEditStaffModal(true);
@@ -394,18 +426,72 @@ const Dashboard = () => {
     setShowEditStaffModal(false);
   };
 
-  // Generic success/error handlers for staff operations
-  const handleStaffOperationSuccess = (message) => {
+  // Handlers for Add Window & Assignment Modal
+  const handleShowAddWindowAndAssignmentModal = () => {
+    setShowAddWindowAndAssignmentModal(true);
+  };
+
+  const handleCloseAddWindowAndAssignmentModal = () => {
+    setShowAddWindowAndAssignmentModal(false);
+  };
+
+  // Handlers for Edit Window Assignment Modal
+  const handleShowEditWindowAssignmentModal = (assignment) => {
+    setSelectedWindowAssignment(assignment);
+    setShowEditWindowAssignmentModal(true);
+  };
+
+  const handleCloseEditWindowAssignmentModal = () => {
+    setSelectedWindowAssignment(null);
+    setShowEditWindowAssignmentModal(false);
+  };
+
+  // Handlers for Delete Window Assignment Confirmation Modal
+  const handleShowDeleteWindowAssignmentModal = (assignment) => {
+    setSelectedWindowAssignment(assignment);
+    setShowDeleteWindowAssignmentModal(true);
+  };
+
+  const handleCloseDeleteWindowAssignmentModal = () => {
+    setSelectedWindowAssignment(null);
+    setShowDeleteWindowAssignmentModal(false);
+  };
+
+
+  // Generic success/error handlers for staff/window operations
+  const handleOperationSuccess = (message) => {
     showPopupMessage(setPopup, "success", message);
     const currentBranchId = localStorage.getItem("branchId");
     if (currentBranchId) {
       fetchStaffList(currentBranchId); // Refresh staff list
-      fetchWindowsAssignedData(currentBranchId); // Also refresh window assignments in case staff names are displayed there
+      fetchWindowsAssignedData(currentBranchId); // Refresh window assignments
+      fetchQueueHistoryData(currentBranchId, selectedPeriod, historyStartDate, historyEndDate); // Refresh queue history
     }
   };
 
-  const handleStaffOperationError = (message) => {
+  const handleOperationError = (message) => {
     showPopupMessage(setPopup, "error", message);
+  };
+
+  // Handler for period buttons
+  const handlePeriodChange = (period) => {
+    setSelectedPeriod(period);
+    setHistoryStartDate(''); // Clear custom dates when a period is selected
+    setHistoryEndDate('');
+    // Data fetch will be triggered by useEffect due to selectedPeriod change
+  };
+
+  // Handler for custom date changes
+  const handleDateChange = (e) => {
+    const { name, value } = e.target;
+    if (name === 'dateFrom') {
+      setHistoryStartDate(value);
+      setSelectedPeriod(''); // Clear period selection when custom date is set
+    } else if (name === 'dateTo') {
+      setHistoryEndDate(value);
+      setSelectedPeriod(''); // Clear period selection when custom date is set
+    }
+    // Data fetch will be triggered by useEffect due to historyStartDate/EndDate change
   };
 
 
@@ -438,11 +524,11 @@ const Dashboard = () => {
                 fetchDashboardSummary(currentBranchId);
                 fetchQueuesData(currentBranchId);
               } else if (currentPage === 'Queue Monitoring') {
-                fetchQueueHistoryData(currentBranchId);
+                fetchQueueHistoryData(currentBranchId, selectedPeriod, historyStartDate, historyEndDate); // Re-fetch
               } else if (currentPage === 'Window Assigned') {
                 fetchWindowsAssignedData(currentBranchId);
               } else if (currentPage === 'Manage Staff') {
-                fetchStaffList(currentBranchId); // MODIFIED: Call fetchStaffList
+                fetchStaffList(currentBranchId);
               }
             }} sx={{ mt: 2, color: '#007bff' }}>Retry</MuiButton>
           )}
@@ -578,6 +664,9 @@ const Dashboard = () => {
               <CustomSearchTextField
                 label="Date From"
                 type="date"
+                name="dateFrom" // Added name
+                value={historyStartDate} // Connected to state
+                onChange={handleDateChange} // Added handler
                 InputLabelProps={{ shrink: true }}
                 InputProps={{
                   startAdornment: (
@@ -590,6 +679,9 @@ const Dashboard = () => {
               <CustomSearchTextField
                 label="Date To"
                 type="date"
+                name="dateTo" // Added name
+                value={historyEndDate} // Connected to state
+                onChange={handleDateChange} // Added handler
                 InputLabelProps={{ shrink: true }}
                 InputProps={{
                   startAdornment: (
@@ -602,28 +694,29 @@ const Dashboard = () => {
             </Box>
 
             <Box sx={{ display: 'flex', justifyContent: 'center', gap: 1, mb: 4, bgcolor: '#1a1a1a', borderRadius: '10px', p: 1, border: '1px solid rgba(100, 110, 130, 0.1)' }}>
-              {['Day', 'Week', 'Month', 'Year'].map((tab) => (
+              {['day', 'week', 'month', 'year'].map((period) => ( // Changed to lowercase for consistency with backend
                 <MuiButton
-                  key={tab}
+                  key={period}
                   variant="text"
+                  onClick={() => handlePeriodChange(period)} // Added onClick handler
                   sx={{
                     color: '#e0e0e0',
                     fontWeight: 600,
                     flex: 1,
                     py: 1.5,
                     borderRadius: '8px',
-                    bgcolor: tab === 'Day' ? '#007bff' : 'transparent',
-                    '&:hover': { bgcolor: tab === 'Day' ? '#0056b3' : 'rgba(0, 123, 255, 0.1)' },
+                    bgcolor: selectedPeriod === period ? '#007bff' : 'transparent', // Highlight selected period
+                    '&:hover': { bgcolor: selectedPeriod === period ? '#0056b3' : 'rgba(0, 123, 255, 0.1)' },
                   }}
                 >
-                  {tab}
+                  {period.charAt(0).toUpperCase() + period.slice(1)} {/* Display capitalized */}
                 </MuiButton>
               ))}
             </Box>
 
             <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-around', gap: 3, mb: 5 }}>
               {[
-                { title: 'Total Queued', value: dashboardSummary.totalQueued, icon: <QueueIcon sx={{ fontSize: '4rem' }} />, color: '#ffc107' },
+                { title: 'Total Queued', value: queueHistorySummary.totalQueued, icon: <QueueIcon sx={{ fontSize: '4rem' }} />, color: '#ffc107' },
                 { title: 'Served', value: dashboardSummary.served, icon: <CheckCircleOutlineIcon sx={{ fontSize: '4rem' }} />, color: '#28a745' },
                 { title: 'Requeues', value: dashboardSummary.requeues, icon: <LoopIcon sx={{ fontSize: '4rem' }} />, color: '#17a2b8' },
                 { title: 'Cancelled', value: dashboardSummary.cancelled, icon: <CancelIcon sx={{ fontSize: '4rem' }} />, color: '#dc3545' },
@@ -698,11 +791,10 @@ const Dashboard = () => {
             </Typography>
 
             <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2, mb: 3 }}>
-              {/* This button will now open the AddCounterAndStaffForm */}
               <MuiButton
                 variant="contained"
                 startIcon={<AddIcon />}
-                onClick={() => setPopup({ type: 'info', message: 'You can add new counters and assign staff through the "Manage Counters & Staff" modal. This button is for assigning staff to existing counters.' })}
+                onClick={handleShowAddWindowAndAssignmentModal}
                 sx={{
                   backgroundColor: '#007bff',
                   color: 'white',
@@ -718,63 +810,61 @@ const Dashboard = () => {
                   },
                 }}
               >
-                Assign Staff to Counter
-              </MuiButton>
-              {/* This button is for adding a new counter (and optionally assigning staff) */}
-              <MuiButton
-                variant="contained"
-                startIcon={<BusinessIcon />}
-                onClick={() => setPopup({ type: 'info', message: 'This button will open the unified form to add new counters or assign staff.' })}
-                sx={{
-                  backgroundColor: '#28a745',
-                  color: 'white',
-                  py: 1,
-                  px: 2,
-                  borderRadius: '20px',
-                  fontSize: '0.9rem',
-                  fontWeight: 600,
-                  boxShadow: '0 4px 10px rgba(40, 167, 69, 0.3)',
-                  '&:hover': {
-                    backgroundColor: '#218838',
-                    boxShadow: '0 6px 15px rgba(40, 167, 69, 0.4)',
-                  },
-                }}
-              >
-                Add New Counter
+                Add Window & Assign Staff
               </MuiButton>
             </Box>
 
+            {/* START: Updated Table Structure for Window Assigned */}
             <Box sx={{ overflowX: 'auto' }}>
-              <table className="data-table">
-                <thead>
-                  <tr>
-                    <th>Counter</th>
-                    <th>Counter Name</th>
-                    <th>Staff</th>
-                    <th>Total Queued</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {windowsAssignedData.length > 0 ? (
-                    windowsAssignedData.map((window, index) => (
-                      <tr key={index}>
-                        <td data-label="Counter">{window.counter}</td>
-                        <td data-label="Counter Name">{window.counterName}</td>
-                        <td data-label="Staff">{window.staff}</td>
-                        <td data-label="Total Queued">{window.totalQueued}</td>
-                        <td data-label="Actions">
-                          <IconButton size="small" sx={{ color: '#007bff' }}><EditIcon fontSize="small" /></IconButton>
-                          <IconButton size="small" sx={{ color: '#dc3545' }}><DeleteIcon fontSize="small" /></IconButton>
-                        </td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr><td colSpan="5" style={{ textAlign: 'center', color: '#a0a0a0' }}>No window assignment data available.</td></tr>
-                  )}
-                </tbody>
-              </table>
+              <TableContainer component={Paper} sx={{ bgcolor: '#1a1a1a', borderRadius: '12px', boxShadow: '0 6px 20px rgba(0,0,0,0.3)' }}>
+                <Table className="data-table">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Window Number</TableCell>
+                      <TableCell>Window Name</TableCell>
+                      <TableCell>Staff Assigned</TableCell>
+                      <TableCell>Total Queued</TableCell>
+                      <TableCell>Actions</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {windowsAssignedData.length > 0 ? (
+                      windowsAssignedData.map((window) => (
+                        <TableRow key={window.windowId}>
+                          <TableCell data-label="Window Number">{window.windowNumber}</TableCell>
+                          <TableCell data-label="Window Name">{window.windowName}</TableCell>
+                          <TableCell data-label="Staff Assigned">{window.staffName}</TableCell>
+                          <TableCell data-label="Total Queued">{window.totalQueued}</TableCell>
+                          <TableCell data-label="Actions">
+                            <IconButton
+                              size="small"
+                              sx={{ color: '#007bff' }}
+                              onClick={() => handleShowEditWindowAssignmentModal(window)}
+                            >
+                              <EditIcon fontSize="small" />
+                            </IconButton>
+                            <IconButton
+                              size="small"
+                              sx={{ color: '#dc3545' }}
+                              onClick={() => handleShowDeleteWindowAssignmentModal(window)}
+                            >
+                              <DeleteIcon fontSize="small" />
+                            </IconButton>
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    ) : (
+                      <TableRow>
+                        <TableCell colSpan={5} sx={{ textAlign: 'center', color: '#a0a0a0' }}>
+                          No window assignment data available.
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+              </TableContainer>
             </Box>
+            {/* END: Updated Table Structure for Window Assigned */}
           </Box>
         );
       case 'Manage Staff':
@@ -813,10 +903,9 @@ const Dashboard = () => {
                 <Table className="data-table">
                   <TableHead>
                     <TableRow>
-                      {/* Only display Full Name, Status, and Actions */}
-                      {/* <TableCell>Staff ID</TableCell> Added Staff ID */}
+                      {/* <TableCell>Staff ID</TableCell> */}
                       <TableCell>Full Name</TableCell>
-                      <TableCell>Branch</TableCell> {/* Added Branch */}
+                      <TableCell>Branch</TableCell>
                       <TableCell>Status</TableCell>
                       <TableCell>Actions</TableCell>
                     </TableRow>
@@ -824,10 +913,10 @@ const Dashboard = () => {
                   <TableBody>
                     {staffUsers.length > 0 ? (
                       staffUsers.map((staff) => (
-                        <TableRow key={staff.staffId}> {/* Changed key to staff.staffId */}
-                          {/* <TableCell data-label="Staff ID">{staff.staffId}</TableCell> Display Staff ID */}
+                        <TableRow key={staff.staffId}>
+                          {/* <TableCell data-label="Staff ID">{staff.staffId}</TableCell> */}
                           <TableCell data-label="Full Name">{staff.fullName}</TableCell>
-                          <TableCell data-label="Branch">{staff.branch?.branchName || 'N/A'}</TableCell> {/* Display Branch Name */}
+                          <TableCell data-label="Branch">{staff.branch?.branchName || 'N/A'}</TableCell>
                           <TableCell data-label="Status">
                             <span className={staff.isActive ? 'status-active' : 'status-inactive'}>
                               {staff.isActive ? 'Active' : 'Inactive'}
@@ -857,7 +946,7 @@ const Dashboard = () => {
                       ))
                     ) : (
                       <TableRow>
-                        <TableCell colSpan={5} sx={{ textAlign: 'center', color: '#a0a0a0' }}> {/* Changed colSpan to 5 */}
+                        <TableCell colSpan={5} sx={{ textAlign: 'center', color: '#a0a0a0' }}>
                           No staff users found for this branch.
                         </TableCell>
                       </TableRow>
@@ -968,13 +1057,14 @@ const Dashboard = () => {
       <AppBar
         position="fixed"
         sx={{
-          width: { sm: `calc(100% - ${drawerWidth}px - 710px)` }, // Reduced width by 20px overall
-          ml: { sm: `calc(${drawerWidth}px + 10px)` }, // Adjusted margin-left for centering with reduction
-          backgroundColor: 'transparent !important', // Made background transparent
+          width: { sm: `calc(100% - ${drawerWidth}px - 710px)` },
+          ml: { sm: `calc(${drawerWidth}px + 10px)` },
+           backgroundColor: 'transparent !important',
           boxShadow: 'none',
+          borderColor:'transparent !important',
           borderBottom: '1px solid rgba(100, 110, 130, 0)',
           zIndex: (theme) => theme.zIndex.drawer + 1,
-          borderRadius: '0 0 10px 10px', // Curved bottom-left and bottom-right corners
+          borderRadius: '0 0 10px 10px',
         }}
       >
         <Toolbar sx={{ minHeight: '64px !important', justifyContent: 'flex-end', pr: 3 }}>
@@ -987,7 +1077,7 @@ const Dashboard = () => {
           >
             <MenuIcon />
           </IconButton>
-          <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+          <Box sx={{ display: 'flex', gap: 2, alignItems: 'center'}}>
             <Typography variant="body1" sx={{ color: '#e0e0e0', fontWeight: 500, fontSize: '1rem' }}>
               {currentTime}
             </Typography>
@@ -1037,7 +1127,7 @@ const Dashboard = () => {
               color: '#e0e0e0',
               display: { xs: 'block', sm: 'none' },
               zIndex: (theme) => theme.zIndex.drawer + 2,
-              borderRadius: '0 15px 15px 0', // Applied border-radius
+              borderRadius: '0 15px 15px 0',
             }
           }}
         >
@@ -1055,7 +1145,7 @@ const Dashboard = () => {
               color: '#e0e0e0',
               display: { xs: 'none', sm: 'block' },
               zIndex: (theme) => theme.zIndex.drawer + 1,
-              borderRadius: '0 30px 30px 0', // Applied border-radius
+              borderRadius: '0 30px 30px 0',
             }
           }}
         >
@@ -1083,12 +1173,12 @@ const Dashboard = () => {
       {showAddStaffModal && (
         <AddStaffForm
           onClose={handleCloseAddStaffModal}
-          onStaffAdded={handleStaffOperationSuccess}
-          onStaffOperationError={handleStaffOperationError}
+          onStaffAdded={handleOperationSuccess}
+          onStaffOperationError={handleOperationError}
           setPopup={setPopup}
-          branches={branches} // Pass branches to the form
-          loadingBranches={loadingBranches} // Pass loading state for branches
-          currentAdminBranchId={localStorage.getItem("branchId")} // Pass admin's branch ID
+          branches={branches}
+          loadingBranches={loadingBranches}
+          currentAdminBranchId={localStorage.getItem("branchId")}
         />
       )}
 
@@ -1096,13 +1186,51 @@ const Dashboard = () => {
       {showEditStaffModal && selectedStaffUser && (
         <EditStaffForm
           onClose={handleCloseEditStaffModal}
-          userData={selectedStaffUser} // This is now a Staff entity object
-          onStaffUpdated={handleStaffOperationSuccess}
-          onStaffDeleted={handleStaffOperationSuccess}
-          onStaffOperationError={handleStaffOperationError}
+          userData={selectedStaffUser}
+          onStaffUpdated={handleOperationSuccess}
+          onStaffDeleted={handleOperationSuccess}
+          onStaffOperationError={handleOperationError}
           setPopup={setPopup}
-          branches={branches} // Pass branches to the form
-          loadingBranches={loadingBranches} // Pass loading state for branches
+          branches={branches}
+          loadingBranches={loadingBranches}
+        />
+      )}
+
+      {/* Add Window & Assignment Modal */}
+      {showAddWindowAndAssignmentModal && (
+        <AddWindowAndAssignmentForm
+          onClose={handleCloseAddWindowAndAssignmentModal}
+          onOperationSuccess={handleOperationSuccess}
+          onOperationError={handleOperationError}
+          currentAdminBranchId={localStorage.getItem("branchId")}
+          branches={branches}
+          loadingBranches={loadingBranches}
+          staffUsers={staffUsers}
+          loadingStaff={loadingStaff}
+        />
+      )}
+
+      {/* Edit Window Assignment Modal */}
+      {showEditWindowAssignmentModal && selectedWindowAssignment && (
+        <EditWindowAssignmentForm
+          onClose={handleCloseEditWindowAssignmentModal}
+          assignmentData={selectedWindowAssignment}
+          onOperationSuccess={handleOperationSuccess}
+          onOperationError={handleOperationError}
+          branches={branches}
+          loadingBranches={loadingBranches}
+          staffUsers={staffUsers}
+          loadingStaff={loadingStaff}
+        />
+      )}
+
+      {/* Delete Window Assignment Confirmation Modal */}
+      {showDeleteWindowAssignmentModal && selectedWindowAssignment && (
+        <DeleteWindowAssignmentConfirmation
+          onClose={handleCloseDeleteWindowAssignmentModal}
+          assignmentData={selectedWindowAssignment}
+          onOperationSuccess={handleOperationSuccess}
+          onOperationError={handleOperationError}
         />
       )}
 
@@ -1111,8 +1239,7 @@ const Dashboard = () => {
         <Box className="modal-overlay">
           <Box className="logout-modal">
             <Typography variant="h6" sx={{ color: '#e0e0e0', mb: 3 }}>
-              Are you sure you want to log out?
-            </Typography>
+              Are you sure you want to log out?</Typography>
             <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2 }}>
               <MuiButton
                 variant="contained"

@@ -1,5 +1,5 @@
-// src/admin/popup-forms/AddWindowForm.jsx
-import React, { useState} from 'react';
+// src/admin/popup-forms/EditWindowForm.jsx
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Typography,
@@ -10,6 +10,8 @@ import {
   InputLabel,
   FormControl,
   CircularProgress,
+  Switch,
+  FormControlLabel,
 } from '@mui/material';
 import axios from 'axios';
 import { styled } from '@mui/material/styles';
@@ -22,8 +24,8 @@ const API_BASE_URL = 'http://localhost:3000'; // IMPORTANT: Match your backend U
 // Styled TextField for consistent professional look
 const CustomTextField = styled(TextField)(() => ({
   '& .MuiInputBase-root': {
-    backgroundColor: '#333b4d', // Dark blue-gray for input background
-    color: '#e0e0e0', // Lighter text color
+    backgroundColor: '#333b4d',
+    color: '#e0e0e0',
     borderRadius: '10px',
     border: '1px solid rgba(0, 123, 255, 0.4)',
     transition: 'border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out',
@@ -36,20 +38,20 @@ const CustomTextField = styled(TextField)(() => ({
     },
   },
   '& .MuiInputLabel-root': {
-    color: '#9E9E9E', // Label color
+    color: '#9E9E9E',
     '&.Mui-focused': {
-      color: '#007bff', // Focused label color
+      color: '#007bff',
     },
   },
   '& .MuiInputBase-input': {
-    color: '#e0e0e0', // Ensure text color is light
+    color: '#e0e0e0',
     '&:-webkit-autofill': {
-      WebkitBoxShadow: '0 0 0 1000px #333b4d inset', // Autofill background
-      WebkitTextFillColor: '#e0e0e0', // Autofill text color
+      WebkitBoxShadow: '0 0 0 1000px #333b4d inset',
+      WebkitTextFillColor: '#e0e0e0',
     },
   },
   '& .MuiOutlinedInput-notchedOutline': {
-    borderColor: 'transparent', // Hide default border
+    borderColor: 'transparent',
   },
 }));
 
@@ -79,25 +81,34 @@ const CustomFormControl = styled(FormControl)(() => ({
     borderColor: 'transparent',
   },
   '& .MuiSelect-icon': {
-    color: '#e0e0e0', // Dropdown icon color
+    color: '#e0e0e0',
   },
 }));
 
-
-const AddWindowForm = ({ onClose, onWindowAdded, onWindowOperationError, branches, loadingBranches }) => {
+const EditWindowForm = ({ onClose, windowData, onWindowUpdated, onWindowDeleted, onWindowOperationError, setPopup, branches, loadingBranches }) => {
   const [formData, setFormData] = useState({
-    windowNumber: '',
-    branchId: '', // Will be selected from dropdown
-    isActive: true,
-    visibilityStatus: VisibilityStatus.ON_LIVE,
+    windowNumber: windowData.windowNumber || '',
+    branchId: windowData.branchId || '',
+    isActive: windowData.isActive,
+    visibilityStatus: windowData.visibilityStatus || VisibilityStatus.ON_LIVE,
   });
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    // Ensure form data is updated if windowData changes (e.g., if re-opened for a different window)
+    setFormData({
+      windowNumber: windowData.windowNumber || '',
+      branchId: windowData.branchId || '',
+      isActive: windowData.isActive,
+      visibilityStatus: windowData.visibilityStatus || VisibilityStatus.ON_LIVE,
+    });
+  }, [windowData]);
+
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, type, checked } = e.target;
     setFormData({
       ...formData,
-      [name]: value,
+      [name]: type === 'checkbox' ? checked : value,
     });
   };
 
@@ -107,27 +118,43 @@ const AddWindowForm = ({ onClose, onWindowAdded, onWindowOperationError, branche
     try {
       const payload = {
         windowNumber: formData.windowNumber,
-        branchId: parseInt(formData.branchId), // Ensure branchId is a number
+        branchId: parseInt(formData.branchId),
         isActive: formData.isActive,
         visibilityStatus: formData.visibilityStatus,
       };
 
-      await axios.post(`${API_BASE_URL}/service-windows`, payload);
-      onWindowAdded('Window added successfully!');
+      const response = await axios.patch(`${API_BASE_URL}/service-windows/${windowData.windowId}`, payload);
+      onWindowUpdated('Window updated successfully!');
       onClose();
     } catch (error) {
-      console.error('Failed to add window:', error);
-      onWindowOperationError(`Failed to add window: ${error.response?.data?.message || error.message}`);
+      console.error('Failed to update window:', error);
+      onWindowOperationError(`Failed to update window: ${error.response?.data?.message || error.message}`);
     } finally {
       setLoading(false);
     }
   };
 
+  const handleDelete = async () => {
+    if (window.confirm("Are you sure you want to delete this window?")) { // Use custom modal instead of window.confirm in production
+      setLoading(true);
+      try {
+        await axios.delete(`${API_BASE_URL}/service-windows/${windowData.windowId}`);
+        onWindowDeleted('Window deleted successfully!');
+        onClose();
+      } catch (error) {
+        console.error('Failed to delete window:', error);
+        onWindowOperationError(`Failed to delete window: ${error.response?.data?.message || error.message}`);
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
+
   return (
     <Box className="modal-overlay">
-      <Box className="modal-content add-window-modal">
+      <Box className="modal-content edit-window-modal">
         <Box className="modal-header">
-          <Typography variant="h6" sx={{ color: '#e0e0e0' }}>Add New Service Window</Typography>
+          <Typography variant="h6" sx={{ color: '#e0e0e0' }}>Edit Service Window</Typography>
           <IconButton onClick={onClose} sx={{ color: '#e0e0e0' }}>
             <CloseIcon />
           </IconButton>
@@ -157,8 +184,8 @@ const AddWindowForm = ({ onClose, onWindowAdded, onWindowOperationError, branche
               MenuProps={{
                 PaperProps: {
                   sx: {
-                    backgroundColor: '#333b4d', // Dark background for dropdown menu
-                    color: '#e0e0e0', // Light text color for dropdown items
+                    backgroundColor: '#333b4d',
+                    color: '#e0e0e0',
                     '& .MuiMenuItem-root': {
                       color: '#e0e0e0',
                       '&:hover': {
@@ -185,6 +212,19 @@ const AddWindowForm = ({ onClose, onWindowAdded, onWindowOperationError, branche
               )}
             </Select>
           </CustomFormControl>
+
+          <FormControlLabel
+            control={
+              <Switch
+                checked={formData.isActive}
+                onChange={handleInputChange}
+                name="isActive"
+                color="primary"
+              />
+            }
+            label="Is Active"
+            sx={{ color: '#e0e0e0', mb: 2 }}
+          />
 
           <CustomFormControl fullWidth sx={{ mb: 2 }}>
             <InputLabel id="status-select-label" sx={{ color: '#9E9E9E' }}>Visibility Status</InputLabel>
@@ -222,34 +262,50 @@ const AddWindowForm = ({ onClose, onWindowAdded, onWindowOperationError, branche
             </Select>
           </CustomFormControl>
 
-          <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2, mt: 3 }}>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2, mt: 3 }}>
             <Button
               variant="contained"
-              onClick={onClose}
-              sx={{
-                backgroundColor: '#6c757d',
-                '&:hover': { backgroundColor: '#5a6268' },
-                color: '#e0e0e0',
-                borderRadius: '8px',
-                textTransform: 'none',
-              }}
-            >
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              variant="contained"
+              onClick={handleDelete}
               disabled={loading}
               sx={{
-                backgroundColor: '#007bff',
-                '&:hover': { backgroundColor: '#0056b3' },
+                backgroundColor: '#dc3545',
+                '&:hover': { backgroundColor: '#c82333' },
                 color: '#e0e0e0',
                 borderRadius: '8px',
                 textTransform: 'none',
               }}
             >
-              {loading ? <CircularProgress size={24} color="inherit" /> : 'Add Window'}
+              {loading ? <CircularProgress size={24} color="inherit" /> : 'Delete'}
             </Button>
+            <Box sx={{ display: 'flex', gap: 2 }}>
+              <Button
+                variant="contained"
+                onClick={onClose}
+                sx={{
+                  backgroundColor: '#6c757d',
+                  '&:hover': { backgroundColor: '#5a6268' },
+                  color: '#e0e0e0',
+                  borderRadius: '8px',
+                  textTransform: 'none',
+                }}
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                variant="contained"
+                disabled={loading}
+                sx={{
+                  backgroundColor: '#007bff',
+                  '&:hover': { backgroundColor: '#0056b3' },
+                  color: '#e0e0e0',
+                  borderRadius: '8px',
+                  textTransform: 'none',
+                }}
+              >
+                {loading ? <CircularProgress size={24} color="inherit" /> : 'Update Window'}
+            </Button>
+            </Box>
           </Box>
         </Box>
       </Box>
@@ -257,4 +313,4 @@ const AddWindowForm = ({ onClose, onWindowAdded, onWindowOperationError, branche
   );
 };
 
-export default AddWindowForm;
+export default EditWindowForm;
