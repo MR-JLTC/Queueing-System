@@ -19,13 +19,13 @@ export class QueueTicket {
   @Column({ name: 'customer_name', length: 255 })
   customerName: string;
 
-  // FIXED: Explicitly set type to 'varchar'
-  @Column({ name: 'customer_phone', type: 'varchar', nullable: true, length: 20 })
-  customerPhone: string | null;
+  // Removed: customerPhone as requested
+  // @Column({ name: 'customer_phone', type: 'varchar', nullable: true, length: 20 })
+  // customerPhone: string | null;
 
-  // FIXED: Explicitly set type to 'varchar'
-  @Column({ name: 'customer_email', type: 'varchar', nullable: true, length: 255 })
-  customerEmail: string | null;
+  // Removed: customerEmail as requested
+  // @Column({ name: 'customer_email', type: 'varchar', nullable: true, length: 255 })
+  // customerEmail: string | null;
 
   @Column({ name: 'branch_id' })
   branchId: number;
@@ -34,7 +34,6 @@ export class QueueTicket {
   @JoinColumn({ name: 'branch_id' })
   branch: Branch;
 
-  // FIXED: Explicitly set type to 'int'
   @Column({ name: 'assigned_to_window_id', type: 'int', nullable: true })
   assignedToWindowId: number | null;
 
@@ -42,7 +41,6 @@ export class QueueTicket {
   @JoinColumn({ name: 'assigned_to_window_id' })
   assignedToWindow: ServiceWindow | null;
 
-  // FIXED: Explicitly set type to 'int'
   @Column({ name: 'assigned_to_staff_id', type: 'int', nullable: true })
   assignedToStaffId: number | null;
 
@@ -50,15 +48,13 @@ export class QueueTicket {
   @JoinColumn({ name: 'assigned_to_staff_id' })
   assignedToStaff: Staff | null;
 
-  // FIXED: Explicitly set type to 'int'
   @Column({ name: 'customer_category_id', type: 'int', nullable: true })
-  customerCategoryId: number | null;
+  customerCategoryId: number | null; // Renamed from categoryId to customerCategoryId to match DB
 
   @ManyToOne(() => CustomerCategory, customerCategory => customerCategory.queueTickets, { nullable: true })
   @JoinColumn({ name: 'customer_category_id' })
   category: CustomerCategory | null;
 
-  // FIXED: Explicitly set type to 'varchar'
   @Column({ name: 'service_type', type: 'varchar', length: 255, nullable: true })
   serviceType: string | null;
 
@@ -72,15 +68,12 @@ export class QueueTicket {
   @Column({ name: 'queued_at', type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   queuedAt: Date;
 
-  // FIXED: Explicitly set type to 'timestamp'
   @Column({ name: 'called_at', type: 'timestamp', nullable: true })
   calledAt: Date | null;
 
-  // FIXED: Explicitly set type to 'timestamp'
   @Column({ name: 'served_at', type: 'timestamp', nullable: true })
   servedAt: Date | null;
 
-  // FIXED: Explicitly set type to 'int'
   @Column({ name: 'cancelled_by_id', type: 'int', nullable: true })
   cancelledById: number | null;
 
@@ -94,7 +87,6 @@ export class QueueTicket {
   @OneToMany(() => TicketStatusHistory, history => history.queueTicket)
   statusHistory: TicketStatusHistory[];
 
-  // FIXED: Explicitly set type to 'int'
   @Column({ name: 'issued_by_user_id', type: 'int', nullable: true })
   issuedByUserId: number | null;
 

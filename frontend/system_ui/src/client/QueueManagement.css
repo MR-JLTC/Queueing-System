@@ -8,362 +8,109 @@ html, body {
   margin: 0;
   padding: 0;
   height: 100%; /* Ensure html and body take full height */
-  overflow: hidden; /* Prevent scrollbars from floating elements */
-  background-color: #0E1626; /* New background color */
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  overflow-x: hidden; /* Prevent horizontal scrollbars */
+  background-color: #1A1A2E; /* Deep dark blue background from image */
+  font-family: 'Inter', sans-serif; /* Consistent professional font */
   color: white; /* Default text color */
 }
 
-/* Remove all previous background patterns and floating elements from body */
+/* Hide previous floating elements if any */
 body::before,
 body::after,
 body .floating-element-1,
 body .floating-element-2 {
-  display: none; /* Hide these elements */
+  display: none;
 }
 
 /* Main Container (queue-page) now acts as a content wrapper */
 .queue-page {
   min-height: 100vh;
   width: 100vw;
-  position: relative;
-  overflow: hidden;
-  display: flex; /* Make queue-page a flex container to center queue-container */
+  display: flex; /* Center content */
   justify-content: center;
   align-items: center;
-  /* No background here, it's on the body */
+  padding: 20px; /* Some padding around the form */
+  box-sizing: border-box;
+  /* Add overflow-y for potential scrolling on small screens */
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
 }
 
-
-/* Queue Container - Structural wrapper only, removed visual styling */
-.queue-container {
-  position: relative;
-  z-index: 10;
-  display: flex;
-  gap: 1.5rem; /* Gap between the form and display panels */
-  padding: clamp(1rem, 3vw, 2rem); /* Outer padding for responsive spacing */
-  justify-content: center;
-  align-items: stretch;
-  flex-wrap: wrap;
+/* Queue Form - The main container for all elements shown in the image */
+.queue-form {
+  background-color: #282840; /* Slightly lighter dark background for the form */
+  border-radius: 15px; /* Rounded corners for the form container */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); /* Soft shadow for depth */
+  padding: 40px; /* Generous padding inside the form */
   width: 100%;
-  max-width: 1100px; /* Limit overall width for desktop view */
-  margin: auto; /* Center the container */
-  /* NO VISUAL STYLES HERE - This container is now purely for layout */
-}
-
-.queue-form,
-.queue-display {
-  flex: 1;
-  min-width: 320px;
-  height: auto;
-  /* --- RE-ADDED VISUAL STYLES FOR INDIVIDUAL BOXES --- */
-  background-color: #1E1E2F; /* This is the subtle background you're seeing */
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 20px;
-  backdrop-filter: blur(15px);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-  /* --------------------------------------------------- */
-
-  padding: clamp(1.5rem, 3vw, 2rem); /* Kept padding for content spacing */
+  max-width: 450px; /* Max width to match the image's form size */
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
-  animation: slideIn 0.8s ease-out;
-  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Adjusted transition for hover */
-}
-
-.queue-form:hover,
-.queue-display:hover {
-  transform: translateY(-5px); /* Slight lift on hover */
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6); /* More prominent shadow on hover */
+  gap: 25px; /* Space between sections */
+  position: relative; /* Needed for absolute positioning of language selector */
+  animation: fadeIn 0.5s ease-out; /* Fade in animation */
 }
 
 /* Form Header */
 .form-header {
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: 10px; /* Adjust margin to match image */
+  padding-top: 20px; /* Add padding to push content down from language selector */
 }
 
 .form-header-icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 64px;
-  height: 64px;
-  border-radius: 100%;
+  width: 70px; /* Larger icon */
+  height: 70px;
+  margin-bottom: 10px;
 }
 
 .form-header-icon img {
-  width: 65px;
-  height: 63px;
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* Ensure logo fits */
 }
 
 .form-title {
-  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-size: 2rem; /* Larger title */
   font-weight: 700;
-  color: white;
-  margin: 0 0 0.5rem 0;
+  color: #E0E0E0; /* Light text color */
+  margin: 0 0 5px 0;
 }
 
 .form-subtitle {
-  font-size: clamp(0.9rem, 2vw, 1rem);
-  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.7); /* Slightly transparent white */
   margin: 0;
 }
 
-/* Form Content */
-.form-content {
-  display: flex;
-  flex-direction: column;
-  gap: clamp(1rem, 2vw, 1.5rem);
-  flex-grow: 1;
-}
-
-/* Name and Nickname Sections */
-.name-section {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
-}
-
-.name-label {
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.9);
-  margin-bottom: 0.25rem;
-}
-
-.name-input {
-  padding: 0.75rem 1rem;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.08);
-  color: #e2e8f0;
-  font-size: 1rem;
-  outline: none;
-  transition: all 0.3s ease;
-  width: 100%;
-}
-
-.name-input:focus {
-  background: rgba(255, 255, 255, 0.15);
-  border-color: #63b3ed;
-  box-shadow: 0 0 0 2px rgba(99, 179, 237, 0.5);
-}
-
-.name-input::placeholder {
-  color: rgba(255, 255, 255, 0.4);
-}
-
-/* Category Section */
-.category-section {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  margin-bottom: 1rem;
-}
-
-/* Styling for SVG icons */
-.category-icon {
-  width: 1.5em;
-  height: 1.5em;
-  margin-right: 8px;
-}
-
-.category-header {
-  text-align: left;
-  margin-bottom: 0.5rem;
-}
-
-.category-title {
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.9);
-  margin: 0;
-}
-
-.category-subtitle {
-  font-size: 0.8rem;
-  color: rgba(255, 255, 255, 0.7);
-  margin: 0;
-}
-
-.category-buttons {
-  display: flex;
-  gap: 0.5rem;
-  justify-content: flex-start;
-  flex-wrap: wrap;
-  margin-bottom: 0;
-}
-
-.category-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.25rem;
-  padding: 0.6rem 1rem;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.08);
-  color: #e2e8f0;
-  cursor: pointer;
-  font-size: 0.9rem;
-  font-weight: 500;
-  transition: all 0.3s ease;
-  flex-grow: 1;
-  flex-basis: auto;
-}
-
-.category-btn:hover {
-  background: rgba(255, 255, 255, 0.15);
-  transform: none;
-}
-
-.category-btn.selected {
-  background: #4299e1;
-  border-color: #4299e1;
-  box-shadow: 0 0 0 2px rgba(66, 153, 225, 0.5);
-  transform: none;
-}
-
-.pwd-btn {
-  flex-grow: 1;
-  flex-basis: auto;
-}
-
-/* Transaction Type */
-.transaction-section {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.transaction-header {
-  text-align: left;
-  margin-bottom: 0.25rem;
-}
-
-.transaction-title {
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.9);
-  margin: 0;
-}
-
-.transaction-subtitle {
-  font-size: 0.8rem;
-  color: rgba(255, 255, 255, 0.7);
-  margin: 0;
-}
-
-.transaction-dropdown {
-  width: 100%;
-  padding: 0.75rem 1rem;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.08);
-  color: #e2e8f0;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  background-image: url('data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2220%22%20height%3D%2220%22%20viewBox%3D%220%200%2020%2020%22%20fill%3D%22none%22%3E%3Cpath%20d%3D%22M6%208L10%2012L14%208%22%20stroke%3D%22%23A0AEC0%22%20stroke-width%3D%221.5%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fsvg%3E');
-  background-repeat: no-repeat;
-  background-position: right 1rem center;
-  background-size: 1em;
-}
-
-.transaction-dropdown:focus {
-  outline: none;
-  border-color: #63b3ed;
-  box-shadow: 0 0 0 2px rgba(99, 179, 237, 0.5);
-}
-
-.transaction-dropdown option {
-  background: #0E1626;
-  color: #e2e8f0;
-  padding: 8px;
-}
-
-.proceed-btn {
-  padding: 0.75rem 1.5rem;
-  background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
-  border: none;
-  border-radius: 8px;
-  color: white;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  margin-top: 1.5rem;
-  position: relative;
-  overflow: hidden;
-  box-shadow: 0 4px 12px rgba(66, 153, 225, 0.3);
-}
-
-.proceed-btn:hover:not(:disabled) {
-  background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(66, 153, 225, 0.4);
-}
-
-.proceed-btn:active:not(:disabled) {
-  transform: translateY(0);
-}
-
-.proceed-btn:disabled {
-  background: rgba(45, 55, 72, 0.5);
-  cursor: not-allowed;
-  opacity: 0.7;
-  box-shadow: none;
-}
-
-/* Display Panel */
-.display-header {
-  text-align: right;
-  margin-bottom: 2rem;
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  gap: 10px;
-}
-
-/* Language Selector Wrapper */
+/* Language Selector at the top left */
 .language-selector-wrapper {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  position: absolute; /* Position absolutely within the form */
+  top: 25px;
+  left: 25px;
+  z-index: 10; /* Ensure it's above other elements if needed */
 }
 
 .language-dropdown {
-  padding: 0.6rem 1rem;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.08);
-  color: #e2e8f0;
+  padding: 8px 15px 8px 35px; /* Padding for text and icon */
+  border: 1px solid rgba(255, 255, 255, 0.2); /* Subtle border */
+  border-radius: 8px; /* Rounded corners */
+  background: rgba(255, 255, 255, 0.1); /* Slightly transparent background */
+  color: #E0E0E0; /* Light text color */
   font-size: 0.9rem;
   cursor: pointer;
   transition: all 0.3s ease;
-  -webkit-appearance: none;
+  -webkit-appearance: none; /* Remove default dropdown arrow */
   -moz-appearance: none;
   appearance: none;
-
-  /* --- NEW STYLES FOR GLOBE ICON AND CHECKBOX ARROW --- */
-  /* Two background images: globe on left, checkbox on right */
-  background-image:
-    url('data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23e2e8f0%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%2212%22%20r%3D%2210%22%2F%3E%3Cpath%20d%3D%22M12%202a14.5%2014.5%200%200%201%200%2020%2014.5%2014.5%200%200%201%200-20%22%2F%3E%3Cpath%20d%3D%22M2%2012h20%22%2F%3E%3C%2Fsvg%3E'), /* Globe icon SVG */
-    url('data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2220%22%20height%3D%2220%22%20viewBox%3D%220%200%2020%2020%22%20fill%3D%22none%22%3E%3Cpath%20d%3D%22M6%208L10%2012L14%208%22%20stroke%3D%22%23A0AEC0%22%20stroke-width%3D%221.5%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fsvg%3E');
-
+  background-image: url('data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23E0E0E0%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%2212%22%20r%3D%2210%22%2F%3E%3Cpath%20d%3D%22M12%202a14.5%2014.5%200%200%201%200%2020%2014.5%2014.5%200%200%201%200-20%22%2F%3E%3Cpath%20d%3D%22M2%2012h20%22%2F%3E%3C%2Fsvg%3E'), /* Globe icon SVG */
+                  url('data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2220%22%20height%3D%2220%22%20viewBox%3D%220%200%2020%2020%22%20fill%3D%22none%22%3E%3Cpath%20d%3D%22M6%208L10%2012L14%208%22%20stroke%3D%22%23E0E0E0%22%20stroke-width%3D%221.5%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fsvg%3E'); /* Dropdown arrow SVG */
   background-repeat: no-repeat, no-repeat;
-  background-position: 0.75rem center, right 0.75rem center; /* Globe on left, Checkbox on right */
-  background-size: 1.2em, 1em; /* Adjust size of globe and checkbox icons */
-
-  padding-left: 2.5rem; /* Make space for the globe icon on the left */
-  padding-right: 2.25rem; /* Make space for the checkbox icon on the right */
-  /* --- END NEW STYLES --- */
+  background-position: 8px center, right 10px center; /* Position globe and arrow */
+  background-size: 18px, 12px; /* Size globe and arrow */
 }
 
 .language-dropdown:focus {
@@ -373,194 +120,196 @@ body .floating-element-2 {
 }
 
 .language-dropdown option {
-  background: #0E1626;
-  color: #e2e8f0;
-  padding: 8px;
+  background: #282840; /* Dark background for dropdown options */
+  color: #E0E0E0;
 }
 
-
-.current-queue {
-  text-align: center;
-  margin-bottom: 2rem;
+/* Section Headers (Name, Nickname, Select Branch, Category, Transaction Type) */
+.section-header {
+  text-align: left;
+  margin-bottom: 10px; /* Space between header and input/buttons */
 }
 
-.queue-header {
-  font-size: 0.8rem;
+.section-title {
+  font-size: 0.9rem;
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.7);
-  margin: 0 0 0.5rem 0;
-  letter-spacing: 1px;
+  color: #E0E0E0;
+  margin: 0;
+  text-transform: uppercase; /* Uppercase as in image */
 }
 
-.current-number {
-  font-size: 3.5rem;
-  font-weight: 900;
-  color: #f6e05e;
-  margin: 0 0 0.25rem 0;
-  text-shadow: 0 0 15px rgba(246, 224, 94, 0.5);
-  animation: pulse 2s infinite;
+.section-subtitle {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.6);
+  margin: 5px 0 0 0;
 }
 
-.counter-info {
+/* Text Inputs (Name, Nickname) */
+.input-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px; /* Space between label and input */
+}
+
+.input-label {
+  font-size: 0.9rem;
+  color: #E0E0E0;
+  font-weight: 500;
+}
+
+.text-input {
+  padding: 12px 15px;
+  border: 1px solid #4A4A6D; /* Darker, subtle border */
+  border-radius: 8px;
+  background-color: #3A3A5C; /* Darker input background */
+  color: #E0E0E0;
   font-size: 1rem;
-  color: rgba(255, 255, 255, 0.8);
+  outline: none;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  width: 100%;
 }
 
-.recorded-queue {
-  flex: 1;
+.text-input::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.text-input:focus {
+  border-color: #63b3ed; /* Blue border on focus */
+  box-shadow: 0 0 0 3px rgba(99, 179, 237, 0.3); /* Blue glow on focus */
+}
+
+/* Dropdowns (Branch, Transaction Type) */
+.branch-filter-section,
+.transaction-section {
   display: flex;
   flex-direction: column;
+  gap: 8px;
 }
 
-.recorded-header {
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.7);
-  margin: 0 0 0.75rem 0;
-  text-align: center;
-  letter-spacing: 1px;
-}
-
-/* Styles for the queue list header */
-.queue-list-header {
-  display: flex;
-  justify-content: space-between;
-  padding: 0.5rem 1rem;
-  margin-bottom: 0.5rem;
-  background: rgba(255, 255, 255, 0.1);
+.branch-dropdown,
+.transaction-dropdown {
+  padding: 12px 15px;
+  border: 1px solid #4A4A6D;
   border-radius: 8px;
-  font-weight: 700;
-  font-size: 0.9em;
-  color: rgba(255, 255, 255, 0.8);
+  background-color: #3A3A5C;
+  color: #E0E0E0;
+  font-size: 1rem;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  width: 100%;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: url('data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2220%22%20height%3D%2220%22%20viewBox%3D%220%200%2020%2020%22%20fill%3D%22none%22%3E%3Cpath%20d%3D%22M6%208L10%2012L14%208%22%20stroke%3D%22%23E0E0E0%22%20stroke-width%3D%221.5%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fsvg%3E');
+  background-repeat: no-repeat;
+  background-position: right 15px center;
+  background-size: 12px;
 }
 
-.queue-list-header-item {
-  flex: 1;
-  text-align: center;
+.branch-dropdown:focus,
+.transaction-dropdown:focus {
+  border-color: #63b3ed;
+  box-shadow: 0 0 0 3px rgba(99, 179, 237, 0.3);
 }
 
-.queue-list-header-item.queue-no-header {
-  flex-basis: 20%;
-  text-align: left;
+.branch-dropdown option,
+.transaction-dropdown option {
+  background: #282840; /* Match form background for options */
+  color: #E0E0E0;
 }
 
-.queue-list-header-item.transaction-header {
-  flex-basis: 50%;
-  text-align: left;
-}
-
-.queue-list-header-item.counter-header {
-  flex-basis: 30%;
-  text-align: right;
-}
-
-
-.queue-list {
+/* Category Buttons */
+.category-section {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  height: 473px;
-  max-height: 1000px;
-  overflow-y: auto;
-  padding-right: 0.5rem;
+  gap: 8px;
 }
 
-.queue-list::-webkit-scrollbar {
-  width: 4px;
-}
-
-.queue-list::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 10px;
-}
-
-.queue-list::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 10px;
-}
-
-.queue-list::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.4);
-}
-
-.queue-item {
+.category-buttons {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.6rem 1rem;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  gap: 10px; /* Space between buttons */
+  justify-content: space-between; /* Distribute horizontally */
+  flex-wrap: wrap; /* Allow wrapping on smaller screens */
+}
+
+.category-btn {
+  flex: 1; /* Allow buttons to grow and shrink */
+  min-width: 140px; /* Minimum width for buttons */
+  padding: 12px 15px;
+  border: 1px solid #4A4A6D;
   border-radius: 8px;
+  background-color: #3A3A5C;
+  color: #E0E0E0;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
   transition: all 0.3s ease;
-  animation: slideInRight 0.6s ease-out;
-}
-
-.queue-item:hover {
-  background: rgba(255, 255, 255, 0.1);
-  transform: translateX(2px);
-}
-
-.queue-item-info {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  flex-basis: 70%;
-  justify-content: flex-start;
-}
-
-.queue-item-number {
-  width: 30px;
-  height: 30px;
-  background: #4299e1;
-  border-radius: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 8px;
+}
+
+.category-btn:hover:not(.selected) {
+  background-color: #4A4A6D; /* Slightly lighter on hover */
+  transform: translateY(-2px); /* Subtle lift */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.category-btn.selected {
+  background-color: #4299E1; /* Blue for selected state */
+  border-color: #4299E1;
   color: white;
-  font-weight: 700;
-  font-size: 0.8rem;
+  box-shadow: 0 4px 15px rgba(66, 153, 225, 0.4); /* Stronger shadow for selected */
+  transform: translateY(-2px); /* Keep lifted when selected */
 }
 
-.queue-item-transaction {
-  color: #e2e8f0;
-  font-weight: 500;
-  font-size: 0.9rem;
+.category-icon {
+  width: 20px; /* Size of the SVG icons */
+  height: 20px;
+  filter: brightness(0) invert(1); /* Make SVG icons white */
 }
 
-.queue-item-counter {
-  padding: 0.2rem 0.6rem;
-  background: rgba(246, 224, 94, 0.2);
-  color: #f6e05e;
-  border-radius: 16px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  border: 1px solid rgba(246, 224, 94, 0.3);
-  flex-basis: 30%;
-  text-align: right;
+.category-btn.selected .category-icon {
+  filter: none; /* Reset filter for selected icon if it's already white */
 }
 
-/* New button for printing the full form */
-.print-full-form-btn {
-  padding: 0.6rem 1.2rem; /* Adjusted padding to be slightly smaller */
-  background: linear-gradient(135deg, #6a0dad 0%, #8a2be2 100%); /* Purple gradient */
+
+/* Proceed Button */
+.proceed-btn {
+  padding: 15px 25px;
+  background-color: #4299E1; /* Blue background */
   border: none;
   border-radius: 8px;
   color: white;
-  font-size: 0.9rem; /* Slightly smaller font size */
+  font-size: 1.1rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 10px rgba(106, 13, 173, 0.3); /* Matching shadow */
+  margin-top: 15px; /* Space above the button */
+  box-shadow: 0 5px 15px rgba(66, 153, 225, 0.3);
 }
 
-.print-full-form-btn:hover {
-  background: linear-gradient(135deg, #8a2be2 0%, #9932cc 100%); /* Darker purple on hover */
-  transform: translateY(-2px);
-  box-shadow: 0 6px 14px rgba(106, 13, 173, 0.4);
+.proceed-btn:hover:not(:disabled) {
+  background-color: #3182CE; /* Darker blue on hover */
+  transform: translateY(-3px); /* More pronounced lift */
+  box-shadow: 0 8px 20px rgba(66, 153, 225, 0.4);
 }
 
+.proceed-btn:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 2px 10px rgba(66, 153, 225, 0.2);
+}
 
-/* Notification Popup (now used for Queue Ticket) */
+.proceed-btn:disabled {
+  background-color: #4A4A6D; /* Greyed out when disabled */
+  cursor: not-allowed;
+  opacity: 0.7;
+  box-shadow: none;
+}
+
+/* --- Styles for Queue Ticket Popup (Modal) --- */
 .notification-overlay {
   position: fixed;
   top: 0;
@@ -576,111 +325,95 @@ body .floating-element-2 {
   animation: fadeIn 0.3s ease-out;
 }
 
-/* --- NEW STYLES FOR QUEUE TICKET POPUP --- */
 .queue-ticket-popup {
-  background: #fff; /* White background as per screenshot */
+  background: #fff;
   border-radius: 12px;
   padding: 2.5rem 2rem;
   box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5);
   animation: bounceIn 0.6s ease-out;
   position: relative;
   text-align: center;
-  border: 1px solid rgba(0, 0, 0, 0.1); /* Subtle border */
-  max-width: 380px; /* Adjusted max-width to match screenshot */
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  max-width: 420px; /* Slightly wider for better layout */
   width: 90%;
-  color: #333; /* Default text color for the ticket */
+  color: #333;
   display: flex;
   flex-direction: column;
   align-items: center;
+  /* Added for a subtle background pattern for the ticket */
+  background-image: linear-gradient(45deg, rgba(240, 240, 240, 0.1) 25%, transparent 25%, transparent 75%, rgba(240, 240, 240, 0.1) 75%, rgba(240, 240, 240, 0.1) 100%), linear-gradient(-45deg, rgba(240, 240, 240, 0.1) 25%, transparent 25%, transparent 75%, rgba(240, 240, 240, 0.1) 75%, rgba(240, 240, 240, 0.1) 100%);
+  background-size: 20px 20px;
+  background-position: 0 0, 10px 10px;
+
+  /* Enable scrolling for the popup content if it overflows */
+  max-height: 90vh; /* Limit height to viewport height */
+  overflow-y: auto; /* Enable vertical scrolling */
+  -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
 }
 
 .ticket-content-printable {
-  /* Ensure this div doesn't have any overflow or fixed dimensions that would clip content */
-  width: 100%; /* Important for html2canvas to capture full width */
-  padding: 0; /* Remove padding here if it causes issues with PDF capture */
+  width: 400px; /* Fixed width for consistent PDF rendering */
+  padding: 1rem 1.5rem; /* Increased internal padding */
   margin: 0;
+  background-color: #ffffff; /* Ensure white background for PDF */
 }
-
 
 .ticket-header {
   text-align: center;
   margin-bottom: 1.5rem;
   width: 100%;
-  position: relative; /* For the lines */
-}
-
-.ticket-header::before,
-.ticket-header::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: #ccc;
-}
-
-.ticket-header::before {
-  top: 70px; /* Position above title */
-}
-
-.ticket-header::after {
-  bottom: -15px; /* Position below number */
+  position: relative;
+  padding-bottom: 20px; /* Increased padding for the border */
+  border-bottom: 2px dashed #e0e0e0; /* More prominent dashed line */
 }
 
 .ticket-header-logo {
-  width: 60px; /* Adjust size as needed */
-  height: 60px; /* Adjust size as needed */
-  margin-bottom: 10px;
-}
-
-
-.ticket-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  background-color: #f0f0f0; /* Light background for icon */
-  border: 1px solid #ddd;
-  margin-bottom: 1rem;
-}
-
-.ticket-icon svg {
-  width: 30px;
-  height: 30px;
-  color: #4299e1; /* Blue color for the icon */
+  width: 80px; /* Slightly larger logo for better visibility in PDF */
+  height: 80px;
+  margin-bottom: 15px;
 }
 
 .ticket-title {
-  font-size: 1.5rem;
-  font-weight: 700;
+  font-size: 2rem; /* Larger title for emphasis */
+  font-weight: 800; /* Bolder */
   color: #333;
   margin: 0;
-  letter-spacing: 1px;
+  letter-spacing: 2px; /* More spacing for readability */
+  text-transform: uppercase;
+  line-height: 1.2;
+}
+
+/* Specific styles for Standard and Priority tickets (as defined in original) */
+.ticket-title.standard {
+  color: #4CAF50; /* Example green for standard */
+}
+
+.ticket-title.priority {
+  color: #F44336; /* Example red for priority */
 }
 
 .ticket-number {
-  font-size: 3rem;
+  font-size: 4rem; /* Significantly larger queue number */
   font-weight: 900;
-  color: #4299e1; /* Blue color for queue number */
-  margin: 0.5rem 0 0 0;
+  color: #000;
+  margin-top: 1rem;
+  letter-spacing: 3px;
 }
 
 .ticket-details {
   width: 100%;
-  margin-top: 2rem;
-  margin-bottom: 2rem;
   text-align: left;
-  line-height: 1.6;
+  margin-top: 1.5rem;
+  margin-bottom: 2rem; /* More space before QR */
+  padding: 0 1rem; /* Padding for detail rows */
 }
 
 .detail-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.5rem 0;
-  border-bottom: 1px dashed #eee; /* Dashed line separator */
+  padding: 8px 0;
+  border-bottom: 1px dotted #ccc; /* Dotted line for separation */
 }
 
 .detail-row:last-child {
@@ -692,429 +425,245 @@ body .floating-element-2 {
   color: #555;
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 8px; /* Space between icon and text */
+  font-size: 0.95rem;
 }
 
 .detail-icon {
-  width: 18px;
-  height: 18px;
-  color: #777;
+  font-size: 1.2rem; /* Adjust icon size */
+  color: #666;
 }
 
 .detail-value {
-  color: #333;
   font-weight: 500;
+  color: #333;
+  text-align: right;
+  flex-grow: 1; /* Allows value to take remaining space */
+  font-size: 0.95rem;
 }
 
 .qr-code-section {
-  text-align: center; /* Fallback for older browsers */
-  margin-bottom: 1.5rem;
-  display: flex; /* Use flexbox for robust centering */
-  justify-content: center; /* Center content horizontally in flex container */
-  align-items: center; /* Center content vertically in flex container */
-  flex-direction: column; /* Stack items vertically within the flex container */
-  width: 100%; /* Ensure it takes full width to allow centering */
-  /* Added border here for print */
-  border: 1px solid #ddd; /* Default border for screen */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 2rem; /* More space after QR */
+  padding: 1rem 0;
+  background-color: #f9f9f9; /* Slight background for QR section */
   border-radius: 8px;
-  padding: 10px; /* Padding inside the border */
 }
 
 .qr-code-canvas {
-  /* Removed border here, now handled by parent .qr-code-section */
+  border: 4px solid #fff; /* White border around QR */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   background-color: #fff;
-  display: block; /* Ensure canvas is a block element */
-  margin: 0 auto; /* Center the canvas itself */
-  width: 220px; /* Increased QR code size */
-  height: 220px; /* Increased QR code size */
 }
 
 .qr-message {
-  font-size: 0.8rem;
-  color: #777;
-  margin-top: 0.5rem;
-  max-width: 250px;
+  font-size: 0.85rem;
+  color: #666;
+  margin-top: 1rem;
+  max-width: 80%; /* Constrain message width */
+  line-height: 1.4;
 }
 
 .ticket-footer {
+  width: 100%;
+  padding-top: 20px; /* Padding above footer */
+  border-top: 2px dashed #e0e0e0;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  justify-content: center;
+  gap: 10px;
   font-size: 0.9rem;
-  font-weight: 600;
-  color: #555;
-  margin-top: 1rem;
+  color: #666;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .footer-icon {
   font-size: 1.2rem;
 }
 
-/* Container for the action buttons */
+/* Ticket actions (buttons) */
 .ticket-actions {
   display: flex;
-  gap: 10px;
-  margin-top: 20px;
-  width: 100%; /* Ensure the container takes full width for flex distribution */
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 2rem; /* Space between ticket content and buttons */
+  width: 100%;
 }
 
-/* Make both buttons take equal width */
-.ticket-actions .download-pdf-btn,
-.ticket-actions .notification-close {
-  flex: 1; /* Make both buttons take equal width */
-  min-width: 0; /* Allow shrinking */
-}
-
-/* Re-purposed notification-close button for ticket */
+.download-pdf-btn,
 .notification-close {
-  padding: 0.6rem 1.8rem;
-  background: #4299e1;
+  padding: 12px 20px;
   border: none;
   border-radius: 8px;
-  color: white;
+  font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 10px rgba(66, 153, 225, 0.4);
 }
 
-.notification-close:hover {
-  background: #3182ce;
-  box-shadow: 0 6px 14px rgba(66, 153, 225, 0.5);
-}
-
-/* New style for the PDF download button */
 .download-pdf-btn {
-  padding: 0.6rem 1.8rem;
-  background: #28a745; /* Green color for download */
-  border: none;
-  border-radius: 8px;
+  background-color: #4CAF50; /* Green for download */
   color: white;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 10px rgba(40, 167, 69, 0.4);
+  box-shadow: 0 4px 10px rgba(76, 175, 80, 0.3);
 }
 
 .download-pdf-btn:hover {
-  background: #218838;
-  box-shadow: 0 6px 14px rgba(40, 167, 69, 0.5);
+  background-color: #45a049;
+  transform: translateY(-2px);
 }
 
-/* Responsive Design */
-@media (max-width: 1024px) {
-  .queue-container {
-    flex-direction: column;
-    gap: 1.5rem;
-    padding: 1.5rem;
-  }
-
-  .queue-form,
-  .queue-display {
-    max-width: 100%;
-    min-width: 0;
-    width: 100%;
-  }
+.notification-close {
+  background-color: #f0f0f0; /* Light grey for close */
+  color: #333;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-@media (max-width: 768px) {
-  .queue-container {
-    padding: 1rem;
-  }
+.notification-close:hover {
+  background-color: #e0e0e0;
+  transform: translateY(-2px);
+}
 
-  .queue-form,
-  .queue-display {
-    padding: 1.5rem;
-  }
+/* Keyframe Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
 
-  .current-number {
-    font-size: clamp(2.5rem, 6vw, 3rem);
+@keyframes bounceIn {
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
   }
-
-  /* Adjust header items for smaller screens */
-  .queue-list-header-item.queue-no-header,
-  .queue-list-header-item.transaction-header,
-  .queue-list-header-item.counter-header {
-    flex-basis: auto;
-    text-align: center;
+  60% {
+    transform: scale(1.05);
+    opacity: 1;
   }
-
-  .queue-item-info {
-    flex-basis: auto;
+  80% {
+    transform: scale(0.98);
   }
-  .queue-item-counter {
-    flex-basis: auto;
+  100% {
+    transform: scale(1);
   }
 }
 
-@media (max-width: 480px) {
-  .queue-container {
-    padding: 0.75rem;
+/* Popup Message Styling (from previous context, kept for consistency) */
+.popup-message-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1001; /* Above the queue ticket popup */
+}
+
+.popup-message-box {
+  background: #fff;
+  border-radius: 10px;
+  padding: 30px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+  text-align: center;
+  max-width: 350px;
+  width: 90%;
+  animation: bounceIn 0.4s ease-out;
+  color: #333;
+}
+
+.popup-message-icon {
+  font-size: 3rem;
+  margin-bottom: 15px;
+  line-height: 1;
+}
+
+.popup-message-icon.success {
+  color: #4CAF50;
+}
+
+.popup-message-icon.error {
+  color: #F44336;
+}
+
+.popup-message-text {
+  font-size: 1.1rem;
+  margin-bottom: 25px;
+  line-height: 1.5;
+}
+
+.popup-message-close-btn {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 25px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.popup-message-close-btn:hover {
+  background-color: #0056b3;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+  .queue-form {
+    padding: 25px;
+    gap: 20px;
   }
 
-  .queue-form,
-  .queue-display {
-    padding: 1.25rem;
+  .form-title {
+    font-size: 1.8rem;
+  }
+
+  .form-subtitle {
+    font-size: 0.9rem;
+  }
+
+  .language-selector-wrapper {
+    top: 15px;
+    left: 15px;
   }
 
   .category-buttons {
     flex-direction: column;
   }
 
-  .queue-item {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.5rem;
-  }
-
-  .notification-popup {
-    padding: 2rem 1.5rem;
-  }
-
-  .queue-list-header {
-    flex-wrap: wrap;
-    justify-content: space-around;
+  .category-btn {
+    min-width: unset; /* Remove min-width for stacking */
   }
 
   .queue-ticket-popup {
-    padding: 2rem 1.5rem;
-  }
-}
-
-/* Styles for print (PDF generation) */
-@media print {
-  body {
-    overflow: visible !important; /* Allow content to flow for printing */
-    background-color: #fff !important; /* Ensure white background for print */
-    color: #000 !important; /* Ensure black text for print */
+    padding: 1.5rem 1rem;
+    max-width: 95%; /* Adjust max-width for smaller screens */
   }
 
-  /* Hide the ticket popup when printing the full form */
-  .notification-overlay {
-    display: none !important;
+  .ticket-content-printable {
+    width: 100%; /* Allow full width within popup on smaller screens */
+    padding: 0.8rem 1rem;
   }
 
-  /* Ensure the main queue page and its containers are visible for printing */
-  .queue-page {
-    display: block !important; /* Override display: flex from screen styles */
-    position: relative !important;
-    width: 100% !important;
-    min-height: auto !important; /* Allow content to dictate height */
-    height: auto !important;
-    overflow: visible !important;
-    padding: 20mm !important; /* Add generous padding for print margins */
-    box-sizing: border-box !important; /* Ensure padding is included in width/height */
-    background-color: #fff !important; /* White background for the page itself */
+  .ticket-header-logo {
+    width: 60px;
+    height: 60px;
   }
 
-  .queue-container {
-    display: flex !important; /* Re-enable flex for internal layout */
-    flex-direction: row !important; /* Keep side-by-side if space allows */
-    flex-wrap: wrap !important; /* Allow wrapping on smaller print pages */
-    gap: 10mm !important; /* Adjust gap for print */
-    padding: 0 !important; /* Remove internal padding, handled by queue-page */
-    max-width: 100% !important; /* Ensure it takes full print width */
-    margin: 0 auto !important; /* Center the container on the page */
-    background-color: transparent !important; /* No background for this wrapper */
-    border: none !important; /* Remove borders for cleaner print */
-    box-shadow: none !important; /* Remove shadows */
-    backdrop-filter: none !important; /* Remove blur */
-    animation: none !important; /* Remove animations */
-    transform: none !important; /* Remove transforms */
+  .ticket-title {
+    font-size: 1.5rem;
   }
 
-  .queue-form,
-  .queue-display {
-    flex: 1 1 45% !important; /* Allow shrinking/growing, aim for two columns */
-    min-width: 0 !important; /* Allow shrinking */
-    width: auto !important; /* Let flex control width */
-    height: auto !important; /* Let content dictate height */
-    padding: 10mm !important; /* Internal padding for form/display boxes */
-    background-color: #f8f8f8 !important; /* Light background for sections */
-    border: 1px solid #eee !important; /* Light border for sections */
-    border-radius: 8px !important;
-    box-shadow: none !important; /* Remove shadows */
-    backdrop-filter: none !important; /* Remove blur */
-    animation: none !important; /* Remove animations */
-    transform: none !important; /* Remove transforms */
-  }
-
-  /* Specific adjustments for elements within the form/display */
-  .form-header,
-  .display-header,
-  .current-queue,
-  .recorded-queue {
-    margin-bottom: 10mm !important; /* Adjust margins for print */
-  }
-
-  .form-title,
-  .form-subtitle,
-  .category-title,
-  .category-subtitle,
-  .transaction-title,
-  .transaction-subtitle,
-  .queue-header,
-  .current-number,
-  .counter-info,
-  .recorded-header,
-  .queue-list-header,
-  .queue-item-transaction,
-  .queue-item-counter,
-  .name-label,
-  .qr-message,
-  .ticket-footer {
-    color: #000 !important; /* Ensure black text for print */
-  }
-
-  .name-input,
-  .transaction-dropdown,
-  .language-dropdown {
-    background: #fff !important; /* White background for inputs */
-    border-color: #ccc !important; /* Lighter border for inputs */
-    color: #000 !important; /* Black text for inputs */
-    box-shadow: none !important; /* Remove shadows */
-  }
-
-  .category-btn {
-    background: #e0e0e0 !important; /* Light background for category buttons */
-    border-color: #ccc !important;
-    color: #000 !important;
-    box-shadow: none !important;
-  }
-
-  .category-btn.selected {
-    background: #d0e0f0 !important; /* Slightly darker for selected */
-    border-color: #a0c0e0 !important;
-  }
-
-  .proceed-btn,
-  .print-full-form-btn {
-    background: #4CAF50 !important; /* Simple green for print button */
-    color: white !important;
-    box-shadow: none !important;
-    print-color-adjust: exact; /* Ensure background color is printed */
-    -webkit-print-color-adjust: exact;
-  }
-
-  .queue-item {
-    background: #f0f0f0 !important; /* Light background for queue items */
-    border-color: #ddd !important;
-    box-shadow: none !important;
-  }
-
-  .queue-item-number {
-    background: #ADD8E6 !important; /* Light blue for queue number circle */
-    color: #000 !important;
-    print-color-adjust: exact;
-    -webkit-print-color-adjust: exact;
-  }
-
-  .queue-item-counter {
-    background: #FFFACD !important; /* Light yellow for counter */
-    color: #000 !important;
-    border-color: #E6DB55 !important;
-    print-color-adjust: exact;
-    -webkit-print-color-adjust: exact;
+  .ticket-number {
+    font-size: 3rem;
   }
 
   .qr-code-section {
-    border: 1px solid #000 !important; /* Ensure black border for QR code */
-    background-color: #fff !important; /* White background for QR section */
-    padding: 5mm !important; /* Adjust padding for print */
-  }
-
-  .qr-code-canvas {
-    width: 60mm !important; /* Fixed size for QR code in print */
-    height: 60mm !important;
-  }
-
-  .ticket-actions { /* Hide buttons on the ticket popup if it were to be printed */
-    display: none !important;
-  }
-
-  /* Hide the print button for the full form itself when printing */
-  .print-full-form-btn {
-    display: none !important;
+    padding: 0.8rem 0;
   }
 }
-
-
-/* Animations */
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes slideInRight {
-  from {
-    opacity: 0;
-    transform: translateX(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes bounceIn {
-  0% {
-    opacity: 0;
-    transform: scale(0.3);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.05);
-  }
-  70% {
-    transform: scale(0.9);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-20px);
-  }
-}
-
-@keyframes pulse {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.8;
-  }
-}
-
-/* Animation delays for queue items */
-.queue-item:nth-child(1) { animation-delay: 0.1s; }
-.queue-item:nth-child(2) { animation-delay: 0.15s; }
-.queue-item:nth-child(3) { animation-delay: 0.2s; }
-.queue-item:nth-child(4) { animation-delay: 0.25s; }
-.queue-item:nth-child(5) { animation-delay: 0.3s; }
-.queue-item:nth-child(6) { animation-delay: 0.35s; }
-.queue-item:nth-child(7) { animation-delay: 0.4s; }
-.queue-item:nth-child(8) { animation-delay: 0.45s; }
-.queue-item:nth-child(9) { animation-delay: 0.5s; }
-.queue-item:nth-child(10) { animation-delay: 0.55s; }

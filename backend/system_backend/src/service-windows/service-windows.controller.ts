@@ -1,4 +1,5 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, HttpStatus, Query } from '@nestjs/common';
+// src/service-windows/service-windows.controller.ts
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, HttpStatus, Query } from '@nestjs/common'; // Import Query
 import { ServiceWindowsService } from './service-windows.service';
 import { CreateServiceWindowDto } from './dto/create-service-window.dto';
 import { UpdateServiceWindowDto } from './dto/update-service-window.dto';
@@ -14,10 +15,9 @@ export class ServiceWindowsController {
   }
 
   @Get()
-  // Add @Query('branchId') to capture the branchId from the URL query string
-  // It's optional, so if not provided, all windows will be returned.
+  // Add @Query decorator to accept branchId from query parameters
   findAll(@Query('branchId') branchId?: string) {
-    // Pass the branchId (if provided) to the service layer
+    // Pass the branchId (parsed to number if it exists) to the service's findAll method
     return this.serviceWindowsService.findAll(branchId ? parseInt(branchId, 10) : undefined);
   }
 

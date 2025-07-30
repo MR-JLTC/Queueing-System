@@ -5,7 +5,7 @@ import { Repository } from 'typeorm';
 import { ServiceWindow } from './entities/service-window.entity';
 import { CreateServiceWindowDto } from './dto/create-service-window.dto';
 import { UpdateServiceWindowDto } from './dto/update-service-window.dto';
-import { Branch } from '../branches/entities/branch.entity'; // Import Branch entity
+import { Branch } from '../branches/entities/branch.entity';
 
 @Injectable()
 export class ServiceWindowsService {
@@ -17,8 +17,8 @@ export class ServiceWindowsService {
   ) {}
 
   async create(createServiceWindowDto: CreateServiceWindowDto): Promise<ServiceWindow> {
-    const { windowNumber, windowName, branchId, isActive, visibilityStatus } = createServiceWindowDto; // Added windowName
-    
+    const { windowNumber, windowName, branchId, isActive, visibilityStatus, lastTicketNumber } = createServiceWindowDto;
+
     const branch = await this.branchRepository.findOne({ where: { branchId } });
     if (!branch) {
       throw new BadRequestException(`Branch with ID ${branchId} not found.`);
@@ -26,25 +26,22 @@ export class ServiceWindowsService {
 
     const serviceWindow = this.serviceWindowsRepository.create({
       windowNumber,
-      windowName, // Assign windowName
+      windowName,
       branch, // Assign the branch entity
       isActive: isActive !== undefined ? isActive : true,
       visibilityStatus: visibilityStatus || 'ON_LIVE',
       createdAt: new Date(),
+      lastTicketNumber: lastTicketNumber !== undefined ? lastTicketNumber : 0, // Initialize or use provided
     });
     return this.serviceWindowsRepository.save(serviceWindow);
   }
 
-  // Modified findAll to accept an optional branchId for filtering
-  async findAll(branchId?: number): Promise<ServiceWindow[]> {
-    const findOptions: any = { relations: ['branch'] }; // Start with relations
-
+  // Modified findAll to accept an optional branchId
+  findAll(branchId?: number): Promise<ServiceWindow[]> {
+    const findOptions: any = { relations: ['branch'] };
     if (branchId) {
-      // If branchId is provided, add a where clause to filter by branch.branchId
-      findOptions.where = { branch: { branchId: branchId } };
+      findOptions.where = { branch: { branchId: branchId } }; // Filter by branchId
     }
-    
-    // Perform the find operation with the constructed options
     return this.serviceWindowsRepository.find(findOptions);
   }
 
@@ -71,16 +68,14 @@ export class ServiceWindowsService {
       delete updateServiceWindowDto.branchId;
     }
 
-    // Assign other properties including windowName if present
     Object.assign(serviceWindow, updateServiceWindowDto);
     return this.serviceWindowsRepository.save(serviceWindow);
   }
 
   async remove(windowId: number): Promise<void> {
-    // Attempt to delete the service window directly
     const result = await this.serviceWindowsRepository.delete(windowId);
     if (result.affected === 0) {
-      throw new NotFoundException(`Service window with ID "${windowId}" not found or already deleted.`);
+      throw new NotFoundException(`Service window with ID "${windowId}" not found`);
     }
   }
 }

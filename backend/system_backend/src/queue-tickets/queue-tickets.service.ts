@@ -8,7 +8,7 @@ import { UpdateQueueTicketDto } from './dto/update-queue-ticket.dto';
 import { Branch } from '../branches/entities/branch.entity';
 import { CustomerCategory } from '../customer-categories/entities/customer-category.entity';
 import { TicketStatus } from '../ticket-statuses/entities/ticket-status.entity';
-import { ServiceWindow } from '../service-windows/entities/service-window.entity';
+import { ServiceWindow } from '../service-windows/entities/service-window.entity'; // Import ServiceWindow
 import { Staff } from '../staff/entities/staff.entity';
 import { User } from '../users/entities/user.entity';
 
@@ -23,7 +23,7 @@ export class QueueTicketsService {
     private customerCategoryRepository: Repository<CustomerCategory>,
     @InjectRepository(TicketStatus)
     private ticketStatusRepository: Repository<TicketStatus>,
-    @InjectRepository(ServiceWindow)
+    @InjectRepository(ServiceWindow) // Inject ServiceWindow Repository
     private serviceWindowRepository: Repository<ServiceWindow>,
     @InjectRepository(Staff)
     private staffRepository: Repository<Staff>,
@@ -33,10 +33,7 @@ export class QueueTicketsService {
 
   async create(createQueueTicketDto: CreateQueueTicketDto): Promise<QueueTicket> {
     const {
-      ticketNumber,
       customerName,
-      customerPhone,
-      customerEmail,
       categoryId,
       branchId,
       currentStatusId,
@@ -85,11 +82,35 @@ export class QueueTicketsService {
       if (!cancelledBy) throw new BadRequestException(`User (cancelledBy) with ID ${cancelledById} not found.`);
     }
 
+    // --- Generate a unique sequential ticket number per window ---
+    let generatedTicketNumber: string;
+    if (assignedToWindow) {
+      // Increment the last ticket number for this specific window
+      assignedToWindow.lastTicketNumber = (assignedToWindow.lastTicketNumber || 0) + 1;
+
+      // Determine a prefix based on window name (e.g., 'P' for Payment, 'L' for Loan)
+      const prefix = assignedToWindow.windowName
+        ? assignedToWindow.windowName.substring(0, 1).toUpperCase()
+        : `W${assignedToWindow.windowNumber}`; // Fallback to Window + Number if no name
+
+      // Pad the number with leading zeros (e.g., 001, 002)
+      const paddedNumber = String(assignedToWindow.lastTicketNumber).padStart(3, '0'); // Ensures 3 digits
+
+      generatedTicketNumber = `${prefix}-${paddedNumber}`;
+
+      // Save the updated lastTicketNumber back to the ServiceWindow entity
+      await this.serviceWindowRepository.save(assignedToWindow);
+    } else {
+      // Fallback for cases where assignedToWindow is not provided (should ideally not happen if required)
+      const datePart = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+      const timePart = new Date().getTime();
+      generatedTicketNumber = `GEN-${datePart}-${timePart}`;
+    }
+    // --- End Ticket Number Generation ---
+
     const newQueueTicket = new QueueTicket();
-    newQueueTicket.ticketNumber = ticketNumber;
+    newQueueTicket.ticketNumber = generatedTicketNumber; // Assign the generated ticket number
     newQueueTicket.customerName = customerName;
-    newQueueTicket.customerPhone = customerPhone === undefined ? null : customerPhone; // Explicitly handle undefined to null
-    newQueueTicket.customerEmail = customerEmail === undefined ? null : customerEmail; // Explicitly handle undefined to null
     newQueueTicket.category = category;
     newQueueTicket.branch = branch;
     newQueueTicket.currentStatus = currentStatus;
@@ -196,20 +217,11 @@ export class QueueTicketsService {
       delete updateQueueTicketDto.cancelledById;
     }
 
-    // Ensure serviceType, customerPhone, customerEmail are handled as string or null
+    // Ensure serviceType is handled as string or null
     if (updateQueueTicketDto.serviceType !== undefined) {
       ticket.serviceType = updateQueueTicketDto.serviceType === '' ? null : updateQueueTicketDto.serviceType;
       delete updateQueueTicketDto.serviceType;
     }
-    if (updateQueueTicketDto.customerPhone !== undefined) {
-      ticket.customerPhone = updateQueueTicketDto.customerPhone === '' ? null : updateQueueTicketDto.customerPhone;
-      delete updateQueueTicketDto.customerPhone;
-    }
-    if (updateQueueTicketDto.customerEmail !== undefined) {
-      ticket.customerEmail = updateQueueTicketDto.customerEmail === '' ? null : updateQueueTicketDto.customerEmail;
-      delete updateQueueTicketDto.customerEmail;
-    }
-
 
     Object.assign(ticket, updateQueueTicketDto);
     return this.queueTicketRepository.save(ticket);
