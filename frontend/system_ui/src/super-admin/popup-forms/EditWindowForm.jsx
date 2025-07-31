@@ -152,7 +152,17 @@ const EditWindowForm = ({ onClose, windowData, onWindowUpdated, onWindowDeleted,
 
   return (
     <Box className="modal-overlay">
-      <Box className="modal-content edit-window-modal">
+      <Box className="modal-content edit-window-modal"
+        sx={{ 
+          maxWidth: '500px', 
+          width: '90%', 
+          p: 3, 
+          borderRadius: '12px', 
+          bgcolor: '#1a1a1a', 
+          boxShadow: '0 8px 30px rgba(0,0,0,0.5)', 
+          border: '1px solid rgba(100, 110, 130, 0.2)' 
+        }}
+      >
         <Box className="modal-header">
           <Typography variant="h6" sx={{ color: '#e0e0e0' }}>Edit Service Window</Typography>
           <IconButton onClick={onClose} sx={{ color: '#e0e0e0' }}>

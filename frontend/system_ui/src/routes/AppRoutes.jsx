@@ -16,6 +16,7 @@ import SuperAdminSignup from "../super-admin/SA_SignupForm";
 // Import ProtectedRoute and the new SuperAdminDashboard
 import ProtectedRoute from "./ProtectedRoute";
 import SuperAdminDashboard from '../super-admin/SuperAdminDashboard'; // Your new Super Admin Dashboard component
+import QueueDisplay from '../QueueMonitoring/QueueDisplay';
 
 const AppRoutes = () => {
   return (
@@ -53,7 +54,7 @@ const AppRoutes = () => {
       <Route path="/counter" element={<CounterQueueManagementSystem />} />
       <Route path="/monitoring" element={<QueueMonitoring />} />
       <Route path="/queue" element={<QueueManagement />} />
-
+      <Route path="/queue-display" element={<QueueDisplay />} />
       {/* Default redirect to SuperAdminlogin if no other route matches */}
       <Route path="*" element={<Navigate to="/SuperAdminlogin" />} />
     </Routes>

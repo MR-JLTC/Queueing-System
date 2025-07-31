@@ -14,6 +14,7 @@ import { DailyQueueSummaryModule } from './daily-queue-summary/daily-queue-summa
 import { BranchesModule } from './branches/branches.module'; 
 import { DashboardModule } from './dashboard/dashboard.module';
 import { StaffModule } from './staff/staff.module';
+import { PrintModule } from './print/print.module'; 
 
 @Module({
   imports: [
@@ -30,7 +31,8 @@ import { StaffModule } from './staff/staff.module';
     DailyQueueSummaryModule,
     BranchesModule,
     DashboardModule,
-    StaffModule 
+    StaffModule,
+    PrintModule
   ],
   controllers: [],
   providers: [],

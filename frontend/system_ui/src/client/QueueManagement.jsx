@@ -494,7 +494,7 @@ const QueueManagement = () => {
       const payload = {
         customerName: name,
         // customerNickname: nickname, // REMOVED: Backend does not expect this
-        categoryId: categoryId, // CHANGED: From customerCategoryId to categoryId
+        customerCategoryId: categoryId, // CHANGED: From customerCategoryId to categoryId
         assignedToWindowId: parseInt(selectedTransactionWindowId, 10),
         branchId: parseInt(selectedBranchId, 10),
         currentStatusId: 1, // Assuming 1 is the ID for 'QUEUED' or initial status

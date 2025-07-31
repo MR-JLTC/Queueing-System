@@ -305,15 +305,15 @@ const EditBranchForm = ({ onClose, branchData, onBranchUpdated, onBranchDeleted,
                 fontSize: '1.1rem',
                 fontWeight: 600,
                 boxShadow: '0 4px 15px rgba(0, 123, 255, 0.4)',
-                '&:hover': {
-                  backgroundColor: '#0056b3',
+               '&:hover': {
+                  backgroundColor: '#5a6268',
                   transform: 'translateY(-1px)',
-                  boxShadow: '0 6px 20px rgba(0, 123, 255, 0.5)',
+                  boxShadow: '0 6px 20px rgba(108, 117, 125, 0.5)',
                 },
                 '&:active': {
-                  backgroundColor: '#21618c',
+                  backgroundColor: '#4e545a',
                   transform: 'translateY(0)',
-                  boxShadow: '0 2px 10px rgba(52, 152, 219, 0.3)',
+                  boxShadow: '0 2px 10px rgba(108, 117, 125, 0.3)',
                 },
                 flex: 1,
               }}
@@ -324,7 +324,7 @@ const EditBranchForm = ({ onClose, branchData, onBranchUpdated, onBranchDeleted,
               variant="contained"
               onClick={handleDelete}
               sx={{
-                backgroundColor: '#6c757d', // Gray for Delete
+                backgroundColor: '#8d1d1bff', // Gray for Delete
                 color: 'white',
                 py: 1.5,
                 borderRadius: '10px',

@@ -11,20 +11,14 @@ export class CreateQueueTicketDto {
   @IsNotEmpty()
   customerName: string;
 
-  // Removed: customerPhone as requested
-  // @IsOptional()
-  // @IsPhoneNumber('PH', { message: 'Customer phone must be a valid Philippine phone number.' })
-  // customerPhone?: string | null;
-
-  // Removed: customerEmail as requested
-  // @IsOptional()
-  // @IsEmail({}, { message: 'Customer email must be a valid email address.' })
-  // customerEmail?: string | null;
+  @IsString()
+  @IsOptional() // Make optional as nickname might not always be provided
+  customerNickname?: string | null;
 
   // Renamed from customerCategoryId to categoryId and kept as NotEmpty based on previous errors
   @IsInt()
   @IsNotEmpty()
-  categoryId: number;
+  customerCategoryId: number;
 
   @IsInt()
   @IsNotEmpty()

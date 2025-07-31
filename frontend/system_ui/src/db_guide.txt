@@ -70,3 +70,15 @@ INSERT INTO `ticket_status_history` (`history_id`, `ticket_id`, `status_code`, `
 (4, 5, 'Q', (SELECT user_id FROM users WHERE username = 'adminmain' LIMIT 1), NOW() - INTERVAL 1 HOUR - INTERVAL 5 MINUTE, 'Ticket issued', 'ON_LIVE'),
 (5, 5, 'X', (SELECT user_id FROM users WHERE username = 'adminmain' LIMIT 1), NOW() - INTERVAL 1 HOUR, 'Customer cancelled', 'ON_LIVE')
 ON DUPLICATE KEY UPDATE ticket_id=ticket_id;
+
+
+INSERT INTO `queue_tickets` (`ticket_id`, `ticket_number`, `customer_name`, `customer_nickname`, `branch_id`, `assigned_to_window_id`, `assigned_to_staff_id`, `customer_category_id`, `service_type`, `current_status_id`, `queued_at`, `called_at`, `served_at`, `cancelled_by_id`, `visibility_status`, `issued_by_user_id`, `requeue_attempts`) VALUES
+(1, 'G-001', 'Alice Smith', 'Ali', 3, 33, 6, 1, 'General Query', 1, '2025-07-31 09:00:00', NULL, NULL, NULL, 'ON_LIVE', 2, 0), -- Main Branch, Window 1, assigned to Staff Hannah (staff_id 3)
+(2, 'P-002', 'Bob Johnson', 'Bobby', 3, 34, 7, 2, 'Payment', 1, '2025-07-31 09:05:00', NULL, NULL, NULL, 'ON_LIVE', 2, 0), -- Main Branch, Window 1, assigned to Staff Hannah (staff_id 3)
+(3, 'L-003', 'Charlie Brown', 'Chuck', 2, 35, 8, 1, 'Loan', 3, '2025-07-31 08:00:00', '2025-07-31 08:05:00', '2025-07-31 08:10:00', NULL, 'ON_LIVE', 2, 0), -- Main Branch, Window 1 (Served), assigned to Staff Hannah (staff_id 3)
+(4, 'L-001', 'Diana Prince', 'Dee', 2, 35, 8, 1, 'Loan', 1, '2025-07-31 09:10:00', NULL, NULL, NULL, 'ON_LIVE', 2, 0), -- Main Branch, Window 2, assigned to Staff Joana (staff_id 4)
+(5, 'L-002', 'Eve Adams', 'Evie', 2, 35, 8, 1, 'Loan', 4, '2025-07-31 08:30:00', NULL, NULL, 2, 'ON_LIVE', 2, 0), -- Main Branch, Window 2 (Cancelled), assigned to Staff Joana (staff_id 4)
+(6, 'R-001', 'Frank White', 'Frankie', 2, 36, 9, 1, 'Records Management', 1, '2025-07-31 09:15:00', NULL, NULL, NULL, 'ON_LIVE', 3, 0), -- Tubigon-Branch, Window 1, assigned to Staff Anne (staff_id 1)
+(7, 'P-001', 'Grace Green', 'Gracie', 2, 36, 9, 2, 'Payment', 1, '2025-07-31 09:20:00', NULL, NULL, NULL, 'ON_LIVE', 3, 0);
+
+

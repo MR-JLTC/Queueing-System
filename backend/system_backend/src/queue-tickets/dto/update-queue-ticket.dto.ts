@@ -12,19 +12,13 @@ export class UpdateQueueTicketDto extends PartialType(CreateQueueTicketDto) {
   @IsString()
   customerName?: string;
 
-  // Removed: customerPhone as requested
-  // @IsOptional()
-  // @IsPhoneNumber('PH', { message: 'Customer phone must be a valid Philippine phone number.' })
-  // customerPhone?: string | null;
-
-  // Removed: customerEmail as requested
-  // @IsOptional()
-  // @IsEmail({}, { message: 'Customer email must be a valid email address.' })
-  // customerEmail?: string | null;
+  @IsOptional()
+  @IsString()
+  customerNickname?: string | null; // Added customerNickname
 
   @IsOptional()
   @IsInt()
-  categoryId?: number; // Renamed from customerCategoryId
+  customerCategoryId?: number; // Renamed from customerCategoryId
 
   @IsOptional()
   @IsInt()
@@ -69,4 +63,8 @@ export class UpdateQueueTicketDto extends PartialType(CreateQueueTicketDto) {
   @IsOptional()
   @IsString()
   visibilityStatus?: string;
+
+  @IsOptional()
+  @IsInt()
+  requeueAttempts?: number; // Added requeueAttempts
 }

@@ -34,4 +34,9 @@ export class QueueTicketsController {
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.queueTicketsService.remove(id);
   }
+
+  @Get('branch/:branchId/queue-status')
+  async getQueueStatusForBranch(@Param('branchId', ParseIntPipe) branchId: number) {
+    return this.queueTicketsService.getQueueStatusByBranchAndWindow(branchId);
+  }
 }

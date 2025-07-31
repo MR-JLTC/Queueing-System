@@ -1,19 +1,20 @@
-// src/queue-tickets/queue-tickets.service.ts
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, Not, In } from 'typeorm'; // Import 'In'
 import { QueueTicket } from './entities/queue-ticket.entity';
 import { CreateQueueTicketDto } from './dto/create-queue-ticket.dto';
 import { UpdateQueueTicketDto } from './dto/update-queue-ticket.dto';
 import { Branch } from '../branches/entities/branch.entity';
 import { CustomerCategory } from '../customer-categories/entities/customer-category.entity';
 import { TicketStatus } from '../ticket-statuses/entities/ticket-status.entity';
-import { ServiceWindow } from '../service-windows/entities/service-window.entity'; // Import ServiceWindow
+import { ServiceWindow } from '../service-windows/entities/service-window.entity';
 import { Staff } from '../staff/entities/staff.entity';
 import { User } from '../users/entities/user.entity';
 
 @Injectable()
 export class QueueTicketsService {
+  private statusIds: { QUEUED: number; CALLED: number; SERVED: number; CANCELLED: number };
+
   constructor(
     @InjectRepository(QueueTicket)
     private queueTicketRepository: Repository<QueueTicket>,
@@ -23,18 +24,33 @@ export class QueueTicketsService {
     private customerCategoryRepository: Repository<CustomerCategory>,
     @InjectRepository(TicketStatus)
     private ticketStatusRepository: Repository<TicketStatus>,
-    @InjectRepository(ServiceWindow) // Inject ServiceWindow Repository
+    @InjectRepository(ServiceWindow)
     private serviceWindowRepository: Repository<ServiceWindow>,
     @InjectRepository(Staff)
     private staffRepository: Repository<Staff>,
     @InjectRepository(User)
     private userRepository: Repository<User>,
-  ) {}
+  ) {
+    this.initializeStatusIds();
+  }
 
-  async create(createQueueTicketDto: CreateQueueTicketDto): Promise<QueueTicket> {
+  private async initializeStatusIds() {
+    const statuses = await this.ticketStatusRepository.find();
+    this.statusIds = {
+      QUEUED: statuses.find(s => s.statusName === 'QUEUED')?.statusId || 1,
+      CALLED: statuses.find(s => s.statusName === 'CALLED')?.statusId || 2,
+      SERVED: statuses.find(s => s.statusName === 'SERVED')?.statusId || 3,
+      CANCELLED: statuses.find(s => s.statusName === 'CANCELLED')?.statusId || 4,
+    };
+    if (Object.values(this.statusIds).some(id => !id)) {
+      console.warn('One or more essential ticket statuses not found in database. Ensure ticket_statuses table is seeded correctly.');
+    }
+  }
+
+   async create(createQueueTicketDto: CreateQueueTicketDto): Promise<QueueTicket> {
     const {
       customerName,
-      categoryId,
+      customerCategoryId,
       branchId,
       currentStatusId,
       assignedToWindowId,
@@ -52,8 +68,8 @@ export class QueueTicketsService {
     const branch = await this.branchRepository.findOne({ where: { branchId } });
     if (!branch) throw new BadRequestException(`Branch with ID ${branchId} not found.`);
 
-    const category = await this.customerCategoryRepository.findOne({ where: { categoryId } });
-    if (!category) throw new BadRequestException(`Customer category with ID ${categoryId} not found.`);
+    const category = await this.customerCategoryRepository.findOne({ where: { categoryId: createQueueTicketDto.customerCategoryId } });
+    if (!category) throw new BadRequestException(`Customer category with ID ${customerCategoryId} not found.`);
 
     const currentStatus = await this.ticketStatusRepository.findOne({ where: { statusId: currentStatusId } });
     if (!currentStatus) throw new BadRequestException(`Ticket status with ID ${currentStatusId} not found.`);
@@ -127,58 +143,61 @@ export class QueueTicketsService {
     return this.queueTicketRepository.save(newQueueTicket);
   }
 
-  findAll(): Promise<QueueTicket[]> {
+  async findAll(): Promise<QueueTicket[]> {
     return this.queueTicketRepository.find({
-      relations: ['branch', 'category', 'currentStatus', 'assignedToWindow', 'assignedToStaff', 'issuedBy', 'cancelledBy'],
+      relations: ['branch', 'assignedToWindow', 'assignedToStaff', 'category', 'currentStatus', 'issuedBy', 'cancelledBy'],
     });
   }
 
   async findOne(ticketId: number): Promise<QueueTicket> {
     const ticket = await this.queueTicketRepository.findOne({
       where: { ticketId },
-      relations: ['branch', 'category', 'currentStatus', 'assignedToWindow', 'assignedToStaff', 'issuedBy', 'cancelledBy'],
+      relations: ['branch', 'assignedToWindow', 'assignedToStaff', 'category', 'currentStatus', 'issuedBy', 'cancelledBy'],
     });
     if (!ticket) {
-      throw new NotFoundException(`Queue ticket with ID "${ticketId}" not found`);
+      throw new NotFoundException(`Queue ticket with ID ${ticketId} not found.`);
     }
     return ticket;
   }
 
   async update(ticketId: number, updateQueueTicketDto: UpdateQueueTicketDto): Promise<QueueTicket> {
-    const ticket = await this.findOne(ticketId);
-
-    // Update relationships if IDs are provided
-    if (updateQueueTicketDto.categoryId !== undefined) {
-      const category = await this.customerCategoryRepository.findOne({ where: { categoryId: updateQueueTicketDto.categoryId } });
-      if (!category) throw new BadRequestException(`Customer category with ID ${updateQueueTicketDto.categoryId} not found.`);
-      ticket.category = category;
-      delete updateQueueTicketDto.categoryId;
+    const ticket = await this.queueTicketRepository.findOne({ where: { ticketId } });
+    if (!ticket) {
+      throw new NotFoundException(`Queue ticket with ID ${ticketId} not found.`);
     }
 
+    // Handle updates to relationships and direct properties
     if (updateQueueTicketDto.branchId !== undefined) {
       const branch = await this.branchRepository.findOne({ where: { branchId: updateQueueTicketDto.branchId } });
       if (!branch) throw new BadRequestException(`Branch with ID ${updateQueueTicketDto.branchId} not found.`);
       ticket.branch = branch;
-      delete updateQueueTicketDto.branchId;
+      ticket.branchId = updateQueueTicketDto.branchId;
+    }
+
+    if (updateQueueTicketDto.customerCategoryId !== undefined) { // Use customerCategoryId [cite: uploaded:queue-ticket.entity.ts]
+      const category = await this.customerCategoryRepository.findOne({ where: { categoryId: updateQueueTicketDto.customerCategoryId } });
+      if (!category) throw new BadRequestException(`Customer category with ID ${updateQueueTicketDto.customerCategoryId} not found.`);
+      ticket.category = category;
+      ticket.customerCategoryId = updateQueueTicketDto.customerCategoryId; // Corrected property name [cite: uploaded:queue-ticket.entity.ts]
     }
 
     if (updateQueueTicketDto.currentStatusId !== undefined) {
-      const currentStatus = await this.ticketStatusRepository.findOne({ where: { statusId: updateQueueTicketDto.currentStatusId } });
-      if (!currentStatus) throw new BadRequestException(`Ticket status with ID ${updateQueueTicketDto.currentStatusId} not found.`);
-      ticket.currentStatus = currentStatus;
-      delete updateQueueTicketDto.currentStatusId;
+      const status = await this.ticketStatusRepository.findOne({ where: { statusId: updateQueueTicketDto.currentStatusId } });
+      if (!status) throw new BadRequestException(`Ticket Status with ID ${updateQueueTicketDto.currentStatusId} not found.`);
+      ticket.currentStatus = status;
+      ticket.currentStatusId = updateQueueTicketDto.currentStatusId;
     }
 
-    if (updateQueueTicketDto.assignedToWindowId !== undefined) {
+    if (updateQueueTicketDto.assignedToWindowId !== undefined) { // Use assignedToWindowId [cite: uploaded:queue-ticket.entity.ts]
       if (updateQueueTicketDto.assignedToWindowId === null) {
         ticket.assignedToWindow = null;
         ticket.assignedToWindowId = null;
       } else {
-        const assignedToWindow = await this.serviceWindowRepository.findOne({ where: { windowId: updateQueueTicketDto.assignedToWindowId } });
-        if (!assignedToWindow) throw new BadRequestException(`Service window with ID ${updateQueueTicketDto.assignedToWindowId} not found.`);
-        ticket.assignedToWindow = assignedToWindow;
+        const serviceWindow = await this.serviceWindowRepository.findOne({ where: { windowId: updateQueueTicketDto.assignedToWindowId } });
+        if (!serviceWindow) throw new BadRequestException(`Service window with ID ${updateQueueTicketDto.assignedToWindowId} not found.`);
+        ticket.assignedToWindow = serviceWindow;
+        ticket.assignedToWindowId = updateQueueTicketDto.assignedToWindowId;
       }
-      delete updateQueueTicketDto.assignedToWindowId;
     }
 
     if (updateQueueTicketDto.assignedToStaffId !== undefined) {
@@ -186,11 +205,11 @@ export class QueueTicketsService {
         ticket.assignedToStaff = null;
         ticket.assignedToStaffId = null;
       } else {
-        const assignedToStaff = await this.staffRepository.findOne({ where: { staffId: updateQueueTicketDto.assignedToStaffId } });
-        if (!assignedToStaff) throw new BadRequestException(`Staff with ID ${updateQueueTicketDto.assignedToStaffId} not found.`);
-        ticket.assignedToStaff = assignedToStaff;
+        const staff = await this.staffRepository.findOne({ where: { staffId: updateQueueTicketDto.assignedToStaffId } });
+        if (!staff) throw new BadRequestException(`Staff with ID ${updateQueueTicketDto.assignedToStaffId} not found.`);
+        ticket.assignedToStaff = staff;
+        ticket.assignedToStaffId = updateQueueTicketDto.assignedToStaffId;
       }
-      delete updateQueueTicketDto.assignedToStaffId;
     }
 
     if (updateQueueTicketDto.issuedByUserId !== undefined) {
@@ -201,8 +220,8 @@ export class QueueTicketsService {
         const issuedBy = await this.userRepository.findOne({ where: { userId: updateQueueTicketDto.issuedByUserId } });
         if (!issuedBy) throw new BadRequestException(`User (issuedBy) with ID ${updateQueueTicketDto.issuedByUserId} not found.`);
         ticket.issuedBy = issuedBy;
+        ticket.issuedByUserId = updateQueueTicketDto.issuedByUserId;
       }
-      delete updateQueueTicketDto.issuedByUserId;
     }
 
     if (updateQueueTicketDto.cancelledById !== undefined) {
@@ -213,24 +232,240 @@ export class QueueTicketsService {
         const cancelledBy = await this.userRepository.findOne({ where: { userId: updateQueueTicketDto.cancelledById } });
         if (!cancelledBy) throw new BadRequestException(`User (cancelledBy) with ID ${updateQueueTicketDto.cancelledById} not found.`);
         ticket.cancelledBy = cancelledBy;
+        ticket.cancelledById = updateQueueTicketDto.cancelledById;
       }
-      delete updateQueueTicketDto.cancelledById;
     }
 
-    // Ensure serviceType is handled as string or null
-    if (updateQueueTicketDto.serviceType !== undefined) {
-      ticket.serviceType = updateQueueTicketDto.serviceType === '' ? null : updateQueueTicketDto.serviceType;
-      delete updateQueueTicketDto.serviceType;
+    // Update direct properties
+    if (updateQueueTicketDto.ticketNumber !== undefined) ticket.ticketNumber = updateQueueTicketDto.ticketNumber;
+    if (updateQueueTicketDto.customerName !== undefined) ticket.customerName = updateQueueTicketDto.customerName;
+    if (updateQueueTicketDto.customerNickname !== undefined) ticket.customerNickname = updateQueueTicketDto.customerNickname;
+    if (updateQueueTicketDto.serviceType !== undefined) ticket.serviceType = updateQueueTicketDto.serviceType;
+    if (updateQueueTicketDto.requeueAttempts !== undefined) ticket.requeueAttempts = updateQueueTicketDto.requeueAttempts;
+    if (updateQueueTicketDto.visibilityStatus !== undefined) ticket.visibilityStatus = updateQueueTicketDto.visibilityStatus;
+
+    // Handle Date string conversions
+    if (updateQueueTicketDto.queuedAt !== undefined) {
+      ticket.queuedAt = updateQueueTicketDto.queuedAt ? new Date(updateQueueTicketDto.queuedAt) : ticket.queuedAt;
+    }
+    if (updateQueueTicketDto.calledAt !== undefined) {
+      ticket.calledAt = updateQueueTicketDto.calledAt ? new Date(updateQueueTicketDto.calledAt) : null;
+    }
+    if (updateQueueTicketDto.servedAt !== undefined) {
+      ticket.servedAt = updateQueueTicketDto.servedAt ? new Date(updateQueueTicketDto.servedAt) : null;
     }
 
-    Object.assign(ticket, updateQueueTicketDto);
     return this.queueTicketRepository.save(ticket);
   }
 
   async remove(ticketId: number): Promise<void> {
     const result = await this.queueTicketRepository.delete(ticketId);
     if (result.affected === 0) {
-      throw new NotFoundException(`Queue ticket with ID "${ticketId}" not found`);
+      throw new NotFoundException(`Queue ticket with ID ${ticketId} not found.`);
     }
+  }
+
+  // --- The Queueing Logic Methods (Adapted to entity properties) ---
+
+  /**
+   * Calls the next available ticket for a specific service window in a branch.
+   * Follows FIFO. Updates status to 'CALLED'.
+   */
+  async callNextTicket(branchId: number, assignedToWindowId: number): Promise<QueueTicket | null> { // branchId and assignedToWindowId are numbers
+    if (!this.statusIds) await this.initializeStatusIds();
+
+    const nextTicket = await this.queueTicketRepository.findOne({
+      where: {
+        branchId,
+        assignedToWindowId, // Corrected property name [cite: uploaded:queue-ticket.entity.ts]
+        currentStatusId: this.statusIds.QUEUED,
+        visibilityStatus: 'ON_LIVE',
+      },
+      order: {
+        queuedAt: 'ASC', // FIFO
+      },
+      relations: ['branch', 'assignedToWindow', 'category', 'currentStatus'], // Correct relation name
+    });
+
+    if (!nextTicket) {
+      return null;
+    }
+
+    nextTicket.currentStatusId = this.statusIds.CALLED;
+    nextTicket.calledAt = new Date();
+    nextTicket.requeueAttempts = 0;
+    return this.queueTicketRepository.save(nextTicket);
+  }
+
+  /**
+   * Requeues a ticket. Increments requeue attempts.
+   * If attempts reach 3, marks as 'CANCELLED'. Otherwise, reverts to 'QUEUED'.
+   */
+  async requeueTicket(ticketId: number, cancelledById?: number): Promise<QueueTicket> {
+    if (!this.statusIds) await this.initializeStatusIds();
+
+    const ticket = await this.queueTicketRepository.findOne({ where: { ticketId } });
+    if (!ticket) {
+      throw new NotFoundException(`Queue ticket with ID ${ticketId} not found.`);
+    }
+
+    ticket.requeueAttempts += 1;
+
+    if (ticket.requeueAttempts >= 3) {
+      ticket.currentStatusId = this.statusIds.CANCELLED;
+      ticket.visibilityStatus = 'CANCELLED';
+      ticket.cancelledById = cancelledById || null;
+    } else {
+      ticket.currentStatusId = this.statusIds.QUEUED;
+      ticket.calledAt = null;
+      ticket.visibilityStatus = 'ON_LIVE';
+    }
+
+    return this.queueTicketRepository.save(ticket);
+  }
+
+  /**
+   * Marks a ticket as 'SERVED'.
+   */
+  async markServed(ticketId: number): Promise<QueueTicket> {
+    if (!this.statusIds) await this.initializeStatusIds();
+
+    const ticket = await this.queueTicketRepository.findOne({ where: { ticketId } });
+    if (!ticket) {
+      throw new NotFoundException(`Queue ticket with ID ${ticketId} not found.`);
+    }
+
+    ticket.currentStatusId = this.statusIds.SERVED;
+    ticket.servedAt = new Date();
+    ticket.visibilityStatus = 'SERVED';
+    return this.queueTicketRepository.save(ticket);
+  }
+
+  /**
+   * Gets the queue status for a specific service window.
+   * Returns tickets categorized into 'called', 'pending', and 'on-going'.
+   */
+  async getQueueForWindow(branchId: number, assignedToWindowId: number): Promise<{ // branchId and assignedToWindowId are numbers
+    called: QueueTicket | null;
+    pending: QueueTicket | null;
+    onGoing: QueueTicket[];
+  }> {
+    if (!this.statusIds) await this.initializeStatusIds();
+
+    const tickets = await this.queueTicketRepository.find({
+      where: {
+        branchId,
+        assignedToWindowId, // Corrected property name [cite: uploaded:queue-ticket.entity.ts]
+        currentStatusId: In([this.statusIds.QUEUED, this.statusIds.CALLED]), // Fixed multiple properties error
+        visibilityStatus: 'ON_LIVE',
+      },
+      order: {
+        queuedAt: 'ASC', // FIFO order
+      },
+      relations: ['branch', 'assignedToWindow', 'category', 'currentStatus'], // Correct relation name
+    });
+
+    let calledTicket: QueueTicket | null = null;
+    let pendingTicket: QueueTicket | null = null;
+    const onGoingTickets: QueueTicket[] = [];
+
+    for (const ticket of tickets) {
+      if (ticket.currentStatusId === this.statusIds.CALLED) {
+        calledTicket = ticket;
+      } else if (ticket.currentStatusId === this.statusIds.QUEUED) {
+        if (!pendingTicket) {
+          pendingTicket = ticket;
+        } else {
+          onGoingTickets.push(ticket);
+        }
+      }
+    }
+
+    return {
+      called: calledTicket,
+      pending: pendingTicket,
+      onGoing: onGoingTickets,
+    };
+  }
+
+  /**
+   * Gets all tickets for a specific branch regardless of window.
+   * Useful for a general branch queue view.
+   */
+  async getQueueForBranch(branchId: number): Promise<QueueTicket[]> { // branchId is number
+    if (!this.statusIds) await this.initializeStatusIds();
+
+    return this.queueTicketRepository.find({
+      where: {
+        branchId,
+        currentStatusId: In([this.statusIds.QUEUED, this.statusIds.CALLED]), // Fixed multiple properties error
+        visibilityStatus: 'ON_LIVE',
+      },
+      order: {
+        queuedAt: 'ASC',
+      },
+      relations: ['branch', 'assignedToWindow', 'category', 'currentStatus'], // Correct relation name
+    });
+  }
+
+ async getQueueStatusByBranchAndWindow(branchId: number) {
+    if (!this.statusIds) await this.initializeStatusIds(); // Ensure status IDs are loaded
+
+    const branch = await this.branchRepository.findOne({ where: { branchId } });
+    if (!branch) {
+      throw new NotFoundException(`Branch with ID ${branchId} not found.`);
+    }
+
+    const serviceWindows = await this.serviceWindowRepository.find({
+      where: { branch: { branchId } },
+      order: { windowNumber: 'ASC' }, // Order by window number
+    });
+
+    const queueStatusByWindow: { [windowId: number]: {
+      windowName: string;
+      called: QueueTicket | null;
+      pending: QueueTicket | null;
+      onGoing: QueueTicket[];
+    }} = {};
+
+    for (const window of serviceWindows) {
+      const tickets = await this.queueTicketRepository.find({
+        where: {
+          branchId,
+          assignedToWindowId: window.windowId,
+          // FIX: Use 'NotIn' to exclude multiple status IDs
+          currentStatus: {
+            statusId: Not(In([this.statusIds.SERVED, this.statusIds.CANCELLED])),
+          },
+        },
+        relations: ['branch', 'category', 'currentStatus', 'assignedToWindow'],
+        order: { queuedAt: 'ASC' }, // Oldest tickets first
+      });
+
+      let calledTicket: QueueTicket | null = null;
+      let pendingTicket: QueueTicket | null = null;
+      const onGoingTickets: QueueTicket[] = [];
+
+      for (const ticket of tickets) {
+        if (ticket.currentStatusId === this.statusIds.CALLED) {
+          calledTicket = ticket;
+        } else if (ticket.currentStatusId === this.statusIds.QUEUED) {
+          if (!pendingTicket) {
+            pendingTicket = ticket; // The first QUEUED ticket is 'pending'
+          } else {
+            onGoingTickets.push(ticket); // The rest are 'on-going'
+          }
+        }
+      }
+
+      queueStatusByWindow[window.windowId] = {
+        windowName: window.windowName || `Window ${window.windowNumber}`,
+        called: calledTicket,
+        pending: pendingTicket,
+        onGoing: onGoingTickets,
+      };
+    }
+
+    return { queueStatusByWindow };
   }
 }

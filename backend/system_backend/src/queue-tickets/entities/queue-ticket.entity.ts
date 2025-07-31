@@ -13,19 +13,14 @@ export class QueueTicket {
   @PrimaryGeneratedColumn({ name: 'ticket_id' })
   ticketId: number;
 
-  @Column({ name: 'ticket_number', length: 50, unique: true })
+  @Column({ name: 'ticket_number', length: 50})
   ticketNumber: string;
 
   @Column({ name: 'customer_name', length: 255 })
   customerName: string;
 
-  // Removed: customerPhone as requested
-  // @Column({ name: 'customer_phone', type: 'varchar', nullable: true, length: 20 })
-  // customerPhone: string | null;
-
-  // Removed: customerEmail as requested
-  // @Column({ name: 'customer_email', type: 'varchar', nullable: true, length: 255 })
-  // customerEmail: string | null;
+  @Column({ name: 'customer_nickname', type: 'varchar', length: 255, nullable: true  }) // Added customer_nickname
+  customerNickname: string | null;
 
   @Column({ name: 'branch_id' })
   branchId: number;
@@ -80,6 +75,9 @@ export class QueueTicket {
   @ManyToOne(() => User, user => user.cancelledTickets, { nullable: true })
   @JoinColumn({ name: 'cancelled_by_id' })
   cancelledBy: User | null;
+
+  @Column({ name: 'requeue_attempts', type: 'int', default: 0 }) // Added requeue_attempts
+  requeueAttempts: number;
 
   @Column({ name: 'visibility_status', length: 255, default: 'ON_LIVE' })
   visibilityStatus: string;
