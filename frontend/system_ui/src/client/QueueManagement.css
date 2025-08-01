@@ -1,3 +1,52 @@
+/* Define CSS variables for consistent theming */
+:root {
+  /* Colors from SuperAdminDashboard.css */
+  --primary-dark-bg: #121212;
+  --secondary-dark-bg: #1a1a1a; /* Used for App Bar/headers in admin, suitable for main background */
+  --card-dark-bg: #1f1f1f; /* Used for cards/panels in admin, suitable for form background */
+  --input-dark-bg: #2B2B2B; /* A slightly darker shade for input fields */
+  --item-dark-bg: #3A3A3A; /* Even darker for list items */
+
+  --text-light-1: #e0e0e0; /* Primary light text */
+  --text-light-2: rgba(255, 255, 255, 0.7); /* Secondary light text */
+  --text-light-3: rgba(255, 255, 255, 0.6); /* Slightly more faded for subtitles */
+  --text-light-4: rgba(255, 255, 255, 0.4); /* For placeholder text */
+  --text-light-dark: #333; /* Dark text on light backgrounds (e.g., ticket popup) */
+  --text-light-dark-secondary: #555; /* Secondary dark text */
+  --text-light-dark-faded: #666; /* Faded dark text */
+
+  --border-color-subtle: rgba(100, 110, 130, 0.15); /* Subtle border for separators */
+  --border-color-input: #4A4A6D; /* Darker, subtle border for inputs */
+
+  --accent-blue: #63b3ed; /* Original blue from QueueManagement for focus/selected states */
+  --accent-blue-shadow: rgba(99, 179, 237, 0.5); /* Shadow for original blue */
+  --accent-blue-darker: #4299E1; /* Stronger blue for selected category/proceed button */
+  --accent-blue-hover: #3182CE; /* Darker blue on hover for proceed button */
+  --accent-blue-shadow-strong: rgba(66, 153, 225, 0.4); /* Stronger shadow for blue */
+
+  --success-green: #4CAF50; /* Green for success popups/download buttons */
+  --success-green-hover: #45a049;
+  --success-green-shadow: rgba(76, 175, 80, 0.3);
+
+  --error-red: #F44336; /* Red for error popups/priority tickets */
+  --error-red-shadow: rgba(244, 67, 54, 0.4); /* Added for consistency */
+
+  --button-disabled-bg: #4A4A6D; /* Greyed out when disabled */
+
+  /* Shadows */
+  --shadow-dark-1: rgba(0, 0, 0, 0.5); /* Soft shadow for depth */
+  --shadow-dark-2: rgba(0, 0, 0, 0.4); /* Popup shadow */
+  --shadow-dark-3: rgba(0, 0, 0, 0.2); /* Subtle shadows for elements */
+  --shadow-dark-button: rgba(0, 0, 0, 0.3); /* For buttons */
+  --shadow-light-inset: rgba(0, 0, 0, 0.1); /* For QR code border/shadow */
+  --shadow-light-inset-strong: rgba(0, 0, 0, 0.2); /* Stronger for selected category */
+
+  /* Popup specific colors (lighter theme within dark app) */
+  --popup-light-bg: #fff;
+  --popup-light-border: rgba(0, 0, 0, 0.1);
+  --popup-light-pattern: rgba(240, 240, 240, 0.1); /* Subtle pattern for ticket */
+}
+
 /* Ensure all elements use border-box */
 *, *:before, *:after {
   box-sizing: border-box;
@@ -7,11 +56,11 @@
 html, body {
   margin: 0;
   padding: 0;
-  height: 100%; /* Ensure html and body take full height */
-  overflow-x: hidden; /* Prevent horizontal scrollbars */
-  background-color: #1A1A2E; /* Deep dark blue background from image */
-  font-family: 'Inter', sans-serif; /* Consistent professional font */
-  color: white; /* Default text color */
+  height: 100%;
+  overflow-x: hidden;
+  background-color: var(--secondary-dark-bg); /* Deep dark blue background from image */
+  font-family: 'Inter', sans-serif;
+  color: var(--text-light-1); /* Default text color */
 }
 
 /* Hide previous floating elements if any */
@@ -26,43 +75,42 @@ body .floating-element-2 {
 .queue-page {
   min-height: 100vh;
   width: 100vw;
-  display: flex; /* Center content */
+  display: flex;
   justify-content: center;
   align-items: center;
-  padding: 20px; /* Some padding around the form */
+  padding: 20px;
   box-sizing: border-box;
-  /* Add overflow-y for potential scrolling on small screens */
   overflow-y: auto;
-  -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+  -webkit-overflow-scrolling: touch;
 }
 
 /* Queue Form - The main container for all elements shown in the image */
 .queue-form {
-  background-color: #282840; /* Slightly lighter dark background for the form */
-  border-radius: 15px; /* Rounded corners for the form container */
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); /* Soft shadow for depth */
-  padding: 40px; /* Generous padding inside the form */
+  background-color: var(--card-dark-bg); /* Slightly lighter dark background for the form */
+  border-radius: 15px;
+  box-shadow: 0 10px 30px var(--shadow-dark-1);
+  padding: 40px;
   width: 100%;
-  max-width: 450px; /* Max width to match the image's form size */
+  max-width: 450px;
   display: flex;
   flex-direction: column;
-  gap: 25px; /* Space between sections */
-  position: relative; /* Needed for absolute positioning of language selector */
-  animation: fadeIn 0.5s ease-out; /* Fade in animation */
+  gap: 25px;
+  position: relative;
+  animation: fadeIn 0.5s ease-out;
 }
 
 /* Form Header */
 .form-header {
   text-align: center;
-  margin-bottom: 10px; /* Adjust margin to match image */
-  padding-top: 20px; /* Add padding to push content down from language selector */
+  margin-bottom: 10px;
+  padding-top: 20px;
 }
 
 .form-header-icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 70px; /* Larger icon */
+  width: 70px;
   height: 70px;
   margin-bottom: 10px;
 }
@@ -70,77 +118,78 @@ body .floating-element-2 {
 .form-header-icon img {
   width: 100%;
   height: 100%;
-  object-fit: contain; /* Ensure logo fits */
+  object-fit: contain;
 }
 
 .form-title {
-  font-size: 2rem; /* Larger title */
+  font-size: 2rem;
   font-weight: 700;
-  color: #E0E0E0; /* Light text color */
+  color: var(--text-light-1);
   margin: 0 0 5px 0;
 }
 
 .form-subtitle {
   font-size: 0.95rem;
-  color: rgba(255, 255, 255, 0.7); /* Slightly transparent white */
+  color: var(--text-light-2);
   margin: 0;
 }
 
 /* Language Selector at the top left */
 .language-selector-wrapper {
-  position: absolute; /* Position absolutely within the form */
+  position: absolute;
   top: 25px;
   left: 25px;
-  z-index: 10; /* Ensure it's above other elements if needed */
+  z-index: 10;
 }
 
 .language-dropdown {
-  padding: 8px 15px 8px 35px; /* Padding for text and icon */
-  border: 1px solid rgba(255, 255, 255, 0.2); /* Subtle border */
-  border-radius: 8px; /* Rounded corners */
+  padding: 8px 15px 8px 35px;
+  border: 1px solid var(--border-color-subtle); /* Subtle border */
+  border-radius: 8px;
   background: rgba(255, 255, 255, 0.1); /* Slightly transparent background */
-  color: #E0E0E0; /* Light text color */
+  color: var(--text-light-1);
   font-size: 0.9rem;
   cursor: pointer;
   transition: all 0.3s ease;
-  -webkit-appearance: none; /* Remove default dropdown arrow */
+  -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
-  background-image: url('data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23E0E0E0%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%2212%22%20r%3D%2210%22%2F%3E%3Cpath%20d%3D%22M12%202a14.5%2014.5%200%200%201%200%2020%2014.5%2014.5%200%200%201%200-20%22%2F%3E%3Cpath%20d%3D%22M2%2012h20%22%2F%3E%3C%2Fsvg%3E'), /* Globe icon SVG */
-                  url('data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2220%22%20height%3D%2220%22%20viewBox%3D%220%200%2020%2020%22%20fill%3D%22none%22%3E%3Cpath%20d%3D%22M6%208L10%2012L14%208%22%20stroke%3D%22%23E0E0E0%22%20stroke-width%3D%221.5%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fsvg%3E'); /* Dropdown arrow SVG */
+  /* SVG icons' fill/stroke color adjusted to match text-light-1 if necessary */
+  background-image: url('data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23E0E0E0%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%2212%22%20r%3D%2210%22%2F%3E%3Cpath%20d%3D%22M12%202a14.5%2014.5%200%200%201%200%2020%2014.5%2014.5%200%200%201%200-20%22%2F%3E%3Cpath%20d%3D%22M2%2012h20%22%2F%3E%3C%2Fsvg%3E'),
+                  url('data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2220%22%20height%3D%2220%22%20viewBox%3D%220%200%2020%2020%22%20fill%3D%22none%22%3E%3Cpath%20d%3D%22M6%208L10%2012L14%208%22%20stroke%3D%22%23E0E0E0%22%20stroke-width%3D%221.5%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fsvg%3E');
   background-repeat: no-repeat, no-repeat;
-  background-position: 8px center, right 10px center; /* Position globe and arrow */
-  background-size: 18px, 12px; /* Size globe and arrow */
+  background-position: 8px center, right 10px center;
+  background-size: 18px, 12px;
 }
 
 .language-dropdown:focus {
   outline: none;
-  border-color: #63b3ed;
-  box-shadow: 0 0 0 2px rgba(99, 179, 237, 0.5);
+  border-color: var(--accent-blue);
+  box-shadow: 0 0 0 2px var(--accent-blue-shadow);
 }
 
 .language-dropdown option {
-  background: #282840; /* Dark background for dropdown options */
-  color: #E0E0E0;
+  background: var(--card-dark-bg); /* Dark background for dropdown options */
+  color: var(--text-light-1);
 }
 
 /* Section Headers (Name, Nickname, Select Branch, Category, Transaction Type) */
 .section-header {
   text-align: left;
-  margin-bottom: 10px; /* Space between header and input/buttons */
+  margin-bottom: 10px;
 }
 
 .section-title {
   font-size: 0.9rem;
   font-weight: 600;
-  color: #E0E0E0;
+  color: var(--text-light-1);
   margin: 0;
-  text-transform: uppercase; /* Uppercase as in image */
+  text-transform: uppercase;
 }
 
 .section-subtitle {
   font-size: 0.8rem;
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--text-light-3);
   margin: 5px 0 0 0;
 }
 
@@ -148,21 +197,21 @@ body .floating-element-2 {
 .input-section {
   display: flex;
   flex-direction: column;
-  gap: 8px; /* Space between label and input */
+  gap: 8px;
 }
 
 .input-label {
   font-size: 0.9rem;
-  color: #E0E0E0;
+  color: var(--text-light-1);
   font-weight: 500;
 }
 
 .text-input {
   padding: 12px 15px;
-  border: 1px solid #4A4A6D; /* Darker, subtle border */
+  border: 1px solid var(--border-color-input);
   border-radius: 8px;
-  background-color: #3A3A5C; /* Darker input background */
-  color: #E0E0E0;
+  background-color: var(--input-dark-bg); /* Darker input background */
+  color: var(--text-light-1);
   font-size: 1rem;
   outline: none;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
@@ -170,12 +219,12 @@ body .floating-element-2 {
 }
 
 .text-input::placeholder {
-  color: rgba(255, 255, 255, 0.4);
+  color: var(--text-light-4);
 }
 
 .text-input:focus {
-  border-color: #63b3ed; /* Blue border on focus */
-  box-shadow: 0 0 0 3px rgba(99, 179, 237, 0.3); /* Blue glow on focus */
+  border-color: var(--accent-blue);
+  box-shadow: 0 0 0 3px var(--accent-blue-shadow);
 }
 
 /* Dropdowns (Branch, Transaction Type) */
@@ -189,10 +238,10 @@ body .floating-element-2 {
 .branch-dropdown,
 .transaction-dropdown {
   padding: 12px 15px;
-  border: 1px solid #4A4A6D;
+  border: 1px solid var(--border-color-input);
   border-radius: 8px;
-  background-color: #3A3A5C;
-  color: #E0E0E0;
+  background-color: var(--input-dark-bg);
+  color: var(--text-light-1);
   font-size: 1rem;
   outline: none;
   cursor: pointer;
@@ -209,14 +258,14 @@ body .floating-element-2 {
 
 .branch-dropdown:focus,
 .transaction-dropdown:focus {
-  border-color: #63b3ed;
-  box-shadow: 0 0 0 3px rgba(99, 179, 237, 0.3);
+  border-color: var(--accent-blue);
+  box-shadow: 0 0 0 3px var(--accent-blue-shadow);
 }
 
 .branch-dropdown option,
 .transaction-dropdown option {
-  background: #282840; /* Match form background for options */
-  color: #E0E0E0;
+  background: var(--card-dark-bg); /* Match form background for options */
+  color: var(--text-light-1);
 }
 
 /* Category Buttons */
@@ -228,19 +277,19 @@ body .floating-element-2 {
 
 .category-buttons {
   display: flex;
-  gap: 10px; /* Space between buttons */
-  justify-content: space-between; /* Distribute horizontally */
-  flex-wrap: wrap; /* Allow wrapping on smaller screens */
+  gap: 10px;
+  justify-content: space-between;
+  flex-wrap: wrap;
 }
 
 .category-btn {
-  flex: 1; /* Allow buttons to grow and shrink */
-  min-width: 140px; /* Minimum width for buttons */
+  flex: 1;
+  min-width: 140px;
   padding: 12px 15px;
-  border: 1px solid #4A4A6D;
+  border: 1px solid var(--border-color-input);
   border-radius: 8px;
-  background-color: #3A3A5C;
-  color: #E0E0E0;
+  background-color: var(--input-dark-bg);
+  color: var(--text-light-1);
   font-size: 0.95rem;
   font-weight: 500;
   cursor: pointer;
@@ -252,21 +301,21 @@ body .floating-element-2 {
 }
 
 .category-btn:hover:not(.selected) {
-  background-color: #4A4A6D; /* Slightly lighter on hover */
-  transform: translateY(-2px); /* Subtle lift */
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  background-color: var(--border-color-input); /* Slightly lighter on hover */
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px var(--shadow-dark-3);
 }
 
 .category-btn.selected {
-  background-color: #4299E1; /* Blue for selected state */
-  border-color: #4299E1;
+  background-color: var(--accent-blue-darker);
+  border-color: var(--accent-blue-darker);
   color: white;
-  box-shadow: 0 4px 15px rgba(66, 153, 225, 0.4); /* Stronger shadow for selected */
-  transform: translateY(-2px); /* Keep lifted when selected */
+  box-shadow: 0 4px 15px var(--accent-blue-shadow-strong);
+  transform: translateY(-2px);
 }
 
 .category-icon {
-  width: 20px; /* Size of the SVG icons */
+  width: 20px;
   height: 20px;
   filter: brightness(0) invert(1); /* Make SVG icons white */
 }
@@ -279,7 +328,7 @@ body .floating-element-2 {
 /* Proceed Button */
 .proceed-btn {
   padding: 15px 25px;
-  background-color: #4299E1; /* Blue background */
+  background-color: var(--accent-blue-darker);
   border: none;
   border-radius: 8px;
   color: white;
@@ -287,23 +336,24 @@ body .floating-element-2 {
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  margin-top: 15px; /* Space above the button */
-  box-shadow: 0 5px 15px rgba(66, 153, 225, 0.3);
+  margin-top: 15px;
+  box-shadow: 0 5px 15px var(--accent-blue-shadow);
 }
 
 .proceed-btn:hover:not(:disabled) {
-  background-color: #3182CE; /* Darker blue on hover */
-  transform: translateY(-3px); /* More pronounced lift */
-  box-shadow: 0 8px 20px rgba(66, 153, 225, 0.4);
+  background-color: var(--accent-blue-hover);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px var(--accent-blue-shadow-strong);
 }
 
 .proceed-btn:active:not(:disabled) {
   transform: translateY(0);
-  box-shadow: 0 2px 10px rgba(66, 153, 225, 0.2);
+  box-shadow: 0 2px 10px var(--shadow-dark-3);
 }
 
 .proceed-btn:disabled {
-  background-color: #4A4A6D; /* Greyed out when disabled */
+  background-color: var(--button-disabled-bg);
+  color: var(--text-light-3); /* Faded text on disabled button */
   cursor: not-allowed;
   opacity: 0.7;
   box-shadow: none;
@@ -326,36 +376,34 @@ body .floating-element-2 {
 }
 
 .queue-ticket-popup {
-  background: #fff;
+  background: var(--popup-light-bg);
   border-radius: 12px;
   padding: 2.5rem 2rem;
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 15px 30px var(--shadow-dark-1);
   animation: bounceIn 0.6s ease-out;
   position: relative;
   text-align: center;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  max-width: 420px; /* Slightly wider for better layout */
+  border: 1px solid var(--popup-light-border);
+  max-width: 420px;
   width: 90%;
-  color: #333;
+  color: var(--text-light-dark);
   display: flex;
   flex-direction: column;
   align-items: center;
-  /* Added for a subtle background pattern for the ticket */
-  background-image: linear-gradient(45deg, rgba(240, 240, 240, 0.1) 25%, transparent 25%, transparent 75%, rgba(240, 240, 240, 0.1) 75%, rgba(240, 240, 240, 0.1) 100%), linear-gradient(-45deg, rgba(240, 240, 240, 0.1) 25%, transparent 25%, transparent 75%, rgba(240, 240, 240, 0.1) 75%, rgba(240, 240, 240, 0.1) 100%);
+  background-image: linear-gradient(45deg, var(--popup-light-pattern) 25%, transparent 25%, transparent 75%, var(--popup-light-pattern) 75%, var(--popup-light-pattern) 100%), linear-gradient(-45deg, var(--popup-light-pattern) 25%, transparent 25%, transparent 75%, var(--popup-light-pattern) 75%, var(--popup-light-pattern) 100%);
   background-size: 20px 20px;
   background-position: 0 0, 10px 10px;
 
-  /* Enable scrolling for the popup content if it overflows */
-  max-height: 90vh; /* Limit height to viewport height */
-  overflow-y: auto; /* Enable vertical scrolling */
-  -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+  max-height: 90vh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .ticket-content-printable {
-  width: 400px; /* Fixed width for consistent PDF rendering */
-  padding: 1rem 1.5rem; /* Increased internal padding */
+  width: 400px;
+  padding: 1rem 1.5rem;
   margin: 0;
-  background-color: #ffffff; /* Ensure white background for PDF */
+  background-color: var(--popup-light-bg);
 }
 
 .ticket-header {
@@ -363,39 +411,39 @@ body .floating-element-2 {
   margin-bottom: 1.5rem;
   width: 100%;
   position: relative;
-  padding-bottom: 20px; /* Increased padding for the border */
-  border-bottom: 2px dashed #e0e0e0; /* More prominent dashed line */
+  padding-bottom: 20px;
+  border-bottom: 2px dashed var(--border-color-subtle);
 }
 
 .ticket-header-logo {
-  width: 80px; /* Slightly larger logo for better visibility in PDF */
+  width: 80px;
   height: 80px;
   margin-bottom: 15px;
 }
 
 .ticket-title {
-  font-size: 2rem; /* Larger title for emphasis */
-  font-weight: 800; /* Bolder */
-  color: #333;
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--text-light-dark);
   margin: 0;
-  letter-spacing: 2px; /* More spacing for readability */
+  letter-spacing: 2px;
   text-transform: uppercase;
   line-height: 1.2;
 }
 
 /* Specific styles for Standard and Priority tickets (as defined in original) */
 .ticket-title.standard {
-  color: #4CAF50; /* Example green for standard */
+  color: var(--success-green);
 }
 
 .ticket-title.priority {
-  color: #F44336; /* Example red for priority */
+  color: var(--error-red);
 }
 
 .ticket-number {
-  font-size: 4rem; /* Significantly larger queue number */
+  font-size: 4rem;
   font-weight: 900;
-  color: #000;
+  color: #000; /* Keeping black for ticket number for strong contrast */
   margin-top: 1rem;
   letter-spacing: 3px;
 }
@@ -404,8 +452,8 @@ body .floating-element-2 {
   width: 100%;
   text-align: left;
   margin-top: 1.5rem;
-  margin-bottom: 2rem; /* More space before QR */
-  padding: 0 1rem; /* Padding for detail rows */
+  margin-bottom: 2rem;
+  padding: 0 1rem;
 }
 
 .detail-row {
@@ -413,7 +461,7 @@ body .floating-element-2 {
   justify-content: space-between;
   align-items: center;
   padding: 8px 0;
-  border-bottom: 1px dotted #ccc; /* Dotted line for separation */
+  border-bottom: 1px dotted #ccc; /* Keeping light grey for subtle dotted line */
 }
 
 .detail-row:last-child {
@@ -422,23 +470,23 @@ body .floating-element-2 {
 
 .detail-label {
   font-weight: 600;
-  color: #555;
+  color: var(--text-light-dark-secondary);
   display: flex;
   align-items: center;
-  gap: 8px; /* Space between icon and text */
+  gap: 8px;
   font-size: 0.95rem;
 }
 
 .detail-icon {
-  font-size: 1.2rem; /* Adjust icon size */
-  color: #666;
+  font-size: 1.2rem;
+  color: var(--text-light-dark-faded);
 }
 
 .detail-value {
   font-weight: 500;
-  color: #333;
+  color: var(--text-light-dark);
   text-align: right;
-  flex-grow: 1; /* Allows value to take remaining space */
+  flex-grow: 1;
   font-size: 0.95rem;
 }
 
@@ -446,36 +494,36 @@ body .floating-element-2 {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 2rem; /* More space after QR */
+  margin-bottom: 2rem;
   padding: 1rem 0;
   background-color: #f9f9f9; /* Slight background for QR section */
   border-radius: 8px;
 }
 
 .qr-code-canvas {
-  border: 4px solid #fff; /* White border around QR */
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  background-color: #fff;
+  border: 4px solid var(--popup-light-bg); /* White border around QR */
+  box-shadow: 0 4px 10px var(--shadow-light-inset);
+  background-color: var(--popup-light-bg);
 }
 
 .qr-message {
   font-size: 0.85rem;
-  color: #666;
+  color: var(--text-light-dark-faded);
   margin-top: 1rem;
-  max-width: 80%; /* Constrain message width */
+  max-width: 80%;
   line-height: 1.4;
 }
 
 .ticket-footer {
   width: 100%;
-  padding-top: 20px; /* Padding above footer */
-  border-top: 2px dashed #e0e0e0;
+  padding-top: 20px;
+  border-top: 2px dashed var(--border-color-subtle);
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
   font-size: 0.9rem;
-  color: #666;
+  color: var(--text-light-dark-faded);
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -490,7 +538,7 @@ body .floating-element-2 {
   display: flex;
   flex-direction: column;
   gap: 15px;
-  margin-top: 2rem; /* Space between ticket content and buttons */
+  margin-top: 2rem;
   width: 100%;
 }
 
@@ -506,24 +554,24 @@ body .floating-element-2 {
 }
 
 .download-pdf-btn {
-  background-color: #4CAF50; /* Green for download */
+  background-color: var(--success-green);
   color: white;
-  box-shadow: 0 4px 10px rgba(76, 175, 80, 0.3);
+  box-shadow: 0 4px 10px var(--success-green-shadow);
 }
 
 .download-pdf-btn:hover {
-  background-color: #45a049;
+  background-color: var(--success-green-hover);
   transform: translateY(-2px);
 }
 
 .notification-close {
-  background-color: #f0f0f0; /* Light grey for close */
-  color: #333;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  background-color: #f0f0f0; /* Keeping a light grey for close button */
+  color: var(--text-light-dark);
+  box-shadow: 0 4px 10px var(--shadow-light-inset);
 }
 
 .notification-close:hover {
-  background-color: #e0e0e0;
+  background-color: #e0e0e0; /* Slightly darker on hover */
   transform: translateY(-2px);
 }
 
@@ -562,19 +610,19 @@ body .floating-element-2 {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1001; /* Above the queue ticket popup */
+  z-index: 1001;
 }
 
 .popup-message-box {
-  background: #fff;
+  background: var(--popup-light-bg);
   border-radius: 10px;
   padding: 30px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 10px 25px var(--shadow-dark-2);
   text-align: center;
   max-width: 350px;
   width: 90%;
   animation: bounceIn 0.4s ease-out;
-  color: #333;
+  color: var(--text-light-dark);
 }
 
 .popup-message-icon {
@@ -584,11 +632,11 @@ body .floating-element-2 {
 }
 
 .popup-message-icon.success {
-  color: #4CAF50;
+  color: var(--success-green);
 }
 
 .popup-message-icon.error {
-  color: #F44336;
+  color: var(--error-red);
 }
 
 .popup-message-text {
@@ -598,7 +646,7 @@ body .floating-element-2 {
 }
 
 .popup-message-close-btn {
-  background-color: #007bff;
+  background-color: var(--info-blue); /* Assuming info-blue is for general purpose blue button */
   color: white;
   border: none;
   border-radius: 5px;
@@ -609,7 +657,7 @@ body .floating-element-2 {
 }
 
 .popup-message-close-btn:hover {
-  background-color: #0056b3;
+  background-color: var(--info-blue-hover);
 }
 
 /* Responsive adjustments */
@@ -637,16 +685,16 @@ body .floating-element-2 {
   }
 
   .category-btn {
-    min-width: unset; /* Remove min-width for stacking */
+    min-width: unset;
   }
 
   .queue-ticket-popup {
     padding: 1.5rem 1rem;
-    max-width: 95%; /* Adjust max-width for smaller screens */
+    max-width: 95%;
   }
 
   .ticket-content-printable {
-    width: 100%; /* Allow full width within popup on smaller screens */
+    width: 100%;
     padding: 0.8rem 1rem;
   }
 

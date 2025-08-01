@@ -34,6 +34,35 @@ export class QueueTicketsService {
     this.initializeStatusIds();
   }
 
+  // New method to check the ticket status
+  // New method to check the ticket status
+  async checkTicketStatus(ticketNumber: string) {
+    const ticket = await this.queueTicketRepository.findOne({
+      where: { ticketNumber },
+      relations: ['currentStatus', 'branch', 'assignedToWindow', 'category'], // Added 'category'
+    });
+
+    if (!ticket) {
+      throw new NotFoundException('Ticket not found or invalid.');
+    }
+
+    // You can add more detailed status checks here
+    const status = ticket.currentStatus.statusName;
+    if (status === 'SERVED' || status === 'CANCELLED') {
+      throw new BadRequestException('This ticket has already been processed.');
+    }
+
+    return {
+      message: 'Ticket validated successfully! Please proceed.',
+      ticketInfo: {
+        ticketNumber: ticket.ticketNumber,
+        customerName: ticket.customerName,
+        category: ticket.category?.categoryName || 'N/A', // Added optional chaining and a fallback
+        branch: ticket.branch.branchName,
+      },
+    };
+  }
+
   private async initializeStatusIds() {
     const statuses = await this.ticketStatusRepository.find();
     this.statusIds = {
@@ -339,6 +368,46 @@ export class QueueTicketsService {
     ticket.servedAt = new Date();
     ticket.visibilityStatus = 'SERVED';
     return this.queueTicketRepository.save(ticket);
+  }
+  
+  async getQueueForWindowByWindowID(windowId: number) { // Now only expects 'windowId'
+    if (!this.statusIds) await this.initializeStatusIds();
+
+    const tickets = await this.queueTicketRepository.find({
+      where: {
+        assignedToWindowId: windowId,
+        currentStatus: {
+          // CORRECTED LINE: Use Not(In([...])) for multiple NOT conditions on the same property
+          statusId: Not(In([this.statusIds.SERVED, this.statusIds.CANCELLED])),
+        },
+      },
+      order: {
+        queuedAt: 'ASC',
+      },
+      relations: ['branch', 'assignedToWindow', 'category', 'currentStatus', 'issuedBy'],
+    });
+
+    let calledTicket: QueueTicket | null = null;
+    let pendingTicket: QueueTicket | null = null;
+    const onGoingTickets: QueueTicket[] = [];
+
+    for (const ticket of tickets) {
+      if (ticket.currentStatusId === this.statusIds.CALLED) {
+        calledTicket = ticket;
+      } else if (ticket.currentStatusId === this.statusIds.QUEUED) {
+        if (!pendingTicket) {
+          pendingTicket = ticket;
+        } else {
+          onGoingTickets.push(ticket);
+        }
+      }
+    }
+
+    return {
+      called: calledTicket,
+      pending: pendingTicket,
+      onGoing: onGoingTickets,
+    };
   }
 
   /**

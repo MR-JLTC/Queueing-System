@@ -1,0 +1,273 @@
+/* QueueChecker.css */
+
+/* Define CSS variables for consistent theming based on user's project */
+:root {
+  --primary-dark-bg: #121212;
+  --secondary-dark-bg: #1a1a1a;
+  --card-dark-bg: #282840; /* Slightly lighter dark for cards and sections */
+  --text-light-1: #e0e0e0;
+  --text-light-2: rgba(255, 255, 255, 0.7);
+  --text-light-3: rgba(255, 255, 255, 0.6);
+  --text-light-4: rgba(255, 255, 255, 0.4);
+  --border-color-input: #4A4A6D;
+
+  --accent-blue: #63b3ed; /* Primary blue color */
+  --accent-blue-darker: #4299E1; /* Darker blue for hover/active states */
+  --accent-blue-shadow: rgba(99, 179, 237, 0.4); /* Shadow for blue elements */
+
+  --shadow-dark-1: rgba(0, 0, 0, 0.5); /* Soft shadow for depth */
+}
+
+/* Base styles for the page */
+.queue-checker-app {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: var(--primary-dark-bg);
+  color: var(--text-light-1);
+  font-family: 'Inter', sans-serif;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* Main Card Container */
+.queue-checker-card {
+  background-color: var(--card-dark-bg);
+  border-radius: 1.5rem;
+  box-shadow: 0 15px 40px var(--shadow-dark-1);
+  padding: 2.5rem;
+  width: 100%;
+  max-width: 450px;
+  text-align: center;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Start Scan View */
+.start-scan-view {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.icon-container {
+  background-color: var(--secondary-dark-bg);
+  padding: 1.5rem;
+  border-radius: 50%;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.3);
+}
+
+.icon-container svg {
+  color: var(--accent-blue);
+  width: 5rem;
+  height: 5rem;
+}
+
+.main-title {
+  font-size: 2.25rem;
+  font-weight: 700;
+  margin: 0;
+  color: white;
+}
+
+.subtitle {
+  font-size: 1rem;
+  color: var(--text-light-2);
+  margin: 0;
+}
+
+.action-btn {
+  width: 100%;
+  padding: 1rem 1.5rem;
+  border: none;
+  border-radius: 1rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 1.5rem;
+}
+
+.scan-qr-btn {
+  background-color: var(--accent-blue);
+  color: white;
+  box-shadow: 0 5px 15px var(--accent-blue-shadow);
+}
+
+.scan-qr-btn:hover {
+  background-color: var(--accent-blue-darker);
+  box-shadow: 0 8px 20px var(--accent-blue-shadow);
+  transform: translateY(-2px);
+}
+
+/* QR Scanner View */
+.qr-scanner-view {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.qr-scanner-title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+#reader {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5);
+  background-color: var(--secondary-dark-bg);
+  position: relative;
+  border: 2px solid var(--accent-blue);
+}
+
+.code-detected-message {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #4CAF50; /* Green for success */
+  animation: pulse 1s infinite;
+}
+
+.stop-scanning-btn {
+  width: 100%;
+  padding: 1rem 1.5rem;
+  background-color: transparent;
+  color: var(--accent-blue);
+  border: 2px solid var(--accent-blue);
+  border-radius: 1rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 0.5rem;
+}
+
+.stop-scanning-btn:hover {
+  background-color: var(--accent-blue);
+  color: white;
+  box-shadow: 0 5px 15px var(--accent-blue-shadow);
+}
+
+.legal-text {
+  font-size: 0.75rem;
+  color: var(--text-light-4);
+  text-align: center;
+  margin-top: 1rem;
+  padding: 0 1rem;
+}
+
+/* Popup Styling */
+.popup-message-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease;
+}
+
+.popup-message-box {
+  background-color: #282840;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  padding: 40px;
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+.popup-message-icon {
+  font-size: 3rem;
+  line-height: 1;
+}
+
+.popup-message-icon.success {
+  color: #4CAF50;
+}
+
+.popup-message-icon.error {
+  color: #F44336;
+}
+
+.popup-message-text {
+  font-size: 1.1rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.popup-message-close-btn {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 25px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-weight: 600;
+}
+
+.popup-message-close-btn:hover {
+  background-color: #0056b3;
+}
+
+/* Keyframe Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.8;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .queue-checker-card {
+    padding: 2rem;
+  }
+  .main-title {
+    font-size: 1.75rem;
+  }
+  .action-btn {
+    font-size: 1rem;
+    padding: 0.8rem 1rem;
+  }
+  .qr-scanner-title {
+    font-size: 1.5rem;
+  }
+  .stop-scanning-btn {
+    font-size: 1rem;
+    padding: 0.8rem 1rem;
+  }
+  .popup-message-box {
+    padding: 30px;
+  }
+}
+

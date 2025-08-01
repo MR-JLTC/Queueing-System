@@ -63,6 +63,22 @@ export class StaffService {
     return staff;
   }
 
+  // NEW/UPDATED METHOD: Find staff by full name, ensuring they are active and ON_LIVE
+  async findOneByName(fullName: string): Promise<Staff> {
+    const staff = await this.staffRepository.findOne({
+      where: {
+        fullName,
+        isActive: true, // Ensure staff is active
+        visibilityStatus: 'ON_LIVE', // Ensure staff is not soft-deleted
+      },
+      relations: ['branch'], // Include branch relation for completeness, though not strictly needed for this endpoint's return
+    });
+    if (!staff) {
+      throw new NotFoundException(`Staff with full name "${fullName}" not found or is inactive/deleted.`);
+    }
+    return staff;
+  }
+
   async update(staffId: number, updateStaffDto: UpdateStaffDto): Promise<Staff> {
     const staff = await this.findOne(staffId);
 

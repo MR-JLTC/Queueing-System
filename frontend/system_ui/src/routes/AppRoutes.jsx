@@ -17,6 +17,7 @@ import SuperAdminSignup from "../super-admin/SA_SignupForm";
 import ProtectedRoute from "./ProtectedRoute";
 import SuperAdminDashboard from '../super-admin/SuperAdminDashboard'; // Your new Super Admin Dashboard component
 import QueueDisplay from '../QueueMonitoring/QueueDisplay';
+import QueueChecker from '../queueAppSite/QueueChecker'; // Import your CSS for styling
 
 const AppRoutes = () => {
   return (
@@ -55,6 +56,7 @@ const AppRoutes = () => {
       <Route path="/monitoring" element={<QueueMonitoring />} />
       <Route path="/queue" element={<QueueManagement />} />
       <Route path="/queue-display" element={<QueueDisplay />} />
+      <Route path="/queue-checker" element={<QueueChecker />} />
       {/* Default redirect to SuperAdminlogin if no other route matches */}
       <Route path="*" element={<Navigate to="/SuperAdminlogin" />} />
     </Routes>
