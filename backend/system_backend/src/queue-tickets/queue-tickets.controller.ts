@@ -14,6 +14,13 @@ export class QueueTicketsController {
     return this.queueTicketsService.create(createQueueTicketDto);
   }
 
+  
+  // NEW ROUTE to check a queue ticket
+  @Post('check')
+  async checkQueueTicket(@Body() { ticketNumber }: { ticketNumber: string }) {
+    return this.queueTicketsService.checkTicketStatus(ticketNumber);
+  }
+  
   @Get()
   findAll() {
     return this.queueTicketsService.findAll();
@@ -23,12 +30,6 @@ export class QueueTicketsController {
   @Get('window-queues/:windowId') // This defines the path segment
   async getQueueForWindow(@Param('windowId', ParseIntPipe) windowId: number) {
     return this.queueTicketsService.getQueueForWindowByWindowID(windowId);
-  }
-
-  // NEW ROUTE to check a queue ticket
-  @Post('check')
-  async checkQueueTicket(@Body() { ticketNumber }: { ticketNumber: string }) {
-    return this.queueTicketsService.checkTicketStatus(ticketNumber);
   }
 
   @Get(':id')

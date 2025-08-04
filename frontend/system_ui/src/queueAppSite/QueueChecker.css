@@ -28,62 +28,75 @@
   background-color: var(--primary-dark-bg);
   color: var(--text-light-1);
   font-family: 'Inter', sans-serif;
-  padding: 20px;
+  padding: 1rem;
   box-sizing: border-box;
 }
 
-/* Main Card Container */
+/* Main content card */
 .queue-checker-card {
   background-color: var(--card-dark-bg);
   border-radius: 1.5rem;
-  box-shadow: 0 15px 40px var(--shadow-dark-1);
+  box-shadow: 0 1rem 2rem var(--shadow-dark-1);
   padding: 2.5rem;
   width: 100%;
-  max-width: 450px;
+  max-width: 500px;
   text-align: center;
-  animation: fadeIn 0.5s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  animation: fadeIn 0.5s ease-out;
 }
 
-/* Start Scan View */
+/* Welcome/Start Scan View */
 .start-scan-view {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1.5rem;
+  gap: 1rem;
 }
 
 .icon-container {
-  background-color: var(--secondary-dark-bg);
+  background-color: var(--accent-blue);
   padding: 1.5rem;
   border-radius: 50%;
-  display: inline-flex;
+  display: flex;
   justify-content: center;
   align-items: center;
-  box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.3);
+  width: 5rem;
+  height: 5rem;
+  box-shadow: 0 0 1.5rem var(--accent-blue-shadow);
+  margin-bottom: 1rem;
+  animation: pulse 2s infinite;
 }
 
 .icon-container svg {
-  color: var(--accent-blue);
-  width: 5rem;
-  height: 5rem;
+  width: 3rem;
+  height: 3rem;
+  color: white;
 }
 
 .main-title {
-  font-size: 2.25rem;
+  font-size: 2.5rem;
   font-weight: 700;
   margin: 0;
-  color: white;
+  color: var(--text-light-1);
+  line-height: 1.2;
 }
 
 .subtitle {
   font-size: 1rem;
+  font-weight: 400;
   color: var(--text-light-2);
   margin: 0;
+  max-width: 400px;
 }
 
-.action-btn {
+/* Action Button */
+.action-btn.scan-qr-btn {
   width: 100%;
   padding: 1rem 1.5rem;
+  background-color: var(--accent-blue);
+  color: white;
   border: none;
   border-radius: 1rem;
   font-size: 1.25rem;
@@ -93,16 +106,15 @@
   margin-top: 1.5rem;
 }
 
-.scan-qr-btn {
-  background-color: var(--accent-blue);
-  color: white;
+.action-btn.scan-qr-btn:hover {
+  background-color: var(--accent-blue-darker);
   box-shadow: 0 5px 15px var(--accent-blue-shadow);
 }
 
-.scan-qr-btn:hover {
-  background-color: var(--accent-blue-darker);
-  box-shadow: 0 8px 20px var(--accent-blue-shadow);
-  transform: translateY(-2px);
+.action-btn.scan-qr-btn:disabled {
+  background-color: var(--border-color-input);
+  cursor: not-allowed;
+  box-shadow: none;
 }
 
 /* QR Scanner View */
@@ -117,27 +129,29 @@
   font-size: 2rem;
   font-weight: 700;
   margin: 0;
+  color: var(--text-light-1);
 }
 
 #reader {
   width: 100%;
-  aspect-ratio: 1 / 1;
+  height: auto;
   border-radius: 1rem;
   overflow: hidden;
-  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5);
-  background-color: var(--secondary-dark-bg);
   position: relative;
-  border: 2px solid var(--accent-blue);
+  box-shadow: 0 0 2rem rgba(0, 0, 0, 0.4);
 }
 
 .code-detected-message {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 0.5rem;
-  color: #4CAF50; /* Green for success */
-  animation: pulse 1s infinite;
+  color: #4CAF50; /* Green success color */
+  font-size: 1.125rem;
+  font-weight: 600;
 }
 
+/* Stop Scanning Button */
 .stop-scanning-btn {
   width: 100%;
   padding: 1rem 1.5rem;
@@ -166,23 +180,39 @@
   padding: 0 1rem;
 }
 
-/* Popup Styling */
+/* Keyframe Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.8;
+  }
+}
+
+/* Popup Message Styling */
 .popup-message-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.6);
+  background-color: rgba(0, 0, 0, 0.7);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
-  animation: fadeIn 0.3s ease;
 }
 
 .popup-message-box {
-  background-color: #282840;
+  background-color: var(--card-dark-bg);
   border-radius: 15px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
   padding: 40px;
@@ -230,44 +260,32 @@
   background-color: #0056b3;
 }
 
-/* Keyframe Animations */
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes pulse {
-  0%, 100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-  50% {
-    transform: scale(1.05);
-    opacity: 0.8;
-  }
-}
-
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .queue-checker-card {
-    padding: 2rem;
+    padding: 1.5rem;
   }
+
   .main-title {
-    font-size: 1.75rem;
+    font-size: 2rem;
   }
-  .action-btn {
+
+  .action-btn.scan-qr-btn {
     font-size: 1rem;
     padding: 0.8rem 1rem;
   }
+
   .qr-scanner-title {
     font-size: 1.5rem;
   }
+  
   .stop-scanning-btn {
     font-size: 1rem;
     padding: 0.8rem 1rem;
   }
+
   .popup-message-box {
-    padding: 30px;
+    padding: 25px;
+    gap: 10px;
   }
 }
-

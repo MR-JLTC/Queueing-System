@@ -57,6 +57,7 @@ export class QueueTicketsService {
       ticketInfo: {
         ticketNumber: ticket.ticketNumber,
         customerName: ticket.customerName,
+        assignToWindow: ticket.assignedToWindowId,
         category: ticket.category?.categoryName || 'N/A', // Added optional chaining and a fallback
         branch: ticket.branch.branchName,
       },
@@ -326,6 +327,7 @@ export class QueueTicketsService {
     return this.queueTicketRepository.save(nextTicket);
   }
 
+  // Use WebSocket then implement it here the queue logic
   /**
    * Requeues a ticket. Increments requeue attempts.
    * If attempts reach 3, marks as 'CANCELLED'. Otherwise, reverts to 'QUEUED'.

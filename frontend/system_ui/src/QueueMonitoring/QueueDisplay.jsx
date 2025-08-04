@@ -64,7 +64,8 @@ const QueueDisplay = () => {
       setError(null);
       try {
         // Fetch all service windows for the selected branch
-        const windowsResponse = await axios.get(`http://localhost:3000/branches/${selectedBranchId}/service-windows`);
+        //service-windows?branchId=
+        const windowsResponse = await axios.get(`http://localhost:3000/service-windows?branchId=${selectedBranchId}`);
         const serviceWindows = windowsResponse.data;
 
         const branchQueueResponses = await axios.get(`http://localhost:3000/queue-tickets/branch/${selectedBranchId}/queue-status`);

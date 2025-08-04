@@ -1,0 +1,208 @@
+/* QueueStatus.css */
+/* Uses CSS variables from QueueChecker.css for consistency */
+
+:root {
+  --primary-dark-bg: #121212;
+  --secondary-dark-bg: #1a1a1a;
+  --card-dark-bg: #282840;
+  --text-light-1: #e0e0e0;
+  --text-light-2: rgba(255, 255, 255, 0.7);
+  --text-light-3: rgba(255, 255, 255, 0.6);
+  --text-light-4: rgba(255, 255, 255, 0.4);
+  --accent-blue: #63b3ed;
+  --accent-blue-darker: #4299E1;
+  --accent-blue-shadow: rgba(99, 179, 237, 0.4);
+  --success-green: #4CAF50;
+  --error-red: #F44336;
+  --shadow-dark-1: rgba(0, 0, 0, 0.5);
+}
+
+.queue-status-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: var(--primary-dark-bg);
+  color: var(--text-light-1);
+  font-family: 'Inter', sans-serif;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.queue-status-card {
+  background-color: var(--card-dark-bg);
+  border-radius: 15px;
+  box-shadow: 0 10px 30px var(--shadow-dark-1);
+  padding: 40px;
+  width: 100%;
+  max-width: 500px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.status-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.status-icon {
+  font-size: 3rem;
+  line-height: 1;
+}
+
+.status-icon.success-icon {
+  color: var(--success-green);
+}
+
+.status-title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0;
+  color: var(--text-light-1);
+}
+
+.status-subtitle {
+  font-size: 1rem;
+  color: var(--text-light-2);
+  margin: 0;
+}
+
+.highlight-text {
+  font-weight: 700;
+  color: var(--accent-blue);
+}
+
+.status-details {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  text-align: left;
+}
+
+.detail-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 10px;
+  background-color: var(--secondary-dark-bg);
+  border-radius: 8px;
+}
+
+.detail-item svg {
+  color: var(--accent-blue);
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.detail-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.detail-label {
+  font-size: 0.85rem;
+  color: var(--text-light-3);
+}
+
+.detail-value {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-light-1);
+  line-height: 1.2;
+}
+
+.status-footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.status-footer-text {
+  font-size: 0.9rem;
+  color: var(--text-light-3);
+  margin: 0;
+}
+
+.status-badge {
+  background-color: var(--success-green);
+  color: white;
+  padding: 5px 15px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.countdown-timer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background-color: #383852;
+  padding: 8px 15px;
+  border-radius: 20px;
+}
+
+.timer-label {
+  font-size: 0.9rem;
+  color: var(--text-light-3);
+}
+
+.timer-value {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #FFA500; /* A distinct color for the timer */
+}
+
+.done-btn {
+  width: 100%;
+  padding: 1rem 1.5rem;
+  background-color: var(--accent-blue);
+  color: white;
+  border: none;
+  border-radius: 1rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 20px;
+  box-shadow: 0 5px 15px var(--accent-blue-shadow);
+}
+
+.done-btn:hover {
+  background-color: var(--accent-blue-darker);
+  box-shadow: 0 8px 20px rgba(99, 179, 237, 0.6);
+}
+
+/* Responsive adjustments for smaller screens */
+@media (max-width: 520px) {
+  .queue-status-card {
+    padding: 25px;
+    gap: 25px;
+  }
+  .status-title {
+    font-size: 1.8rem;
+  }
+  .detail-item {
+    gap: 10px;
+  }
+  .detail-value {
+    font-size: 0.95rem;
+  }
+  .done-btn {
+    font-size: 1.1rem;
+    padding: 0.8rem 1.2rem;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+

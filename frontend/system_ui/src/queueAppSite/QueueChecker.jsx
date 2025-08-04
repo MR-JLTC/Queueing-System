@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { Html5QrcodeScanner } from 'html5-qrcode';
+// import { useNavigate } from 'react-router-dom'; // Import useNavigate hook
 import './QueueChecker.css';
 
 // API Base URL (adjust this to your backend's address)
@@ -50,34 +51,70 @@ const QueueChecker = () => {
   const [scannerMessage, setScannerMessage] = useState("Please allow camera access to scan.");
   const [popup, setPopup] = useState(null);
   const scannerRef = useRef(null);
-
+  // const navigate = useNavigate(); // Initialize the useNavigate hook
+  const qrCodeScannerRef = useRef(null);
+  
   // Function to handle the QR code scan success
+  // Function to handle the successful scan of a QR code
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const onScanSuccess = (decodedText) => {
     console.log(`Scan successful: ${decodedText}`);
     setIsCodeDetected(true);
-    setScannerMessage("Code Detected! Redirecting...");
-    setTimeout(() => {
-      // Simulate API call to process the ticket
-      axios.post(`${API_BASE_URL}/api/queue/check`, { ticketNumber: decodedText })
-        .then(response => {
-          setPopup({ type: 'success', message: response.data.message });
-          // Stop the scanner after successful scan
-          if (scannerRef.current) {
-            scannerRef.current.stop();
-          }
-          setShowScanner(false);
-          setScannerMessage("Please allow camera access to scan.");
-          setIsCodeDetected(false);
-        })
-        .catch(error => {
-          console.error("API error:", error);
-          const errorMessage = error.response?.data?.message || 'Failed to process ticket. Please try again.';
-          setPopup({ type: 'error', message: errorMessage });
-          console.log("Scan error:", errorMessage);
-          setScannerMessage("Please allow camera access to scan.");
-          setIsCodeDetected(false);
+    setScannerMessage("Code Detected! Processing ticket...");
+
+    // Stop the scanner immediately to prevent multiple scans
+    if (qrCodeScannerRef.current) {
+      qrCodeScannerRef.current.stop().then(() => {
+        console.log('Scanner stopped.');
+      });
+    }
+
+    setTimeout(async () => {
+      try {
+        // Parse the decodedText to extract the required data.
+        // Assuming decodedText is a JSON string with the following structure:
+        // { "queueNumber": "B-001", "branchName": "Main Branch", "counter": "Window 1" }
+        const ticketData = JSON.parse(decodedText);
+        const { queueNumber, branchName, counter } = ticketData;
+
+        // Validate the extracted data
+        if (!queueNumber || !branchName || !counter) {
+          throw new Error('QR code data is incomplete or in an unexpected format.');
+        }
+
+        console.log('Parsed ticket data:', ticketData);
+
+        // Make an API call to process the ticket
+        const response = await axios.post(`${API_BASE_URL}/queue-tickets/check`, {
+          ticketNumber: queueNumber,
+          branchName: branchName,
+          counter: counter
         });
-    }, 1500); // Wait a bit for visual feedback before hiding
+
+        // Handle successful API response
+        setPopup({ type: 'success', message: response.data.message });
+  
+        if (ticketData &&
+            queueNumber !== undefined && queueNumber !== null &&
+            branchName !== undefined && branchName !== null &&
+            counter !== undefined && counter !== null
+          ) {
+            setPopup({ type: 'success', message: 'Ticket validated successfully!' });  
+            // navigate('/queuestatus', { state: { ticketData: response.data.ticket } });
+          } else setPopup({ type: 'error', message: 'Invalid or expired QR code.' });
+
+      } catch (error) {
+        console.error("API error or JSON parse error:", error);
+        // Handle both API errors and JSON parsing errors
+        const errorMessage = error.response?.data?.message || error.message || 'Failed to process ticket. Please try again.';
+        setPopup({ type: 'error', message: errorMessage });
+      } finally {
+        // Always reset the scanner and UI state after the process
+        setShowScanner(false);
+        setIsCodeDetected(false);
+        setScannerMessage("Please allow camera access to scan.");
+      }
+    }, 1500); // Wait a bit for visual feedback before processing
   };
 
   // Function to handle the QR code scan error
@@ -121,7 +158,7 @@ const QueueChecker = () => {
         console.log("Scanner cleaned up.");
       }
     };
-  }, [showScanner]); // Dependency array: Re-run effect when showScanner changes
+  }, [onScanSuccess, showScanner]); // Dependency array: Re-run effect when showScanner changes
 
   const handleStartScanning = () => {
     setShowScanner(true);
