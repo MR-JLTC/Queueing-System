@@ -1,160 +1,155 @@
-// QueueStatus.jsx
 import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import './QueueStatus.css';
 
-// SVG icons for ticket details
-const AccountCircleIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
-    <circle cx="12" cy="7" r="4" />
-  </svg>
-);
+// API Base URL (adjust this to your backend's backend)
+const API_BASE_URL = 'http://localhost:3000';
 
-const BusinessIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M12 2L2 7l10 5 10-5-10-5z" />
-    <path d="M2 17l10 5 10-5" />
-    <path d="M2 12l10 5 10-5" />
-  </svg>
-);
-
-const MeetingRoomIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-    <path d="M12 12v6" />
-    <path d="M16 12v6" />
-    <path d="M8 12v6" />
-    <path d="M5 8h14" />
-    <path d="M5 16h14" />
-  </svg>
-);
-
-const CategoryIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M20.5 12c-2.4-.7-4.1-2.9-4.5-5.5-1.1.2-2.3.2-3.4 0-1.2 2.6-2.9 4.8-5.3 5.5-1.1.3-2.1.3-3.1 0-1.2-2.6-2.9-4.8-5.3-5.5" />
-    <path d="M20.5 12c-2.4.7-4.1 2.9-4.5 5.5-1.1-.2-2.3-.2-3.4 0-1.2-2.6-2.9-4.8-5.3-5.5" />
-  </svg>
-);
-
-const AccessTimeIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <circle cx="12" cy="12" r="10" />
-    <polyline points="12 6 12 12 16 14" />
-  </svg>
-);
-
-const CheckCircleIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M22 11.08V12a10 10 0 1 1-5.93-8.8" />
-    <polyline points="22 4 12 14.01 9 11.01" />
-  </svg>
-);
-
-const QueueStatus = ({ queueTicketData, onDone }) => {
-  const {
-    ticketNumber,
-    customerName,
-    branchName,
-    windowNumber,
-    windowName,
-    categoryName,
-    currentStatusName,
-    queuedAt,
-    estimatedWaitTime,
-  } = queueTicketData;
-
-  const [timer, setTimer] = useState(estimatedWaitTime || 300); // Default to 5 minutes
-
-  useEffect(() => {
-    // Start countdown timer
-    const interval = setInterval(() => {
-      setTimer((prev) => (prev > 0 ? prev - 1 : 0));
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, []);
-
-  const formatTime = (seconds) => {
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = seconds % 60;
-    return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
+const QueueStatus = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [queueInfo, setQueueInfo] = useState(null);
+  const [queueList, setQueueList] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  
+  // A helper function to fetch the queue for a specific window/counter
+  const fetchQueueForWindow = async (windowId) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/queue-tickets/window-queues/${windowId}`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch queue list.");
+      }
+      const data = await response.json();
+      setQueueList(data);
+    } catch (err) {
+      console.error("Error fetching queue list:", err);
+      setError("Could not retrieve the queue list. Please try again.");
+    }
   };
 
-  const formattedDate = new Date(queuedAt).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  });
-  const formattedTime = new Date(queuedAt).toLocaleTimeString('en-US', {
-    hour: '2-digit',
-    minute: '2-digit',
-  });
+  // The main effect hook to get initial data and set up polling
+  useEffect(() => {
+    if (location.state && location.state.ticketData) {
+      setQueueInfo(location.state.ticketData);
+      setLoading(false);
+      
+      const windowId = location.state.ticketData.assignToWindow;
+      fetchQueueForWindow(windowId);
+      
+      const intervalId = setInterval(() => {
+        fetchQueueForWindow(windowId);
+      }, 5000); // Poll every 5 seconds
+
+      return () => clearInterval(intervalId);
+      
+    } else {
+      setError("No queue ticket found. Please scan a QR code.");
+      setLoading(false);
+    }
+  }, [location.state]);
+
+  const onDone = () => {
+    navigate('/queue-checker'); // Navigate back to the main scanner page
+  };
+
+  // Render loading and error states
+  if (loading) {
+    return (
+      <div className="queue-status-container">
+        <div className="queue-checker-card">
+          <p>Loading queue status...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="queue-status-container">
+        <div className="queue-checker-card">
+          <p className="text-red-500">{error}</p>
+          <button onClick={() => navigate('/')} className="stop-scanning-btn">
+            Go Back
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  const userTicketNumber = queueInfo?.ticketNumber || 'N/A';
+  const assignedWindowName = queueInfo?.assignToWindowName || 'N/A';
+  
+  const servingTicket = Array.isArray(queueList) ? queueList.find(ticket => ticket.currentStatus?.statusName === 'CALLED') : null;
+  const inQueueTickets = Array.isArray(queueList) ? queueList.filter(ticket => ticket.currentStatus?.statusName === 'QUEUED') : [];
+  
+  // Calculate the user's position in the queue
+  const userTicketIndex = inQueueTickets.findIndex(ticket => ticket.ticketNumber === userTicketNumber);
+  const userPosition = userTicketIndex !== -1 ? userTicketIndex + 1 : null;
+  const userStatus = userTicketNumber === servingTicket?.ticketNumber ? 'Serving' : (userPosition !== null ? 'In Queue' : 'N/A');
 
   return (
     <div className="queue-status-container">
-      <div className="queue-status-card">
+      <div className="queue-checker-card">
         <div className="status-header">
-          <div className="status-icon success-icon">
-            <CheckCircleIcon />
-          </div>
-          <h2 className="status-title">Ticket Validated!</h2>
-          <p className="status-subtitle">
-            Your queue number is <span className="highlight-text">{ticketNumber}</span>
-          </p>
+          <img 
+            src="/src/assets/sys_logo.png"
+            alt="System Logo" 
+            className="header-logo" 
+          />
+          <span className="header-title">My Queue Status</span>
         </div>
-
-        <div className="status-details">
-          <div className="detail-item">
-            <BusinessIcon />
-            <div className="detail-text">
-              <span className="detail-label">Branch</span>
-              <span className="detail-value">{branchName}</span>
-            </div>
-          </div>
-
-          <div className="detail-item">
-            <MeetingRoomIcon />
-            <div className="detail-text">
-              <span className="detail-label">Window</span>
-              <span className="detail-value">{windowName || `Window ${windowNumber}`}</span>
-            </div>
-          </div>
-
-          <div className="detail-item">
-            <AccountCircleIcon />
-            <div className="detail-text">
-              <span className="detail-label">Customer Name</span>
-              <span className="detail-value">{customerName}</span>
-            </div>
-          </div>
-
-          <div className="detail-item">
-            <CategoryIcon />
-            <div className="detail-text">
-              <span className="detail-label">Transaction Type</span>
-              <span className="detail-value">{categoryName}</span>
-            </div>
-          </div>
-
-          <div className="detail-item">
-            <AccessTimeIcon />
-            <div className="detail-text">
-              <span className="detail-label">Queued At</span>
-              <span className="detail-value">{`${formattedDate} at ${formattedTime}`}</span>
+        
+        {/* Serving Ticket Section */}
+        <div className="queue-section serving-section">
+          <h2 className="section-title">Now Serving</h2>
+          <div className="ticket-card serving">
+            <div className="ticket-info">
+              <span className="ticket-number">{servingTicket?.ticketNumber || 'N/A'}</span>
+              <p className="ticket-status">Counter: <span className="highlight-text">{servingTicket?.assignedToWindow?.windowName || 'N/A'}</span></p>
             </div>
           </div>
         </div>
-
-        {/* This section with the timer is based on the screenshot */}
-        <div className="status-footer">
-          <p className="status-footer-text">Current Status</p>
-          <span className="status-badge">{currentStatusName}</span>
-          {/* A mock countdown to show the feature based on the image */}
-          <div className="countdown-timer">
-            <span className="timer-label">Estimated Time Left:</span>
-            <span className="timer-value">{formatTime(timer)}</span>
+        
+        {/* In Queue Tickets Section */}
+        <div className="queue-section in-queue-section">
+          <h2 className="section-title">In-Queue ({inQueueTickets.length})</h2>
+          <div className="ticket-list-container">
+            {inQueueTickets.length > 0 ? (
+              inQueueTickets.map((ticket, index) => (
+                <div 
+                  key={ticket.ticketNumber} 
+                  className={`ticket-card in-queue ${ticket.ticketNumber === userTicketNumber ? 'my-ticket' : ''}`}
+                >
+                  <span className="ticket-number">{ticket.ticketNumber}</span>
+                  <span className="ticket-position">{index + 1}</span>
+                </div>
+              ))
+            ) : (
+              <p className="empty-queue-text">No other tickets in the queue.</p>
+            )}
           </div>
         </div>
+
+        {/* My Ticket Info Section */}
+        <div className="my-code-display-section">
+          <div className="my-code-info-header">
+            <span className="my-code-label">YOUR QUEUE NUMBER</span>
+            <span className="my-code-value">{userTicketNumber}</span>
+          </div>
+          <div className="my-code-details">
+            <p className="counter-label">Counter: <span className="highlight-text">{assignedWindowName}</span></p>
+            {userPosition && (
+              <p>Position: <span className="highlight-text">#{userPosition}</span></p>
+            )}
+          </div>
+          {userStatus === 'Serving' && (
+            <p className="my-code-status">
+              Status: <span className="highlight-text">You are being served</span>
+            </p>
+          )}
+        </div>
+        
       </div>
       <button onClick={onDone} className="done-btn">
         Done

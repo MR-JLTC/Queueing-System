@@ -268,7 +268,7 @@ const SuperAdminDashboard = () => {
     try {
       const url = branchId ? `${API_BASE_URL}/api/dashboard/summary?branchId=${branchId}` : `${API_BASE_URL}/api/dashboard/summary`;
       const response = await axios.get(url);
-      setOverallDashboardSummary(response.data);
+      setOverallDashboardSummary(response.data.totalQueued, response.data.served, response.data.requeues, response.data.cancelled);
     } catch (err) {
       console.error("Error fetching overall dashboard summary:", err);
       setOverallDashboardError("Failed to load overall dashboard summary.");
@@ -290,7 +290,9 @@ const SuperAdminDashboard = () => {
 
       const url = `${API_BASE_URL}/api/dashboard/queue-history?${params.toString()}`;
       const summaryResponse = await axios.get(url);
-      setOverallQueueHistorySummary(summaryResponse.data);
+      setOverallQueueHistorySummary(summaryResponse.data.totalQueued, summaryResponse.data.pwd,
+        summaryResponse.data.seniorCitizens, summaryResponse.data.standard, summaryResponse.data.cancelled
+      );
     } catch (err) {
       console.error("Error fetching overall queue history data:", err);
       setOverallDashboardError("Failed to load overall queue history.");
@@ -477,7 +479,6 @@ const SuperAdminDashboard = () => {
     { name: 'Standard', value: overallQueueHistorySummary.standard },
     { name: 'Cancelled', value: overallQueueHistorySummary.cancelled },
   ].filter(data => data.value > 0);
-
 
   const renderContent = () => {
     // Centralized loading/error handling for the main content area
@@ -689,7 +690,7 @@ const SuperAdminDashboard = () => {
                         <Cell key={`cell-${index}`} fill={PIE_COLORS[index % PIE_COLORS.length]} />
                       ))}
                     </Pie>
-                    <Tooltip contentStyle={{ backgroundColor: '#1a1a1a', border: 'none', borderRadius: '8px', color: '#e0e0e0' }} />
+                    <Tooltip contentStyle={{ backgroundColor: '#fdfdfdff', border: 'none', borderRadius: '8px', color: '#e0e0e0' }} />
                     <Legend wrapperStyle={{ color: '#e0e0e0' }} />
                   </PieChart>
                 </ResponsiveContainer>

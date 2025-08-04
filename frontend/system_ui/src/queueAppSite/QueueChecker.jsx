@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { Html5QrcodeScanner } from 'html5-qrcode';
-// import { useNavigate } from 'react-router-dom'; // Import useNavigate hook
+import { useNavigate } from 'react-router-dom'; // Import useNavigate hook
 import './QueueChecker.css';
 
 // API Base URL (adjust this to your backend's address)
@@ -51,7 +51,7 @@ const QueueChecker = () => {
   const [scannerMessage, setScannerMessage] = useState("Please allow camera access to scan.");
   const [popup, setPopup] = useState(null);
   const scannerRef = useRef(null);
-  // const navigate = useNavigate(); // Initialize the useNavigate hook
+  const navigate = useNavigate(); // Initialize the useNavigate hook
   const qrCodeScannerRef = useRef(null);
   
   // Function to handle the QR code scan success
@@ -93,14 +93,22 @@ const QueueChecker = () => {
 
         // Handle successful API response
         setPopup({ type: 'success', message: response.data.message });
-  
+        const fetchedTicket = response.data.ticketInfo.ticketNumber;
+        const fetchedBranch = response.data.ticketInfo.branchName;
+        const fetchedCounter = response.data.ticketInfo.assignToWindow;
+        const fetchedCustomerName = response.data.ticketInfo.fetchedCustomerName;
+        
         if (ticketData &&
             queueNumber !== undefined && queueNumber !== null &&
             branchName !== undefined && branchName !== null &&
             counter !== undefined && counter !== null
           ) {
             setPopup({ type: 'success', message: 'Ticket validated successfully!' });  
-            // navigate('/queuestatus', { state: { ticketData: response.data.ticket } });
+            localStorage.setItem('ticketData', fetchedTicket);
+            localStorage.setItem('branchName', fetchedBranch);
+            localStorage.setItem('counter', fetchedCounter);
+            localStorage.setItem("CustomerName", fetchedCustomerName);
+            navigate('/queuestatus', { state: { ticketData: response.data.ticketInfo } });
           } else setPopup({ type: 'error', message: 'Invalid or expired QR code.' });
 
       } catch (error) {
@@ -172,12 +180,12 @@ const QueueChecker = () => {
 
   return (
     <div className="queue-checker-app">
-      <div className="queue-checker-card">
+      <div className="queue-checker-card_qc">
         {/* Main Interface or Scanner View */}
         {!showScanner ? (
           <div className="start-scan-view">
             <div className="icon-container">
-              <QrCodeIcon />
+              <img src="/src/assets/sys_logo.png" alt="System Logo" />
             </div>
             <h1 className="main-title">Queue Check-in</h1>
             <p className="subtitle">

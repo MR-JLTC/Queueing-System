@@ -153,4 +153,19 @@ export class UsersService {
     user.isActive = false;
     await this.usersRepository.save(user);
   }
+
+  async findByEmail(email: string): Promise<User | null> {
+    return this.usersRepository.findOne({ where: { email } });
+  }
+
+  // NEW METHOD: Directly reset password by email
+  async resetPasswordByEmail(email: string, newPasswordPlain: string): Promise<User> {
+    const user = await this.usersRepository.findOne({ where: { email } });
+    if (!user) {
+      throw new NotFoundException(`User with email "${email}" not found.`);
+    }
+
+    user.passwordHash = await bcrypt.hash(newPasswordPlain, 10);
+    return this.usersRepository.save(user);
+  }
 }

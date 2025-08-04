@@ -773,7 +773,7 @@ const Dashboard = () => {
                         <Cell key={`cell-${index}`} fill={PIE_COLORS[index % PIE_COLORS.length]} />
                       ))}
                     </Pie>
-                    <Tooltip contentStyle={{ backgroundColor: '#1a1a1a', border: 'none', borderRadius: '8px', color: '#e0e0e0' }} />
+                    <Tooltip contentStyle={{ backgroundColor: '#fbf9f9ff', border: 'none', borderRadius: '8px', color: '#e0e0e0' }} />
                     <Legend wrapperStyle={{ color: '#e0e0e0' }} />
                   </PieChart>
                 </ResponsiveContainer>

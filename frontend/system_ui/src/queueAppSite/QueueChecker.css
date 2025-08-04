@@ -1,5 +1,3 @@
-/* QueueChecker.css */
-
 /* Define CSS variables for consistent theming based on user's project */
 :root {
   --primary-dark-bg: #121212;
@@ -14,6 +12,9 @@
   --accent-blue: #63b3ed; /* Primary blue color */
   --accent-blue-darker: #4299E1; /* Darker blue for hover/active states */
   --accent-blue-shadow: rgba(99, 179, 237, 0.4); /* Shadow for blue elements */
+
+  --success-green: #4CAF50; /* Added from QueueStatus.css */
+  --error-red: #F44336; /* Added from QueueStatus.css */
 
   --shadow-dark-1: rgba(0, 0, 0, 0.5); /* Soft shadow for depth */
 }
@@ -33,8 +34,8 @@
 }
 
 /* Main content card */
-.queue-checker-card {
-  background-color: var(--card-dark-bg);
+.queue-checker-card_qc {
+  background-color:#1E1E2F;
   border-radius: 1.5rem;
   box-shadow: 0 1rem 2rem var(--shadow-dark-1);
   padding: 2.5rem;
@@ -56,23 +57,18 @@
 }
 
 .icon-container {
-  background-color: var(--accent-blue);
   padding: 1.5rem;
-  border-radius: 50%;
   display: flex;
   justify-content: center;
   align-items: center;
   width: 5rem;
   height: 5rem;
-  box-shadow: 0 0 1.5rem var(--accent-blue-shadow);
   margin-bottom: 1rem;
-  animation: pulse 2s infinite;
 }
 
-.icon-container svg {
-  width: 3rem;
-  height: 3rem;
-  color: white;
+.icon-container img {
+  width: 5rem;
+  height: 5rem;
 }
 
 .main-title {
@@ -260,7 +256,234 @@
   background-color: #0056b3;
 }
 
-/* Responsive adjustments */
+/* Styles from QueueStatus.css merged below */
+.queue-status-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: var(--primary-dark-bg);
+  color: var(--text-light-1);
+  font-family: 'Inter', sans-serif;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.queue-status-card {
+  background-color: var(--card-dark-bg);
+  border-radius: 15px;
+  box-shadow: 0 10px 30px var(--shadow-dark-1);
+  padding: 40px;
+  width: 100%;
+  max-width: 500px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.status-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.status-icon {
+  font-size: 3rem;
+  line-height: 1;
+}
+
+.status-icon.success-icon {
+  color: var(--success-green);
+}
+
+.status-title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0;
+  color: var(--text-light-1);
+}
+
+.status-subtitle {
+  font-size: 1rem;
+  color: var(--text-light-2);
+  margin: 0;
+}
+
+/* .highlight-text is defined above in QueueChecker.css, ensure consistency */
+
+.status-details {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  text-align: left;
+}
+
+.detail-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 10px;
+  background-color: var(--secondary-dark-bg);
+  border-radius: 8px;
+}
+
+.detail-item svg {
+  color: var(--accent-blue);
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.detail-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.detail-label {
+  font-size: 0.85rem;
+  color: var(--text-light-3);
+}
+
+.detail-value {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-light-1);
+  line-height: 1.2;
+}
+
+.status-footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.status-footer-text {
+  font-size: 0.9rem;
+  color: var(--text-light-3);
+  margin: 0;
+}
+
+.status-badge {
+  background-color: var(--success-green);
+  color: white;
+  padding: 5px 15px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.countdown-timer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background-color: #383852;
+  padding: 8px 15px;
+  border-radius: 20px;
+}
+
+.timer-label {
+  font-size: 0.9rem;
+  color: var(--text-light-3);
+}
+
+.timer-value {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #FFA500; /* A distinct color for the timer */
+}
+
+.done-btn {
+  width: 100%;
+  padding: 1rem 1.5rem;
+  background-color: var(--accent-blue);
+  color: white;
+  border: none;
+  border-radius: 1rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 20px;
+  box-shadow: 0 5px 15px var(--accent-blue-shadow);
+}
+
+.done-btn:hover {
+  background-color: var(--accent-blue-darker);
+  box-shadow: 0 8px 20px rgba(99, 179, 237, 0.6);
+}
+
+/* New styles for the monitoring section based on screenshot */
+.monitoring-section {
+  background-color: var(--secondary-dark-bg);
+  border-radius: 15px;
+  padding: 20px;
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  width: 100%;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.monitoring-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 10px;
+}
+
+.current-queue-number-display {
+  font-size: 3rem;
+  font-weight: 800;
+  color: var(--text-light-1);
+}
+
+.queue-list {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.queue-item {
+  background-color: #383852; /* A distinct background for queue items */
+  border-radius: 10px;
+  padding: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+  color: var(--text-light-1);
+}
+
+.queue-item.ongoing {
+  background-color: var(--accent-blue-darker); /* Highlight for ongoing */
+}
+
+.queue-item-number {
+  font-size: 1.5rem;
+}
+
+.queue-item-status {
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  color: var(--text-light-2);
+}
+
+.my-code-display {
+  font-size: 1.1rem;
+  color: var(--text-light-2);
+  margin-top: 15px;
+  font-weight: 500;
+}
+
+/* Responsive adjustments for smaller screens */
 @media (max-width: 768px) {
   .queue-checker-card {
     padding: 1.5rem;
@@ -278,7 +501,7 @@
   .qr-scanner-title {
     font-size: 1.5rem;
   }
-  
+
   .stop-scanning-btn {
     font-size: 1rem;
     padding: 0.8rem 1rem;
@@ -288,4 +511,36 @@
     padding: 25px;
     gap: 10px;
   }
+
+  /* Responsive adjustments for Queue Status */
+  .queue-status-card {
+    padding: 25px;
+    gap: 25px;
+  }
+  .status-title {
+    font-size: 1.8rem;
+  }
+  .detail-item {
+    gap: 10px;
+  }
+  .detail-value {
+    font-size: 0.95rem;
+  }
+  .done-btn {
+    font-size: 1.1rem;
+    padding: 0.8rem 1.2rem;
+  }
+
+  .current-queue-number-display {
+    font-size: 2.5rem;
+  }
+  .queue-item-number {
+    font-size: 1.3rem;
+  }
+}
+
+/* Keyframe for QueueStatus fade-in, also usable by QueueChecker */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }

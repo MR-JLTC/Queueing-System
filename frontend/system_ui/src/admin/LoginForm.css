@@ -41,7 +41,7 @@
   display: flex;
   height: 100px;
   flex-direction: column;
-  background-color: #1a1a1a; /* Darker, more professional background for the form */
+ background-color:#1E1E2F; /* Darker, more professional background for the form */
   border: 1px solid rgba(100, 110, 130, 0.3); /* Softer, more integrated border */
   margin-top: -20px; /* Adjust as needed */
   border-radius: 18px; /* Slightly more rounded corners for a modern feel */
@@ -307,7 +307,6 @@ input:focus {
 .login-button {
   width: 80%;
   max-width: 300px;
-  paddingY: 16px;
   border-radius: 28px;
   background-color: #3498db;
   color: white;

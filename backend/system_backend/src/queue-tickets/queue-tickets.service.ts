@@ -57,7 +57,8 @@ export class QueueTicketsService {
       ticketInfo: {
         ticketNumber: ticket.ticketNumber,
         customerName: ticket.customerName,
-        assignToWindow: ticket.assignedToWindowId,
+        assignToWindowName: ticket.assignedToWindow?.windowName || 'N/A',
+        assignToWindow: ticket.assignedToWindowId, // Added optional chaining and a fallback
         category: ticket.category?.categoryName || 'N/A', // Added optional chaining and a fallback
         branch: ticket.branch.branchName,
       },

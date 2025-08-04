@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, HttpStatus, ParseIntPipe, Query, Optional } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, HttpStatus, ParseIntPipe, Query, Optional, BadRequestException } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -35,5 +35,25 @@ export class UsersController {
   @HttpCode(HttpStatus.NO_CONTENT)
   async remove(@Param('id', ParseIntPipe) id: number) {
     await this.usersService.remove(id);
+  }
+
+  @Post('check-email')
+  @HttpCode(HttpStatus.OK)
+  async checkEmailExists(@Body('email') email: string): Promise<{ exists: boolean }> {
+    const user = await this.usersService.findByEmail(email);
+    return { exists: !!user }; // Returns true if user exists, false otherwise
+  }
+
+  // NEW ENDPOINT: Directly reset password by email
+  @Post('reset-password-by-email')
+  @HttpCode(HttpStatus.OK)
+  async resetPasswordByEmail(
+    @Body('email') email: string,
+    @Body('password') newPassword: string,
+  ) {
+    if (!email || !newPassword) {
+      throw new BadRequestException('Email and new password are required.');
+    }
+    return this.usersService.resetPasswordByEmail(email, newPassword);
   }
 }
