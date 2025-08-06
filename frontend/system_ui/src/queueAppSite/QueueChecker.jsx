@@ -96,6 +96,7 @@ const QueueChecker = () => {
         const fetchedTicket = response.data.ticketInfo.ticketNumber;
         const fetchedBranch = response.data.ticketInfo.branchName;
         const fetchedCounter = response.data.ticketInfo.assignToWindow;
+        const branchId = response.data.ticketInfo.branchid;
         const fetchedCustomerName = response.data.ticketInfo.fetchedCustomerName;
         
         if (ticketData &&
@@ -104,10 +105,11 @@ const QueueChecker = () => {
             counter !== undefined && counter !== null
           ) {
             setPopup({ type: 'success', message: 'Ticket validated successfully!' });  
-            localStorage.setItem('ticketData', fetchedTicket);
+            localStorage.setItem('ticketNumber', fetchedTicket);
             localStorage.setItem('branchName', fetchedBranch);
             localStorage.setItem('counter', fetchedCounter);
             localStorage.setItem("CustomerName", fetchedCustomerName);
+            localStorage.setItem("branchId", branchId);
             navigate('/queuestatus', { state: { ticketData: response.data.ticketInfo } });
           } else setPopup({ type: 'error', message: 'Invalid or expired QR code.' });
 

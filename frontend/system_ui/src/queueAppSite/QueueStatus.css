@@ -125,6 +125,13 @@ body {
   box-shadow: 0 8px 25px rgba(255, 193, 7, 0.5), inset 0 0 10px rgba(255,255,255,0.1);
 }
 
+.ticket-card.my-ticket-serving {
+  background: linear-gradient(135deg, #FFC107, #FFAB00); /* Richer orange/yellow gradient */
+  color: #333; /* Dark text for contrast */
+  box-shadow: 0 8px 25px rgba(255, 193, 7, 0.5), inset 0 0 10px rgba(255,255,255,0.1);
+  animation: pulse 1.7s infinite, myTicketPulse 1.7s infinite; /* Combine pulses */
+}
+
 .ticket-info {
   display: flex;
   flex-direction: column;
@@ -139,7 +146,7 @@ body {
 }
 
 .ticket-status {
-  font-size: 1rem; /* Slightly larger status text */
+  font-size: 1.2rem; /* Slightly larger status text */
   text-transform: uppercase;
   font-weight: 600;
   opacity: 0.95;
@@ -187,22 +194,21 @@ body {
 
 /* Adjusted font-size for "YOUR TICKET" number */
 .my-code-value {
-  font-size: 2.2rem; /* Reduced size */
+  font-size: 2.5rem; /* Reduced size */
   font-weight: 800;
   color: var(--accent-blue);
-  letter-spacing: 0.1rem;
+  letter-spacing: 0.0rem;
   text-shadow: 0 0 10px rgba(97, 218, 251, 0.4); /* Subtle glow for user's ticket */
 }
 
 .my-code-details {
   display: flex;
   flex-direction: column;
-  gap: 0.6rem;
 }
 
 .my-code-details p {
   margin: 0;
-  font-size: 1.15rem; /* Slightly larger details text */
+  font-size: 1.5rem; /* Slightly larger details text */
   color: var(--text-secondary);
 }
 
@@ -214,7 +220,12 @@ body {
 
 .highlight-text {
   font-weight: 700;
+  font-size: 25px;
   color: var(--accent-blue);
+}
+
+.serving-status-text {
+  color: var(--my-ticket-color); /* Highlight serving status for user */
 }
 
 .empty-queue-text {
@@ -256,6 +267,12 @@ body {
   0% { box-shadow: 0 8px 25px rgba(76, 175, 80, 0.5); }
   50% { box-shadow: 0 8px 30px rgba(76, 175, 80, 0.7); } /* Stronger pulse */
   100% { box-shadow: 0 8px 25px rgba(76, 175, 80, 0.5); }
+}
+
+@keyframes myTicketPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.02); } /* Subtle scale for user's serving ticket */
+  100% { transform: scale(1); }
 }
 
 /* Scrollbar styling for a cleaner look */

@@ -61,6 +61,7 @@ export class QueueTicketsService {
         assignToWindow: ticket.assignedToWindowId, // Added optional chaining and a fallback
         category: ticket.category?.categoryName || 'N/A', // Added optional chaining and a fallback
         branch: ticket.branch.branchName,
+        branchid: ticket.branchId
       },
     };
   }
@@ -102,8 +103,76 @@ export class QueueTicketsService {
     const category = await this.customerCategoryRepository.findOne({ where: { categoryId: createQueueTicketDto.customerCategoryId } });
     if (!category) throw new BadRequestException(`Customer category with ID ${customerCategoryId} not found.`);
 
-    const currentStatus = await this.ticketStatusRepository.findOne({ where: { statusId: currentStatusId } });
-    if (!currentStatus) throw new BadRequestException(`Ticket status with ID ${currentStatusId} not found.`);
+   // --- Start of new logic to determine initial status and queue priority ---
+    let initialStatusId: number;
+    let initialQueuedAt: Date = new Date();
+
+    if (customerCategoryId === 2) {
+      initialStatusId = this.statusIds.QUEUED;
+
+      if (assignedToWindowId !== null && assignedToWindowId !== undefined) {
+        // Find the last QUEUED ticket with the same customer category
+        const lastPriorityTicket = await this.queueTicketRepository.findOne({
+          where: {
+            assignedToWindowId,
+            currentStatusId: this.statusIds.QUEUED,
+            customerCategoryId: 2,
+            visibilityStatus: 'ON_LIVE',
+          },
+          order: {
+            queuedAt: 'DESC',
+          },
+        });
+
+        if (lastPriorityTicket) {
+          // If a previous priority ticket exists, place this new ticket right after it
+          initialQueuedAt = new Date(lastPriorityTicket.queuedAt.getTime() + 1);
+        } else {
+          // If no other priority tickets exist, find the first QUEUED ticket and place this one before it
+          const firstQueuedTicket = await this.queueTicketRepository.findOne({
+            where: {
+              assignedToWindowId,
+              currentStatusId: this.statusIds.QUEUED,
+              visibilityStatus: 'ON_LIVE',
+            },
+            order: {
+              queuedAt: 'ASC',
+            },
+          });
+
+          if (firstQueuedTicket) {
+            initialQueuedAt = new Date(firstQueuedTicket.queuedAt.getTime() - 1);
+          } else {
+            initialQueuedAt = new Date();
+          }
+        }
+      } else {
+        // No assigned window, so just use the current time
+        initialQueuedAt = new Date();
+      }
+    } else if (assignedToWindowId !== null && assignedToWindowId !== undefined) {
+      const calledTicket = await this.queueTicketRepository.findOne({
+        where: {
+          assignedToWindowId,
+          currentStatusId: this.statusIds.CALLED,
+          visibilityStatus: 'ON_LIVE',
+        }
+      });
+
+      if (!calledTicket) {
+        initialStatusId = this.statusIds.CALLED;
+      } else {
+        initialStatusId = this.statusIds.QUEUED;
+      }
+      initialQueuedAt = new Date();
+    } else {
+      initialStatusId = this.statusIds.QUEUED;
+      initialQueuedAt = new Date();
+    }
+    // --- End of new logic ---
+
+    const currentStatus = await this.ticketStatusRepository.findOne({ where: { statusId: initialStatusId } });
+    if (!currentStatus) throw new BadRequestException(`Ticket status with ID ${initialStatusId} not found.`);
 
     let assignedToWindow: ServiceWindow | null = null;
     if (assignedToWindowId !== undefined && assignedToWindowId !== null) {
@@ -160,17 +229,18 @@ export class QueueTicketsService {
     newQueueTicket.customerName = customerName;
     newQueueTicket.category = category;
     newQueueTicket.branch = branch;
-    newQueueTicket.currentStatus = currentStatus;
+    newQueueTicket.currentStatus = currentStatus; // Use the determined initial status
     newQueueTicket.assignedToWindow = assignedToWindow;
     newQueueTicket.assignedToStaff = assignedToStaff;
     newQueueTicket.serviceType = serviceType === undefined ? null : serviceType;
-    newQueueTicket.queuedAt = queuedAt || new Date();
+    newQueueTicket.queuedAt = initialQueuedAt; // Use the determined timestamp
     newQueueTicket.issuedBy = issuedBy;
-    newQueueTicket.calledAt = calledAt || null;
+    newQueueTicket.calledAt =
+    initialStatusId === this.statusIds.CALLED ? new Date() : null; // Set calledAt only if status is CALLED
     newQueueTicket.servedAt = servedAt || null;
     newQueueTicket.cancelledBy = cancelledBy;
     newQueueTicket.visibilityStatus = visibilityStatus || 'ON_LIVE';
-
+    newQueueTicket.requeueAttempts = 3;
     return this.queueTicketRepository.save(newQueueTicket);
   }
 
@@ -205,11 +275,11 @@ export class QueueTicketsService {
       ticket.branchId = updateQueueTicketDto.branchId;
     }
 
-    if (updateQueueTicketDto.customerCategoryId !== undefined) { // Use customerCategoryId [cite: uploaded:queue-ticket.entity.ts]
+    if (updateQueueTicketDto.customerCategoryId !== undefined) { // Use customerCategoryId
       const category = await this.customerCategoryRepository.findOne({ where: { categoryId: updateQueueTicketDto.customerCategoryId } });
       if (!category) throw new BadRequestException(`Customer category with ID ${updateQueueTicketDto.customerCategoryId} not found.`);
       ticket.category = category;
-      ticket.customerCategoryId = updateQueueTicketDto.customerCategoryId; // Corrected property name [cite: uploaded:queue-ticket.entity.ts]
+      ticket.customerCategoryId = updateQueueTicketDto.customerCategoryId; // Corrected property name
     }
 
     if (updateQueueTicketDto.currentStatusId !== undefined) {
@@ -219,7 +289,7 @@ export class QueueTicketsService {
       ticket.currentStatusId = updateQueueTicketDto.currentStatusId;
     }
 
-    if (updateQueueTicketDto.assignedToWindowId !== undefined) { // Use assignedToWindowId [cite: uploaded:queue-ticket.entity.ts]
+    if (updateQueueTicketDto.assignedToWindowId !== undefined) { // Use assignedToWindowId
       if (updateQueueTicketDto.assignedToWindowId === null) {
         ticket.assignedToWindow = null;
         ticket.assignedToWindowId = null;
@@ -328,7 +398,7 @@ export class QueueTicketsService {
     return this.queueTicketRepository.save(nextTicket);
   }
 
-  // Use WebSocket then implement it here the queue logic
+  //IF wish to automate the queueing process Use WebSocket then implement it here the queue logic
   /**
    * Requeues a ticket. Increments requeue attempts.
    * If attempts reach 3, marks as 'CANCELLED'. Otherwise, reverts to 'QUEUED'.
@@ -380,7 +450,6 @@ export class QueueTicketsService {
       where: {
         assignedToWindowId: windowId,
         currentStatus: {
-          // CORRECTED LINE: Use Not(In([...])) for multiple NOT conditions on the same property
           statusId: Not(In([this.statusIds.SERVED, this.statusIds.CANCELLED])),
         },
       },
@@ -457,6 +526,49 @@ export class QueueTicketsService {
       called: calledTicket,
       pending: pendingTicket,
       onGoing: onGoingTickets,
+    };
+  }
+
+  /**
+   * Retrieves the currently called ticket and all sequentially ordered queued tickets for a specific service window and branch.
+   * @param branchId The ID of the branch.
+   * @param windowId The ID of the service window.
+   * @returns An object containing the 'called' ticket and an array of 'queued' tickets.
+   */
+  async getLiveQueueStatusForWindowAndBranch(branchId: number, windowId: number): Promise<{
+    called: QueueTicket | null;
+    queued: QueueTicket[];
+  }> {
+    if (!this.statusIds) await this.initializeStatusIds();
+    
+    // Find the single ticket currently in 'CALLED' status
+    const calledTicket = await this.queueTicketRepository.findOne({
+      where: {
+        branchId,
+        assignedToWindowId: windowId,
+        currentStatusId: this.statusIds.CALLED,
+        visibilityStatus: 'ON_LIVE',
+      },
+      relations: ['category', 'currentStatus'],
+    });
+
+    // Find all tickets currently in 'QUEUED' status, ordered by queue time (FIFO)
+    const queuedTickets = await this.queueTicketRepository.find({
+      where: {
+        branchId,
+        assignedToWindowId: windowId,
+        currentStatusId: this.statusIds.QUEUED,
+        visibilityStatus: 'ON_LIVE',
+      },
+      order: {
+        queuedAt: 'ASC', // Ensures sequential order (FIFO)
+      },
+      relations: ['category', 'currentStatus'],
+    });
+
+    return {
+      called: calledTicket,
+      queued: queuedTickets,
     };
   }
 

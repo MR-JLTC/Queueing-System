@@ -53,7 +53,7 @@ const AppRoutes = () => {
 
       {/* Other existing routes */}
       <Route path="/counter" element={<CounterQueueManagementSystem />} />
-      <Route path="/monitoring" element={<QueueMonitoring />} />
+      {/* <Route path="/monitoring" element={<QueueMonitoring />} /> */}
       <Route path="/queue" element={<QueueManagement />} />
       <Route path="/queue-display" element={<QueueDisplay />} />
       <Route path="/queue-checker" element={<QueueChecker />} />

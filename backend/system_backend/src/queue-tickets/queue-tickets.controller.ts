@@ -26,6 +26,18 @@ export class QueueTicketsController {
     return this.queueTicketsService.findAll();
   }
 
+  // NEW ROUTE TO GET LIVE QUEUE STATUS FOR A WINDOW AND ITS DESIGNATED BRANCH
+  @Get('live-status/:branchId/:windowId')
+  async getLiveQueueStatusForWindowAndBranch(
+    @Param('branchId', ParseIntPipe) branchId: number,
+    @Param('windowId', ParseIntPipe) windowId: number,
+  ) {
+    return this.queueTicketsService.getLiveQueueStatusForWindowAndBranch(
+      branchId,
+      windowId,
+    );
+  }
+
   // NEW ROUTE TO GET QUEUES FOR A SPECIFIC WINDOW
   @Get('window-queues/:windowId') // This defines the path segment
   async getQueueForWindow(@Param('windowId', ParseIntPipe) windowId: number) {

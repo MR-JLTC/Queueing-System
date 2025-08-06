@@ -38,6 +38,13 @@ INSERT INTO `ticket_statuses` (`status_code`, `status_label`, `visibility_status
 ('D', 'Completed', 'ON_LIVE') -- Assuming 'D' for completed
 ON DUPLICATE KEY UPDATE status_label=status_label;
 
+INSERT INTO ticket_statuses (status_name, description) VALUES
+("QUEUED", "queue ticket number is in queue"),
+("CALLED", "queue ticket number is called"),
+("SERVED", "queue ticket number is done with the transaction"),
+("CANCELLED", "queue ticket number got cancelled"),
+("REQUEUE", "queue ticket number is got requeue");
+
 -- Insert Sample Service Windows for Main Branch (branch_id = 1)
 INSERT INTO `service_windows` (`window_id`, `branch_id`, `counter_label`, `service_area`, `is_open`, `visibility_status`) VALUES
 (1, 1, 'Window 1', 'Front Desk', TRUE, 'ON_LIVE'),
