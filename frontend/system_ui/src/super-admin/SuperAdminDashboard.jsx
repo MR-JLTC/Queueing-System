@@ -268,7 +268,7 @@ const SuperAdminDashboard = () => {
     try {
       const url = branchId ? `${API_BASE_URL}/api/dashboard/summary?branchId=${branchId}` : `${API_BASE_URL}/api/dashboard/summary`;
       const response = await axios.get(url);
-      setOverallDashboardSummary(response.data.totalQueued, response.data.served, response.data.requeues, response.data.cancelled);
+      setOverallDashboardSummary(response.data);
     } catch (err) {
       console.error("Error fetching overall dashboard summary:", err);
       setOverallDashboardError("Failed to load overall dashboard summary.");
@@ -472,14 +472,20 @@ const SuperAdminDashboard = () => {
   ];
 
   // NEW: Chart data for the overall dashboard
+  // const overallChartData = [
+  //   { name: 'Total Queued', value: overallQueueHistorySummary.totalQueued },
+  //   { name: 'PWD', value: overallQueueHistorySummary.pwd },
+  //   { name: 'Senior Citizens', value: overallQueueHistorySummary.seniorCitizens },
+  //   { name: 'Standard', value: overallQueueHistorySummary.standard },
+  //   { name: 'Cancelled', value: overallQueueHistorySummary.cancelled },
+  // ].filter(data => data.value > 0);
   const overallChartData = [
-    { name: 'Total Queued', value: overallQueueHistorySummary.totalQueued },
-    { name: 'PWD', value: overallQueueHistorySummary.pwd },
-    { name: 'Senior Citizens', value: overallQueueHistorySummary.seniorCitizens },
-    { name: 'Standard', value: overallQueueHistorySummary.standard },
+    { name: 'Total Queued', value:overallDashboardSummary.totalQueued },
+    { name: 'PWD', value: overallDashboardSummary.served },
+    { name: 'Senior Citizens', value: overallDashboardSummary.requeues },
     { name: 'Cancelled', value: overallQueueHistorySummary.cancelled },
   ].filter(data => data.value > 0);
-
+  
   const renderContent = () => {
     // Centralized loading/error handling for the main content area
     const isLoading = (currentView === 'overall-dashboard' && loadingOverallDashboard) ||

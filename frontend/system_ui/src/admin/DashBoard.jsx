@@ -502,12 +502,19 @@ const Dashboard = () => {
     { text: 'Manage Staff', icon: <PeopleIcon sx={{ color: '#8ab4f8' }} />, path: 'Manage Staff' },
   ];
 
+  // const chartData = [
+  //   { name: 'Total Queued', value: queueHistorySummary.totalQueued },
+  //   { name: 'PWD', value: queueHistorySummary.pwd },
+  //   { name: 'Senior Citizens', value: queueHistorySummary.seniorCitizens },
+  //   { name: 'Standard', value: queueHistorySummary.standard },
+  //   { name: 'Cancelled', value: queueHistorySummary.cancelled },
+  // ].filter(data => data.value > 0);
+
   const chartData = [
-    { name: 'Total Queued', value: queueHistorySummary.totalQueued },
-    { name: 'PWD', value: queueHistorySummary.pwd },
-    { name: 'Senior Citizens', value: queueHistorySummary.seniorCitizens },
-    { name: 'Standard', value: queueHistorySummary.standard },
-    { name: 'Cancelled', value: queueHistorySummary.cancelled },
+    { name: 'Total Queued', value: dashboardSummary.totalQueued },
+    { name: 'Served', value: dashboardSummary.served },
+    { name: 'Requeues', value: dashboardSummary.requeues },
+    { name: 'Cancelled', value: dashboardSummary.cancelled },
   ].filter(data => data.value > 0);
 
 
@@ -716,7 +723,7 @@ const Dashboard = () => {
 
             <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-around', gap: 3, mb: 5 }}>
               {[
-                { title: 'Total Queued', value: queueHistorySummary.totalQueued, icon: <QueueIcon sx={{ fontSize: '4rem' }} />, color: '#ffc107' },
+                { title: 'Total Queued', value: dashboardSummary.totalQueued, icon: <QueueIcon sx={{ fontSize: '4rem' }} />, color: '#ffc107' },
                 { title: 'Served', value: dashboardSummary.served, icon: <CheckCircleOutlineIcon sx={{ fontSize: '4rem' }} />, color: '#28a745' },
                 { title: 'Requeues', value: dashboardSummary.requeues, icon: <LoopIcon sx={{ fontSize: '4rem' }} />, color: '#17a2b8' },
                 { title: 'Cancelled', value: dashboardSummary.cancelled, icon: <CancelIcon sx={{ fontSize: '4rem' }} />, color: '#dc3545' },
