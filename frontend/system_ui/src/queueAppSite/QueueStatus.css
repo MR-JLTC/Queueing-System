@@ -162,7 +162,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 1.1rem; /* Slightly increased gap for list items */
-  max-height: 280px; /* Increased max height */
+  max-height: 160px; /* Increased max height */
   overflow-y: auto;
   padding-right: 0.8rem;
 }

@@ -2,49 +2,49 @@
 :root {
   /* Colors from SuperAdminDashboard.css */
   --primary-dark-bg: #121212;
-  --secondary-dark-bg: #1a1a1a; /* Used for App Bar/headers in admin, suitable for main background */
-  --card-dark-bg: #1f1f1f; /* Used for cards/panels in admin, suitable for form background */
-  --input-dark-bg: #2B2B2B; /* A slightly darker shade for input fields */
-  --item-dark-bg: #3A3A3A; /* Even darker for list items */
+  --secondary-dark-bg: #1a1a1a;
+  --card-dark-bg: #1f1f1f;
+  --input-dark-bg: #2B2B2B;
+  --item-dark-bg: #3A3A3A;
 
-  --text-light-1: #e0e0e0; /* Primary light text */
-  --text-light-2: rgba(255, 255, 255, 0.7); /* Secondary light text */
-  --text-light-3: rgba(255, 255, 255, 0.6); /* Slightly more faded for subtitles */
-  --text-light-4: rgba(255, 255, 255, 0.4); /* For placeholder text */
+  --text-light-1: #e0e0e0;
+  --text-light-2: rgba(255, 255, 255, 0.7);
+  --text-light-3: rgba(255, 255, 255, 0.6);
+  --text-light-4: rgba(255, 255, 255, 0.4);
   --text-light-dark: #333; /* Dark text on light backgrounds (e.g., ticket popup) */
   --text-light-dark-secondary: #555; /* Secondary dark text */
   --text-light-dark-faded: #666; /* Faded dark text */
 
-  --border-color-subtle: rgba(100, 110, 130, 0.15); /* Subtle border for separators */
-  --border-color-input: #4A4A6D; /* Darker, subtle border for inputs */
+  --border-color-subtle: rgba(100, 110, 130, 0.15);
+  --border-color-input: #4A4A6D;
 
-  --accent-blue: #63b3ed; /* Original blue from QueueManagement for focus/selected states */
-  --accent-blue-shadow: rgba(99, 179, 237, 0.5); /* Shadow for original blue */
-  --accent-blue-darker: #4299E1; /* Stronger blue for selected category/proceed button */
-  --accent-blue-hover: #3182CE; /* Darker blue on hover for proceed button */
-  --accent-blue-shadow-strong: rgba(66, 153, 225, 0.4); /* Stronger shadow for blue */
+  --accent-blue: #63b3ed;
+  --accent-blue-shadow: rgba(99, 179, 237, 0.5);
+  --accent-blue-darker: #4299E1;
+  --accent-blue-hover: #3182CE;
+  --accent-blue-shadow-strong: rgba(66, 153, 225, 0.4);
 
-  --success-green: #4CAF50; /* Green for success popups/download buttons */
+  --success-green: #4CAF50;
   --success-green-hover: #45a049;
   --success-green-shadow: rgba(76, 175, 80, 0.3);
 
-  --error-red: #F44336; /* Red for error popups/priority tickets */
-  --error-red-shadow: rgba(244, 67, 54, 0.4); /* Added for consistency */
+  --error-red: #F44336;
+  --error-red-shadow: rgba(244, 67, 54, 0.4);
 
-  --button-disabled-bg: #4A4A6D; /* Greyed out when disabled */
+  --button-disabled-bg: #4A4A6D;
 
   /* Shadows */
-  --shadow-dark-1: rgba(0, 0, 0, 0.5); /* Soft shadow for depth */
-  --shadow-dark-2: rgba(0, 0, 0, 0.4); /* Popup shadow */
-  --shadow-dark-3: rgba(0, 0, 0, 0.2); /* Subtle shadows for elements */
-  --shadow-dark-button: rgba(0, 0, 0, 0.3); /* For buttons */
-  --shadow-light-inset: rgba(0, 0, 0, 0.1); /* For QR code border/shadow */
-  --shadow-light-inset-strong: rgba(0, 0, 0, 0.2); /* Stronger for selected category */
+  --shadow-dark-1: rgba(0, 0, 0, 0.5);
+  --shadow-dark-2: rgba(0, 0, 0, 0.4);
+  --shadow-dark-3: rgba(0, 0, 0, 0.2);
+  --shadow-dark-button: rgba(0, 0, 0, 0.3);
+  --shadow-light-inset: rgba(0, 0, 0, 0.1);
+  --shadow-light-inset-strong: rgba(0, 0, 0, 0.2);
 
   /* Popup specific colors (lighter theme within dark app) */
   --popup-light-bg: #fff;
   --popup-light-border: rgba(0, 0, 0, 0.1);
-  --popup-light-pattern: rgba(240, 240, 240, 0.1); /* Subtle pattern for ticket */
+  --popup-light-pattern: rgba(240, 240, 240, 0.1);
 }
 
 /* Ensure all elements use border-box */
@@ -58,9 +58,9 @@ html, body {
   padding: 0;
   height: 100%;
   overflow-x: hidden;
-  background-color: var(--secondary-dark-bg); /* Deep dark blue background from image */
+  background-color: var(--secondary-dark-bg);
   font-family: 'Inter', sans-serif;
-  color: var(--text-light-1); /* Default text color */
+  color: var(--text-light-1);
 }
 
 /* Hide previous floating elements if any */
@@ -86,7 +86,7 @@ body .floating-element-2 {
 
 /* Queue Form - The main container for all elements shown in the image */
 .queue-form {
-  background-color: var(--card-dark-bg); /* Slightly lighter dark background for the form */
+  background-color: var(--card-dark-bg);
   border-radius: 15px;
   box-shadow: 0 10px 30px var(--shadow-dark-1);
   padding: 40px;
@@ -144,9 +144,9 @@ body .floating-element-2 {
 
 .language-dropdown {
   padding: 8px 15px 8px 35px;
-  border: 1px solid var(--border-color-subtle); /* Subtle border */
+  border: 1px solid var(--border-color-subtle);
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.1); /* Slightly transparent background */
+  background: rgba(255, 255, 255, 0.1);
   color: var(--text-light-1);
   font-size: 0.9rem;
   cursor: pointer;
@@ -154,7 +154,6 @@ body .floating-element-2 {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
-  /* SVG icons' fill/stroke color adjusted to match text-light-1 if necessary */
   background-image: url('data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23E0E0E0%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%2212%22%20r%3D%2210%22%2F%3E%3Cpath%20d%3D%22M12%202a14.5%2014.5%200%200%201%200%2020%2014.5%2014.5%200%200%201%200-20%22%2F%3E%3Cpath%20d%3D%22M2%2012h20%22%2F%3E%3C%2Fsvg%3E'),
                   url('data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2220%22%20height%3D%2220%22%20viewBox%3D%220%200%2020%2020%22%20fill%3D%22none%22%3E%3Cpath%20d%3D%22M6%208L10%2012L14%208%22%20stroke%3D%22%23E0E0E0%22%20stroke-width%3D%221.5%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fsvg%3E');
   background-repeat: no-repeat, no-repeat;
@@ -169,7 +168,7 @@ body .floating-element-2 {
 }
 
 .language-dropdown option {
-  background: var(--card-dark-bg); /* Dark background for dropdown options */
+  background: var(--card-dark-bg);
   color: var(--text-light-1);
 }
 
@@ -210,7 +209,7 @@ body .floating-element-2 {
   padding: 12px 15px;
   border: 1px solid var(--border-color-input);
   border-radius: 8px;
-  background-color: var(--input-dark-bg); /* Darker input background */
+  background-color: var(--input-dark-bg);
   color: var(--text-light-1);
   font-size: 1rem;
   outline: none;
@@ -264,7 +263,7 @@ body .floating-element-2 {
 
 .branch-dropdown option,
 .transaction-dropdown option {
-  background: var(--card-dark-bg); /* Match form background for options */
+  background: var(--card-dark-bg);
   color: var(--text-light-1);
 }
 
@@ -301,7 +300,7 @@ body .floating-element-2 {
 }
 
 .category-btn:hover:not(.selected) {
-  background-color: var(--border-color-input); /* Slightly lighter on hover */
+  background-color: var(--border-color-input);
   transform: translateY(-2px);
   box-shadow: 0 4px 10px var(--shadow-dark-3);
 }
@@ -317,11 +316,11 @@ body .floating-element-2 {
 .category-icon {
   width: 20px;
   height: 20px;
-  filter: brightness(0) invert(1); /* Make SVG icons white */
+  filter: brightness(0) invert(1);
 }
 
 .category-btn.selected .category-icon {
-  filter: none; /* Reset filter for selected icon if it's already white */
+  filter: none;
 }
 
 
@@ -353,7 +352,7 @@ body .floating-element-2 {
 
 .proceed-btn:disabled {
   background-color: var(--button-disabled-bg);
-  color: var(--text-light-3); /* Faded text on disabled button */
+  color: var(--text-light-3);
   cursor: not-allowed;
   opacity: 0.7;
   box-shadow: none;
@@ -378,22 +377,17 @@ body .floating-element-2 {
 .queue-ticket-popup {
   background: var(--popup-light-bg);
   border-radius: 12px;
-  padding: 2.5rem 2rem;
+  padding: 0rem 0rem;
   box-shadow: 0 15px 30px var(--shadow-dark-1);
   animation: bounceIn 0.6s ease-out;
   position: relative;
   text-align: center;
   border: 1px solid var(--popup-light-border);
-  max-width: 420px;
-  width: 90%;
-  color: var(--text-light-dark);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background-image: linear-gradient(45deg, var(--popup-light-pattern) 25%, transparent 25%, transparent 75%, var(--popup-light-pattern) 75%, var(--popup-light-pattern) 100%), linear-gradient(-45deg, var(--popup-light-pattern) 25%, transparent 25%, transparent 75%, var(--popup-light-pattern) 75%, var(--popup-light-pattern) 100%);
-  background-size: 20px 20px;
-  background-position: 0 0, 10px 10px;
-
+  max-width: 432px;
+  width: 70%;
+  /* Change the color to white for the popup */
+  color: white;
+  background-image: none; /* Remove the background pattern */
   max-height: 90vh;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
@@ -403,7 +397,7 @@ body .floating-element-2 {
   width: 400px;
   padding: 1rem 1.5rem;
   margin: 0;
-  background-color: var(--popup-light-bg);
+  background-color: #636262; /* Set the background of the printable area to black */
 }
 
 .ticket-header {
@@ -412,7 +406,7 @@ body .floating-element-2 {
   width: 100%;
   position: relative;
   padding-bottom: 20px;
-  border-bottom: 2px dashed var(--border-color-subtle);
+  border-bottom: 2px dashed #333; /* Darker dashed line */
 }
 
 .ticket-header-logo {
@@ -424,7 +418,7 @@ body .floating-element-2 {
 .ticket-title {
   font-size: 2rem;
   font-weight: 800;
-  color: var(--text-light-dark);
+  color: white; /* Title is now white */
   margin: 0;
   letter-spacing: 2px;
   text-transform: uppercase;
@@ -433,17 +427,17 @@ body .floating-element-2 {
 
 /* Specific styles for Standard and Priority tickets (as defined in original) */
 .ticket-title.standard {
-  color: var(--success-green);
+  color: white; /* Standard title is now white */
 }
 
 .ticket-title.priority {
-  color: var(--error-red);
+  color: white; /* Priority title is now white */
 }
 
 .ticket-number {
-  font-size: 4rem;
+  font-size: 3rem;
   font-weight: 900;
-  color: #000; /* Keeping black for ticket number for strong contrast */
+  color: white; /* Ticket number is now white */
   margin-top: 1rem;
   letter-spacing: 3px;
 }
@@ -461,7 +455,7 @@ body .floating-element-2 {
   justify-content: space-between;
   align-items: center;
   padding: 8px 0;
-  border-bottom: 1px dotted #ccc; /* Keeping light grey for subtle dotted line */
+  border-bottom: 1px dotted #444; /* Darker dotted line */
 }
 
 .detail-row:last-child {
@@ -470,7 +464,7 @@ body .floating-element-2 {
 
 .detail-label {
   font-weight: 600;
-  color: var(--text-light-dark-secondary);
+  color: white; /* Labels are now white */
   display: flex;
   align-items: center;
   gap: 8px;
@@ -479,12 +473,12 @@ body .floating-element-2 {
 
 .detail-icon {
   font-size: 1.2rem;
-  color: var(--text-light-dark-faded);
+  color: white; /* Icons are now white */
 }
 
 .detail-value {
   font-weight: 500;
-  color: var(--text-light-dark);
+  color: white; /* Values are now white */
   text-align: right;
   flex-grow: 1;
   font-size: 0.95rem;
@@ -496,19 +490,19 @@ body .floating-element-2 {
   align-items: center;
   margin-bottom: 2rem;
   padding: 1rem 0;
-  background-color: #f9f9f9; /* Slight background for QR section */
+  background-color: #646464; /* Darker background for QR section */
   border-radius: 8px;
 }
 
 .qr-code-canvas {
-  border: 4px solid var(--popup-light-bg); /* White border around QR */
-  box-shadow: 0 4px 10px var(--shadow-light-inset);
-  background-color: var(--popup-light-bg);
+  border: 4px solid #333; /* Darker border around QR */
+  box-shadow: 0 4px 10px #000;
+  background-color: #333;
 }
 
 .qr-message {
   font-size: 0.85rem;
-  color: var(--text-light-dark-faded);
+  color: white; /* QR message is now white */
   margin-top: 1rem;
   max-width: 80%;
   line-height: 1.4;
@@ -517,13 +511,13 @@ body .floating-element-2 {
 .ticket-footer {
   width: 100%;
   padding-top: 20px;
-  border-top: 2px dashed var(--border-color-subtle);
+  border-top: 2px dashed #333; /* Darker dashed line */
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
   font-size: 0.9rem;
-  color: var(--text-light-dark-faded);
+  color: white; /* Footer text is now white */
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -565,13 +559,13 @@ body .floating-element-2 {
 }
 
 .notification-close {
-  background-color: #f0f0f0; /* Keeping a light grey for close button */
-  color: var(--text-light-dark);
+  background-color: #333; /* Dark close button */
+  color: white; /* White text on close button */
   box-shadow: 0 4px 10px var(--shadow-light-inset);
 }
 
 .notification-close:hover {
-  background-color: #e0e0e0; /* Slightly darker on hover */
+  background-color: #444; /* Slightly darker on hover */
   transform: translateY(-2px);
 }
 
@@ -646,7 +640,7 @@ body .floating-element-2 {
 }
 
 .popup-message-close-btn {
-  background-color: var(--info-blue); /* Assuming info-blue is for general purpose blue button */
+  background-color: var(--info-blue);
   color: white;
   border: none;
   border-radius: 5px;

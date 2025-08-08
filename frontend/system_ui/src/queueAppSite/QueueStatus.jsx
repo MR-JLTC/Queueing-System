@@ -48,8 +48,8 @@ const QueueStatus = () => {
       const servingTicket = data.called;
       if (servingTicket && userTicketNumber !== 'N/A' && servingTicket.ticketNumber === userTicketNumber) {
         if (lastSpokenTicketRef.current !== userTicketNumber) {
-          const windowName = servingTicket.assignedToWindow?.windowName || `Window ${servingTicket.assignedToWindow?.windowNumber}`;
-          speakText(`Your number ${userTicketNumber} is called, please proceed to counter ${windowName}.`);
+          // const windowName = servingTicket.assignedToWindow?.windowName || `Window ${servingTicket.assignedToWindow?.windowNumber}`;
+          speakText(`Your number ${userTicketNumber} is called, please proceed to counter ${windowId}.`);
           lastSpokenTicketRef.current = userTicketNumber; // Update the ref
         }
       }
@@ -143,7 +143,7 @@ const QueueStatus = () => {
       <div className="queue-status-container">
         <div className="queue-checker-card">
           <p className="text-red-500">{error}</p>
-          <button onClick={() => navigate('/')} className="done-btn">
+          <button onClick={() => navigate('/queue-checker')} className="done-btn">
             Go Back
           </button>
         </div>

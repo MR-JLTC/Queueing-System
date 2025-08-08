@@ -114,7 +114,7 @@ const QueueDisplay = () => {
 
     fetchQueueData();
     // Optional: Poll for updates every few seconds (e.g., every 5 seconds)
-    const interval = setInterval(fetchQueueData, 5000);
+    const interval = setInterval(fetchQueueData, 3000); // prev is 5000
     return () => clearInterval(interval); // Clean up interval on unmount
   }, [selectedBranchId, selectedLanguage]); // selectedBranchId is a dependency, so changing it *will* re-fetch and reset queueData
 

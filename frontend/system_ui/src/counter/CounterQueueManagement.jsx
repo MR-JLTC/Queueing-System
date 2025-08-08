@@ -180,7 +180,7 @@ const CounterQueueManagement = () => {
       const newStatusId = 5; // This is now handled on the backend to be a new status or a cancellation
       // const { staffId } = staffInfo;
       // Pass null for assignedToWindowId and assignedToStaffId
-      await updateTicketStatus(ticketId, newStatusId, null, null);
+      await updateTicketStatus(ticketId, newStatusId, staffInfo.staffId, staffInfo.windowId);
       setIsServing(false);
       setOnGoingQueue(null); // Clear the ongoing queue after requeueing
     }
@@ -296,11 +296,27 @@ const CounterQueueManagement = () => {
             <div className="action-and-list-container">
               <div className="action-buttons">
                 <button
-                  className="next-button"
-                  onClick={handleNextQueue}
-                  disabled={loading || isServing}
+                    className="next-button"
+                    onClick={handleNextQueue}
+                    disabled={loading || isServing}
                 >
-                  Call Next
+                    Call Next
+                </button>
+                {/* {onGoingQueue && isServing && (
+                    <button
+                        className="call-again-button"
+                        onClick={() => speakTicketInfo(onGoingQueue.ticketNumber, staffInfo.windowNumber)}
+                        disabled={loading}
+                    >
+                        Call Again
+                    </button>
+                )} */}
+                <button
+                     className="call-again-button"
+                     onClick={() => speakTicketInfo(onGoingQueue.ticketNumber, staffInfo.windowNumber)}
+                     disabled={loading}
+                    >
+                        Call Again
                 </button>
                 <div className="next-button-group">
                   <button
